@@ -95,5 +95,3 @@ header automatically.
 [cheadergen-toml-config]: https://docs.rs/cheadergen/latest/cheadergen/config_reference/index.html
 [cheadergen-macro]: https://docs.rs/cheadergen/latest/cheadergen/index.html
 [cbindgen]: https://github.com/mozilla/cbindgen
-
-[^1]: feel old yet?

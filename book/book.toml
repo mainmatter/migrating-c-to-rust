@@ -1,4 +1,131 @@
 [book]
-title = "C to Rust Migration"
 authors = ["Jonas Kruckenberg"]
 language = "en"
+src = "src"
+title = "The C to Rust Migration Book"
+
+[preprocessor.exercise-linker]
+exercise_root_url = "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises"
+
+[preprocessor.link-shortener]
+base_url = "https://c2r.io"
+renderers = ["pandoc"]
+mapping = "link2alias.json"
+verify = false
+after = ["exercise-linker"]
+
+[output.html]
+git-repository-url = "https://github.com/mainmatter/migrating-c-to-rust"
+
+[output.html.playground]
+runnable = false
+
+[output.pandoc]
+optional = true
+hosted-html = "https://mainmatter.com/c-to-rust-migration-book/course/"
+
+[output.pandoc.code]
+show-hidden-lines = true
+
+[output.pandoc.profile.pdf] # options to pass to Pandoc (see https://pandoc.org/MANUAL.html)
+output-file = "c-to-rust-migration-book.pdf"
+to = "latex"
+highlight-style = "./custom.theme"
+# We use `lualatext` because, right now, it's the only engine
+# that supports fallback fonts, which we need for emojis.
+pdf-engine = "lualatex"
+metadata-file = "metadata.yml"
+
+[output.pandoc.profile.pdf.variables]
+mainfont = "CoreSansA45.ttf"
+mainfontoptions = [
+  "BoldFont=CoreSansA65.ttf",
+  "ItalicFont=CoreSansA45It.ttf",
+  "BoldItalicFont=CoreSansA65It.ttf",
+]
+sansfont = "CoreSansA45.ttf"
+sansfontoptions = [
+  "BoldFont=CoreSansA65.ttf",
+  "ItalicFont=CoreSansA45It.ttf",
+  "BoldItalicFont=CoreSansA65It.ttf",
+]
+# You can get these fonts here: https://fonts.google.com/selection?query=noto+color+
+monofont = "Noto Sans Mono"
+mainfontfallback = ["Open Sans:style=Regular"]
+sansfontfallback = ["Open Sans:style=Regular"]
+monofontfallback = [
+  "Noto Color Emoji:mode=harf",
+]
+linkcolor = "Links"
+urlcolor = "Links"
+urlstyle = "rm"
+documentclass = "book"
+fontsize = "10pt"
+geometry = "papersize={8in,10in},top=2cm,bottom=2cm,left=2.4cm,right=2.4cm"
+header-includes = [
+  "\\definecolor{Links}{HTML}{6200EE}",
+  # Reduce font size of code blocks
+  "\\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\\\\{\\},fontsize=\\small}",
+]
+
+[output.pandoc.profile.paperback]
+output-file = "c-to-rust-migration-book.pdf"
+to = "latex"
+highlight-style = "monochrome"
+metadata-file = "metadata.yml"
+# We use `lualatext` because, right now, it's the only engine
+# that supports fallback fonts, which we need for emojis.
+pdf-engine = "lualatex"
+
+[output.pandoc.profile.paperback.variables]
+mainfont = "CoreSansA45.ttf"
+mainfontoptions = [
+  "BoldFont=CoreSansA65.ttf",
+  "ItalicFont=CoreSansA45It.ttf",
+  "BoldItalicFont=CoreSansA65It.ttf",
+]
+sansfont = "CoreSansA45.ttf"
+sansfontoptions = [
+  "BoldFont=CoreSansA65.ttf",
+  "ItalicFont=CoreSansA45It.ttf",
+  "BoldItalicFont=CoreSansA65It.ttf",
+]
+# You can get these fonts here: https://fonts.google.com/selection?query=noto+color+
+monofont = "Noto Sans Mono"
+mainfontfallback = ["Open Sans:style=Regular"]
+sansfontfallback = ["Open Sans:style=Regular"]
+monofontfallback = [
+  "Noto Color Emoji:mode=harf",
+]
+linkcolor = "Links"
+urlcolor = "Links"
+urlstyle = "rm"
+documentclass = "book"
+fontsize = "10pt"
+geometry = "papersize={8in,10in},top=2cm,bottom=2cm,left=2.8cm,right=2.5cm"
+header-includes = [
+  "\\definecolor{Links}{HTML}{6200EE}",
+  # Reduce font size of code blocks
+  "\\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\\\\{\\},fontsize=\\small}",
+]
+links-as-notes = true
+
+# We go through HTML, rather than directly to ePUB, since routing
+# Pandoc's HTML through Calibre's ePUB converter gives us better results.
+[output.pandoc.profile.html]
+output-file = "c-to-rust-migration-book.html"
+to = "html"
+highlight-style = "monochrome"
+embed-resources = true
+standalone = true
+metadata-file = "metadata.yml"
+
+[output.pandoc.profile.html.variables]
+# You can get these fonts here: https://fonts.google.com/selection?query=noto+color+
+monofont = "Noto Sans Mono"
+mainfontfallback = ["Open Sans:style=Regular"]
+sansfontfallback = ["Open Sans:style=Regular"]
+monofontfallback = [
+  "Noto Color Emoji:mode=harf",
+]
+urlstyle = "rm"

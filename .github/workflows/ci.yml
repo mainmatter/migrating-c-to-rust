@@ -39,3 +39,138 @@ jobs:
           purge-last-accessed: P7D
       - name: typos
         run: nix develop .#author --command typos
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get Core Sans
+        uses: actions/checkout@v4
+        if: "!github.event.pull_request.head.repo.fork"
+        with:
+          fetch-depth: 0
+          repository: mainmatter/core-sans-a-fonts
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          path: core-sans-a-fonts
+          ref: main
+      - name: Install Core Sans Font
+        if: "!github.event.pull_request.head.repo.fork"
+        run: |
+          sudo cp -r core-sans-a-fonts/* /usr/local/share/fonts/
+          sudo fc-cache -f -v
+          fc-list | grep "Core Sans"
+      - name: Use Fallback font for fork PRs
+        if: "github.event.pull_request.head.repo.fork"
+        run: |
+          sed -i 's/"BoldFont=CoreSansA65.ttf",//g' book/book.toml
+          sed -i 's/"ItalicFont=CoreSansA45It.ttf",//g' book/book.toml
+          sed -i 's/"BoldItalicFont=CoreSansA65It.ttf",//g' book/book.toml
+          sed -i 's/CoreSansA45.ttf/Open Sans:style=Regular/g' book/book.toml
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install exercise plugin
+        run: cargo install --git https://github.com/mainmatter/mdbook-exercise-linker
+      - name: Install link shortener plugin
+        run: cargo install --git https://github.com/mainmatter/mdbook-link-shortener
+      - name: Install mdbook-pandoc, calibre, pdftk and related dependencies
+        run: |
+          cargo install mdbook-pandoc --locked --version 0.11.0
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto fonts-open-sans calibre pdftk
+          sudo fc-cache -f -v
+          export PANDOC_VERSION=3.3
+          curl -LsSf https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | tar zxf -
+          echo "$PWD/pandoc-${PANDOC_VERSION}/bin" >> $GITHUB_PATH
+        shell: bash
+      - name: Setup TeX Live
+        uses: TeX-Live/setup-texlive-action@v3
+        with:
+          packages:
+            scheme-basic
+            luatex
+            lualatex-math
+            luacolor
+            luatexbase
+            luaotfload
+            framed
+            unicode-math
+            xcolor
+            geometry
+            longtable
+            booktabs
+            array
+            lua-ul
+            etoolbox
+            fancyvrb
+            footnote
+            selnolig
+            natbib
+            csquotes
+            bookmark
+            xurl
+            amsmath
+            setspace
+            iftex
+      - name: Check `tlmgr` version
+        run: tlmgr --version
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: mdbook
+      - name: Build book
+        env:
+          LINK_SHORTENER_VERIFY: "true"
+        run: |
+          cd book
+          mdbook build
+      - name: Add cover and back to downloadable PDF
+        run: |
+          pdftk book/assets/cover.pdf book/book/pandoc/pdf/c-to-rust-migration-book.pdf book/assets/back.pdf cat output book/book/pandoc/pdf/c-to-rust-migration-book-with-cover.pdf
+          mv book/book/pandoc/pdf/c-to-rust-migration-book-with-cover.pdf book/book/pandoc/pdf/c-to-rust-migration-book.pdf
+      - name: Convert HTML to ePUB
+        run: |
+          tree .
+          cd book/book/pandoc/html
+          sed -i 's|<code>\\newpage</code>{=latex}||g' c-to-rust-migration-book.html
+          ebook-convert c-to-rust-migration-book.html c-to-rust-migration-book.epub \
+            --embed-all-fonts \
+            --subset-embedded-fonts
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v1
+        with:
+          fail: true
+          args: |
+            --exclude-loopback
+            --require-https
+            --no-progress
+            book/book/html/
+      # Upload the HTML book as an artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: book
+          # When you support multiple formats, the output directory changes
+          # to include the format in its path.
+          path: book/book/html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: online-pdf
+          path: book/book/pandoc/pdf/c-to-rust-migration-book.pdf
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paperback
+          path: book/book/pandoc/paperback/c-to-rust-migration-book.pdf
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ePUB
+          path: book/book/pandoc/html/c-to-rust-migration-book.epub
+
+  is_fresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo apt-get update && sudo apt-get install -y jq
+      - run: |
+          ./helpers/json2redirects.sh book/link2alias.json > site/_redirects
+      # Verify nothing has changed, meaning that the redirect file is up-to-date
+      - run: |
+          git diff --exit-code site/_redirects
