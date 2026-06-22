@@ -26,7 +26,8 @@ If you'd like to organize a private session for your company, please
 [get in touch](https://mainmatter.com/contact/).
 
 You can also take the course on your own, but we recommend you find a friend or
-a mentor to help you along the way should you get stuck. 
+a mentor to help you along the way should you get stuck.
+
 <!--You can find solutions for all exercises in the
 [`solutions` branch of the GitHub repository](https://github.com/mainmatter/migrating-c-to-rust/tree/solutions).-->
 
