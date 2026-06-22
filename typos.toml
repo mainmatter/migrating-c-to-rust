@@ -4,6 +4,7 @@ extend-exclude = [
   "Cargo.lock",
   "flake.lock",
   "book/book",
+  "book/theme",
 ]
 
 [default]
