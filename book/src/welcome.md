@@ -26,9 +26,9 @@ If you'd like to organize a private session for your company, please
 [get in touch](https://mainmatter.com/contact/).
 
 You can also take the course on your own, but we recommend you find a friend or
-a mentor to help you along the way should you get stuck. You can find solutions
-for all exercises in the
-[`solutions` branch of the GitHub repository](https://github.com/mainmatter/c-to-rust-migration-book/tree/solutions).
+a mentor to help you along the way should you get stuck. 
+<!--You can find solutions for all exercises in the
+[`solutions` branch of the GitHub repository](https://github.com/mainmatter/migrating-c-to-rust/tree/solutions).-->
 
 ## Formats
 
@@ -42,12 +42,12 @@ sections. To verify your understanding, each section is paired with an exercise
 that you need to solve.
 
 You can find the exercises in the
-[companion GitHub repository](https://github.com/mainmatter/c-to-rust-migration-book).\
+[companion GitHub repository](https://github.com/mainmatter/migrating-c-to-rust).\
 Before starting the course, make sure to clone the repository to your local
 machine:
 
 ```bash
-git clone https://github.com/mainmatter/c-to-rust-migration-book
+git clone https://github.com/mainmatter/migrating-c-to-rust
 ```
 
 We also recommend you work on a branch, so you can easily track your progress

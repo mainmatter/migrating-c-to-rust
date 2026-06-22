@@ -22,7 +22,7 @@ need when things inevitably break — one exercise at a time.
 Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/mainmatter/c-to-rust-migration-book
+git clone https://github.com/mainmatter/migrating-c-to-rust
 ```
 
 We recommend you work on a branch, so you can easily track your progress and
@@ -72,7 +72,7 @@ section until you've solved the exercise for the current one.
 <!--## Solutions
 
 You can find the solutions to the exercises in the
-[`solutions` branch](https://github.com/mainmatter/c-to-rust-migration-book/tree/solutions)
+[`solutions` branch](https://github.com/mainmatter/migrating-c-to-rust/tree/solutions)
 of this repository.-->
 
 # License
