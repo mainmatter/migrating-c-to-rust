@@ -5,7 +5,7 @@ src = "src"
 title = "The C to Rust Migration Book"
 
 [preprocessor.exercise-linker]
-exercise_root_url = "https://github.com/mainmatter/c-to-rust-migration-book/tree/main/exercises"
+exercise_root_url = "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises"
 
 [preprocessor.link-shortener]
 base_url = "https://c2r.io"
@@ -15,7 +15,7 @@ verify = false
 after = ["exercise-linker"]
 
 [output.html]
-git-repository-url = "https://github.com/mainmatter/c-to-rust-migration-book"
+git-repository-url = "https://github.com/mainmatter/migrating-c-to-rust"
 
 [output.html.playground]
 runnable = false
