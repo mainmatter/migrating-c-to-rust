@@ -22,7 +22,7 @@ runnable = false
 
 [output.pandoc]
 optional = true
-hosted-html = "https://mainmatter.com/c-to-rust-migration-book/"
+hosted-html = "https://mainmatter.com/c-to-rust-migration-book/course/"
 
 [output.pandoc.code]
 show-hidden-lines = true
