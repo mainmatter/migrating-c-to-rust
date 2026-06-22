@@ -1,0 +1,3 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_validate_and_narrow"]

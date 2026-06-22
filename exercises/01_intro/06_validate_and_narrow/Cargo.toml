@@ -1,0 +1,8 @@
+[package]
+name = "bm_validate_and_narrow"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"

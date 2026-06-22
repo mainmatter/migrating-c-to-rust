@@ -1,0 +1,13 @@
+[files]
+extend-exclude = [
+  "target",
+  "Cargo.lock",
+  "flake.lock",
+  "book/book",
+]
+
+[default]
+extend-ignore-re = [
+  # Allow `bm_` prefixed identifiers without spellcheck noise.
+  "\\bbm_[a-zA-Z0-9_]+\\b",
+]

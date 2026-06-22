@@ -1,0 +1,12 @@
+[package]
+name = "cheadergen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["staticlib"]
+
+# TODO(jonas): confirm the actual cheadergen build-dep name/version.
+[build-dependencies]
+# cheadergen = "0.x"

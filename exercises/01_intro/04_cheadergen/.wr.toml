@@ -1,0 +1,19 @@
+[[verification]]
+command = "cargo"
+args = ["build"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-std=c11",
+  "-I.",
+  "c_test/test_strlower.c",
+  "../../../target/debug/libcheadergen.a",
+  "-o",
+  "../../../target/debug/test_strlower",
+]
+
+[[verification]]
+command = "../../../target/debug/test_strlower"

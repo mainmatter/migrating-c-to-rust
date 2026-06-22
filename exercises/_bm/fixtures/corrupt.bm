@@ -1,0 +1,9 @@
+https://example.com/first	valid,control
+https://example.com/second	valid,control
+https://example.com/third	valid,control
+ftp://oldserver.example.com/file	bad,scheme
+	orphan-tag-no-url
+https://	empty,host
+not-a-url-at-all
+   	whitespace,url
+https://example.com/after	never,reached

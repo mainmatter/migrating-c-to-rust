@@ -1,0 +1,5 @@
+exercises_dir = "exercises"
+
+# Exercises drive their own build via `make`; the runner shouldn't try to
+# `cargo build` first. Each per-exercise .wr.toml supplies its own `[[verification]]`.
+skip_build = true

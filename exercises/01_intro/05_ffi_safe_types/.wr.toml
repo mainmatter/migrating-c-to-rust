@@ -1,0 +1,23 @@
+[[verification]]
+command = "cargo"
+args = ["build"]
+
+[[verification]]
+command = "cheadergen"
+args = ["generate", "--lang", "c", "--output-dir", "c_test", "-p", "ffi_safe_types"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-std=c11",
+  "-I.",
+  "c_test/test_tag_describe.c",
+  "../../../target/debug/libcheadergen.a",
+  "-o",
+  "../../../target/debug/test_tag_describe",
+]
+
+[[verification]]
+command = "../../../target/debug/test_tag_describe"

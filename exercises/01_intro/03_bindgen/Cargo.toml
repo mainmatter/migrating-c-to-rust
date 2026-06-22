@@ -1,0 +1,12 @@
+[package]
+name = "bm_bindgen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[build-dependencies]
+cc.workspace = true
+bindgen.workspace = true

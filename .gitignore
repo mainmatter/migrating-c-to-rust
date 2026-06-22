@@ -1,0 +1,13 @@
+/target/
+build/
+exercises/**/include/
+*.o
+*.a
+bm
+bm-demo
+.DS_Store
+progress.db
+CLAUDE.md
+voice-prompt.md
+INSTRUCTOR.md
+exercises/01_intro/05_cheadergen/c_test/cheadergen.h

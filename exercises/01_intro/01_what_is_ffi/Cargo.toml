@@ -1,0 +1,11 @@
+[package]
+name = "bm_what_is_ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[build-dependencies]
+cc.workspace = true
