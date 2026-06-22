@@ -9,7 +9,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
-bindgen = "0.70"
+bindgen = "0.72"
 cbindgen = "0.27"
 cc = "1.0"
 
