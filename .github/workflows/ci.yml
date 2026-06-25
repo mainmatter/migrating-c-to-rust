@@ -84,7 +84,7 @@ jobs:
           echo "$PWD/pandoc-${PANDOC_VERSION}/bin" >> $GITHUB_PATH
         shell: bash
       - name: Setup TeX Live
-        uses: TeX-Live/setup-texlive-action@v3
+        uses: TeX-Live/setup-texlive-action@v4
         with:
           packages:
             scheme-basic
