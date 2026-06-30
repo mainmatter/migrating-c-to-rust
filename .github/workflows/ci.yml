@@ -145,21 +145,21 @@ jobs:
             --no-progress
             book/book/html/
       # Upload the HTML book as an artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: book
           # When you support multiple formats, the output directory changes
           # to include the format in its path.
           path: book/book/html
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: online-pdf
           path: book/book/pandoc/pdf/c-to-rust-migration-book.pdf
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: paperback
           path: book/book/pandoc/paperback/c-to-rust-migration-book.pdf
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ePUB
           path: book/book/pandoc/html/c-to-rust-migration-book.epub
