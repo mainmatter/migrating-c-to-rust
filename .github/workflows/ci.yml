@@ -10,7 +10,7 @@ jobs:
     name: dprint check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: DeterminateSystems/determinate-nix-action@v3
       - uses: nix-community/cache-nix-action@v7
         with:
@@ -27,7 +27,7 @@ jobs:
     name: typos
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: DeterminateSystems/determinate-nix-action@v3
       - uses: nix-community/cache-nix-action@v7
         with:
@@ -43,11 +43,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Get Core Sans
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         if: "!github.event.pull_request.head.repo.fork"
         with:
           fetch-depth: 0
@@ -167,7 +167,7 @@ jobs:
   is_fresh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - run: sudo apt-get update && sudo apt-get install -y jq
       - run: |
           ./helpers/json2redirects.sh book/link2alias.json > site/_redirects
