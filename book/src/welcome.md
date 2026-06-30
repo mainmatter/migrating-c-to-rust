@@ -68,8 +68,6 @@ solution.
 
 To work through this course, you'll need:
 
-[TODO: what's needed?]
-
 - [**Rust**](https://www.rust-lang.org/tools/install). If `rustup` is already
   installed on your system, run `rustup update` (or another appropriate command
   depending on how you installed Rust on your system) to ensure you're running
