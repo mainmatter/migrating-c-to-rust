@@ -70,7 +70,7 @@ as a small set of verbs, not a mirror of your internal struct.
 
 ## Head to the exercise
 
-Head to the exercise where we will update our exercise 06 solution with the new
+Head to [the exercise](https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/07_high_quality_ffi_apis) where we will update our exercise 06 solution with the new
 rule(s) we have learned.
 
 [^1]: You may (jadedly) say that no one ever reads comments and you may actually

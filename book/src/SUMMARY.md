@@ -2,7 +2,7 @@
 
 [Welcome](welcome.md)
 
-- [Chapter 1: Basics](./01_intro/00_README.md)
+- [Chapter 1: Basics](./01_intro/README.md)
   - [What is FFI? Calling C from Rust](./01_intro/01_what_is_ffi.md)
   - [When hand-written bindings drift](./01_intro/02_drift.md)
   - [Generating Rust bindings with bindgen](./01_intro/03_bindgen.md)
@@ -10,7 +10,7 @@
   - [FFI-safe types](./01_intro/05_ffi_safe_types.md)
   - [The FFI boundary as a firewall](./01_intro/06_validate_and_narrow.md)
   - [High-quality FFI APIs](./01_intro/07_high_quality_ffi_apis.md)
-- [Chapter 2: Intermediate](./02_intermediate/00_README.md)
+- [Chapter 2: Intermediate](./02_intermediate/README.md)
   - [How to rewrite a module]()
   - [Allocation, allocators, and mixing allocators]()
   - [Using lldb/gdb]()

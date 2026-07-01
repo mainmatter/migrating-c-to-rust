@@ -54,7 +54,7 @@ You would typically wrap them in a safe, idiomatic API. This is the common
 
 ## Head to the exercise
 
-Replace the hand-written `extern` block from the previous chapter with `bindgen`
+Head to [the exercise](https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/03_bindgen). Replace the hand-written `extern` block from the previous chapter with `bindgen`
 in `build.rs`. Safe wrappers and tests stay identical.
 
 <details><summary><b>Tip</b></summary>

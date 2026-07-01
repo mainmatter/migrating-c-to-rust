@@ -149,7 +149,7 @@ represents generics.
 
 ## Head to the exercise
 
-Head to the exercise. There you will find an FFI function that attempts to pass
+Head to [the exercise](https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_ffi_safe_types). There you will find an FFI function that attempts to pass
 types that are not FFI-safe. Notice the compiler-generated warnings! It is your
 job to fix this by using FFI-safe types.
 

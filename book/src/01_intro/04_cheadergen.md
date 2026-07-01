@@ -86,7 +86,7 @@ us build something with better diagnostics and fewer surprises.
 
 ## Head to the exercise
 
-You'll port the `bm_strlower` function to Rust and call
+Head to [the exercise](https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/04_cheadergen). You'll port the `bm_strlower` function to Rust and call
 `cheadergen generate --lang c --output-dir c_test -p cheadergen` to generate the
 header automatically.
 

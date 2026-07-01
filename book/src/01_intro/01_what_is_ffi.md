@@ -82,7 +82,7 @@ exercises we will see how to make this much safer and more ergonomic.
 
 ## Head to the exercise
 
-Head to the exercise, where you'll write this block for a `bm_add` function
+Head to [the exercise](https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/01_what_is_ffi), where you'll write this block for a `bm_add` function
 implemented in C.
 
 [^1]: Technically, there is no "single" calling convention. Every architecture

@@ -5,4 +5,4 @@ use it to interoperate between C and Rust, see common pitfalls and more!
 
 ## Exercises
 
-The exercises for this section are located in `exercises/01_intro`
+The exercises for this section are located in [`exercises/01_intro`](https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro)

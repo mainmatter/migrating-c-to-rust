@@ -76,7 +76,7 @@ To work through this course, you'll need:
   recommend one of the following:
   - [RustRover](https://www.jetbrains.com/rust/);
   - [Visual Studio Code](https://code.visualstudio.com) with the
-    [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer)
+    [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
     extension.
 - A C compiler. The one provided by your Operating System will be good enough.
 
@@ -114,3 +114,5 @@ next-generation computing infrastructure. He is the lead author of k23, an
 experimental high-reliability operating system. As a TC39 Invited Expert, he
 helps shape the future of web by bringing non-browser perspectives to JavaScript
 language standardization.
+
+[Mainmatter](https://mainmatter.com/rust-consulting/) is an engineering consultancy specializing in Rust. We offer engineering services, training, and mentorship to companies that aim to migrate from C to Rust or introduce Rust into an existing codebase.
