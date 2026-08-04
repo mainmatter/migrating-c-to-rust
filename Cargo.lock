@@ -46,6 +46,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "bm_clippy_lints"
+version = "0.1.0"
+
+[[package]]
 name = "bm_drift"
 version = "0.1.0"
 dependencies = [
