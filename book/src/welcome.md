@@ -104,13 +104,16 @@ current one.
 
 Enjoy the course!
 
-## Author
+## Authors
 
 This course was written by [Jonas Kruckenberg](https://jonaskruckenberg.de),
-Engineering Consultant at
-[Mainmatter](https://mainmatter.com/rust-consulting/).\
+Engineering Consultant at [Mainmatter](https://mainmatter.com/rust-consulting/),
+and Artur Jakubiec.\
 Jonas Kruckenberg is a systems engineer and technologist focused on
 next-generation computing infrastructure. He is the lead author of k23, an
 experimental high-reliability operating system. As a TC39 Invited Expert, he
 helps shape the future of web by bringing non-browser perspectives to JavaScript
-language standardization.
+language standardization.\
+Artur Jakubiec is a long-time C/C++ engineer and was one of the main developers
+of Cubasis. He is now a tech lead at a company building enterprise SaaS
+productivity software, currently migrating it from C++ to Rust.
