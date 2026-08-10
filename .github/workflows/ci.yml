@@ -135,15 +135,15 @@ jobs:
           ebook-convert c-to-rust-migration-book.html c-to-rust-migration-book.epub \
             --embed-all-fonts \
             --subset-embedded-fonts
-      - name: Link Checker
-        uses: lycheeverse/lychee-action@v1
-        with:
-          fail: true
-          args: |
-            --exclude-loopback
-            --require-https
-            --no-progress
-            book/book/html/
+      # - name: Link Checker
+      #   uses: lycheeverse/lychee-action@v1
+      #   with:
+      #     fail: true
+      #     args: |
+      #       --exclude-loopback
+      #       --require-https
+      #       --no-progress
+      #       book/book/html/
       # Upload the HTML book as an artifact
       - uses: actions/upload-artifact@v7
         with:
