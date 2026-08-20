@@ -29,7 +29,13 @@ a different machine architecture.
 
 There are several workable strategies:
 
-1. **Use Rust allocators from C.** A Rust type that crosses the boundary will
+1. **Use C allocation APIs from Rust.** Rust can call a C constructor such as
+   `bookmark_new` and wrap the returned pointer in an owning Rust type. Its
+   `Drop` implementation releases the allocation by calling the matching C
+   function, `bookmark_free`. Keep allocation and deallocation within the same C
+   API; export the functions through FFI to Rust.
+
+2. **Use Rust allocators from C.** A Rust type that crosses the boundary will
    need a matching `_new`/`_free` pair exported through FFI. `_new` in Rust is
    paired with `_free` in Rust; C only ever holds the pointer and calls the Rust
    functions to allocate or free an object of that type.
@@ -71,27 +77,28 @@ There are several workable strategies:
    }
    ```
 
-2. **Use C allocators from Rust.** C owns the allocation. When existing C code
-   insists on calling `free` on what we hand it, we allocate with
-   [libc::malloc](https://docs.rs/libc/latest/libc/fn.malloc.html) on the Rust
-   side. This doesn't apply only to `malloc`/`free` of course, but to all
-   allocation APIs written in C, like in our example where we use `bookmark_new`
-   and `bookmark_free`. To use them, they need to be exported through FFI to
-   Rust.
+3. **Allocate for C to free.** This is very similar to option 1, except C frees
+   the allocation itself. This is useful when a C API requires ownership of a
+   pointer and will release it itself, with `free` or another matching C
+   deallocation function. In that case, call the C allocation function from
+   Rust, for example
+   [libc::malloc](https://docs.rs/libc/latest/libc/fn.malloc.html), then hand
+   ownership of the returned pointer to C. This only works when the allocation's
+   layout and ownership contract exactly match what that C API expects.
 
-3. **Make Rust use `malloc` globally.** Registering a custom `GlobalAlloc` that
-   forwards to `malloc`/`free` (or any other allocator in C) makes both worlds
-   share one allocator. **Avoid if possible!** Only go this route when you
-   absolutely have to. Writing an allocator is a non-trivial task: it's
+4. **Use a `malloc`/`free` adapter as Rust's global allocator.** On Linux,
+   Rust's default global allocator typically already uses the system allocator,
+   so this is usually unnecessary. It can still be useful when Rust must use a
+   specific C allocation API. Implementing the adapter is non-trivial: it's
    inherently `unsafe`, and you need to be very careful to uphold all the safety
    guarantees required by the
    [GlobalAlloc](https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html)
-   trait. Sharing an allocator ensures that both languages use the same
-   mechanism for allocating and deallocating memory. It does not make arbitrary
-   Rust values safe for C to destroy: C will not run Rust destructors, so values
-   containing String, Vec, or other owned resources may leak.
+   trait. Using the same underlying allocation mechanism does not make it safe
+   for C to call `free` on Rust-allocated pointers. C will not run Rust
+   destructors, so values containing `String`, `Vec`, or other owned resources
+   may leak.
 
-4. **Use the Allocator API.** As of this writing the API is still experimental
+5. **Use the Allocator API.** As of this writing the API is still experimental
    and only available on nightly Rust. It functions similarly to `GlobalAlloc`:
    you have to implement your own allocator, but unlike the global one, it is a
    lot more flexible and can be used on a per-variable basis. The new API adds
