@@ -12,7 +12,7 @@
   - [High-quality FFI APIs](./01_intro/07_high_quality_ffi_apis.md)
 - [Chapter 2: Intermediate](./02_intermediate/00_README.md)
   - [How to rewrite a module]()
-  - [Allocation, allocators, and mixing allocators]()
+  - [Allocation, allocators, and mixing allocators](./02_intermediate/02_allocators.md)
   - [Using lldb/gdb]()
   - [Clippy lints for unsafe Rust & static verification]()
   - [Performance benchmarking]()
