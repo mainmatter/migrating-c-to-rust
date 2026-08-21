@@ -37,7 +37,7 @@ Use `rust-gdb` or `rust-lldb` rather than plain `gdb` and `lldb`. They're thin
 wrappers that load Rust's pretty-printers, which is what makes a `String`,
 `Vec`, or `Option` readable instead of a pile of pointers and capacities.
 
-On macOS that's usually `rust-lldb`:
+On macOS, that's usually `rust-lldb`:
 
 ```sh
 rust-lldb target/debug/bm_lldb_gdb
@@ -53,8 +53,8 @@ Program arguments go after `--` for `rust-lldb` and after `--args` for
 `rust-gdb`.
 
 If you prefer a graphical frontend, `rust-gdbgui` starts the browser-based
-[`gdbgui`](https://gdbgui.com/) with the same pretty-printers loaded. It needs
-`gdbgui` installed separately.
+[`gdbgui`](https://gdbgui.com/) with the same pretty-printers loaded. Install
+`gdbgui` separately.
 
 ```sh
 rust-gdbgui target/debug/bm_lldb_gdb
@@ -66,24 +66,24 @@ If you already know one debugger and need the equivalent command in the other,
 keep the official [GDB to LLDB command map](https://lldb.llvm.org/use/map.html)
 open. It covers both directions in one place.
 
-Say you're investigating `bm_normalize_url`: the Rust port from Chapter 1,
-called from C on the `bm add` path. Set a breakpoint on it, run the program, and
-look at the stack when execution stops (output abbreviated):
+Say you're investigating `bm_shout`, the C helper called by the Rust exercise.
+Set a breakpoint on it, run the program, and look at the stack when execution
+stops (output abbreviated):
 
 ```text
-(lldb) b bm_normalize_url
-Breakpoint 1: where = bm`bm_normalize_url at lib.rs:42
+(lldb) b bm_shout
+Breakpoint 1: where = bm`bm_shout at shout.c:6
 (lldb) run
 Process 51234 stopped
 * thread #1, stop reason = breakpoint 1.1
-  * frame #0: bm`bm_normalize_url at lib.rs:42
-    frame #1: bm`bm_add at index.c:197
-    frame #2: bm`cmd_add at cli.c:83
-    frame #3: bm`main at cli.c:202
+  * frame #0: bm`bm_shout at shout.c:6
+    frame #1: bm`bm_lldb_gdb::shout at lib.rs:17
+    frame #2: bm`bm_lldb_gdb::demo at lib.rs:30
+    frame #3: bm`main at main.rs:2
 ```
 
 C frames and Rust frames are interleaved, and the numbering tells you which way
-to walk: frame #0 is where execution stopped and every higher number is one of
+to walk: frame #0 is where execution stopped, and every higher number is one of
 its callers. `up` moves toward callers, `down` back toward the stop. So the code
 that handed over the bad value is always _up_, whichever language crashed. If
 Rust crashed, `up` gets you to the C caller and the arguments it passed. If C
@@ -93,15 +93,15 @@ From there the usual commands work in both debuggers: `s` steps into a call, `n`
 steps over one, `finish` runs the current frame to completion, `bt` prints the
 stack, and `p` prints a value.
 
-For a `char *url`, inspect the bytes directly: `x/s url` in `gdb`, and either
-`x/s url` or `memory read --format c-string url` in `lldb` (the format name is
+For a `char *out`, inspect the bytes directly: `x/s out` in `gdb`, and either
+`x/s out` or `memory read --format c-string out` in `lldb` (the format name is
 `c-string`, with the hyphen; `cstring` is rejected). For a raw buffer, use
-`x/16xb url` in `gdb` or `memory read --size 1 --count 16 --format x url` in
+`x/16xb out` in `gdb` or `memory read --size 1 --count 16 --format x out` in
 `lldb`. This quickly tells you whether the pointer, length, and terminator agree
 with the FFI contract.
 
-When the process dies instead of stopping at a breakpoint, you don't need a
-breakpoint at all. Run it, let it take the signal, and print the stack:
+When the process dies outright, you don't need a breakpoint at all. Run it, let
+it take the signal, and print the stack:
 
 ```text
 (lldb) run
@@ -111,7 +111,7 @@ Process 51234 stopped
 ```
 
 The frame you land in is where the bad pointer was dereferenced, which is not
-necessarily where it went wrong. Walk up until the values stop making sense.
+necessarily where the bug is. Walk up until the values stop making sense.
 
 ## A note on Rust symbol names
 
@@ -121,15 +121,16 @@ done so since November 2025, so the toolchain this book pins already emits v0
 symbols.
 
 Symbol mangling is how the compiler turns a function into a linker-safe name.
-For a C function that's usually just the function name. Rust also has to
+For a C function, that's usually just the function name. Rust also has to
 distinguish generic instantiations: `Vec<u8>::push` and `Vec<String>::push` are
 different generated functions and therefore need different symbols.
 
 The old scheme used a hash for much of that distinction. It worked, but a
 backtrace through generic code often left you with a readable function name and
-an opaque suffix. v0 preserves the concrete generic arguments in a form tools
-can decode, so when you're debugging or profiling a monomorphized call chain the
-backtrace can show which instantiation actually ran rather than a hash.
+an opaque suffix. The v0 scheme preserves the concrete generic arguments in a
+form tools can decode, so when you're debugging or profiling a monomorphized
+call chain, the backtrace can show which instantiation actually ran rather than
+a hash.
 
 This doesn't affect functions exported to C with `#[unsafe(no_mangle)]`, but it
 does require every tool that reads Rust symbols to understand v0. Recent `gdb`,
@@ -138,10 +139,7 @@ pipelines may show raw names such as `_RNvNtNtCs...` instead. Check your whole
 debugging path before upgrading a pinned CI or production toolchain.
 
 A quick test is enough: write a small generic function that panics, run it with
-`RUST_BACKTRACE=1`, and read the backtrace. Readable concrete type names mean
-the pipeline is ready; raw `_R...` symbols mean some tool still expects the
-legacy format. The change has no runtime cost: it changes symbol names, not
-generated machine code.
+`RUST_BACKTRACE=1`, and read the backtrace.
 
 See the [stabilization PR][v0-mangling] and the
 [v0 symbol-format documentation][v0-format] for details.
