@@ -1,0 +1,8 @@
+[package]
+name = "bm_lldb_gdb"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[build-dependencies]
+cc.workspace = true
