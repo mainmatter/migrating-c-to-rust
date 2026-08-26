@@ -15,9 +15,32 @@ obligations, and surface undocumented assumptions. They can't prove that a
 pointer is valid or that a C caller is honest, but they can make unchecked
 assumptions visible for review.
 
-## Make unsafe operations explicit
+## The lints you already have
 
-Start by enabling these lints in the crate root:[^1]
+Before adding anything, several useful lints are already enabled by default.
+
+`improper_ctypes` and `improper_ctypes_definitions` are rustc lints,
+warn-by-default, and you've encountered them already: they're what complained
+about the non-FFI-safe types back in Chapter 1. `improper_ctypes` covers the
+types you declare in an `extern` block; `improper_ctypes_definitions` covers the
+ones you define with `extern "C"`. Between them they catch most type-level
+mistakes long before a linker gets involved.
+
+`clippy::not_unsafe_ptr_arg_deref` is a correctness lint, so Clippy already
+marks it as deny rather than warn. It fires when a public safe function
+dereferences a raw-pointer argument even though its signature places no
+requirements on the caller. Either make the function unsafe and document its
+pointer contract, or keep it safe and accept a type that can be dereferenced
+safely. Don't silence the lint.
+
+`clippy::missing_safety_doc` flags a public `unsafe fn` whose docs have no
+`# Safety` section. Set `check-private-items = true` in `clippy.toml` to apply
+it to private items as well. This is worth doing in an FFI crate, where plenty
+of the interesting unsafe code isn't public.
+
+## More lints to turn on
+
+Add these lints in the crate root:[^1]
 
 ```rust
 #![deny(unsafe_op_in_unsafe_fn)]
@@ -44,40 +67,16 @@ asks for a `// SAFETY:` comment before each unsafe block.
 single unsafe operation, keeping its safety argument focused. Together they turn
 a large, vague unsafe region into small claims that can be checked one by one.
 
-The remaining lints earn their keep when you're porting C habits mechanically.
+`clippy::unnecessary_safety_doc` catches the opposite documentation mistake: a
+`# Safety` section on a public safe function or trait. A safe API should not
+have safety preconditions for its callers or implementors to uphold. This is a
+restriction lint and allow-by-default, so enable it explicitly.
+
+The pointer lints earn their keep when you're porting C habits mechanically.
 Pointer casts and pointer transmutes often compile without complaint, even when
 they introduce a stricter alignment requirement or hide a more direct API. A
 warning doesn't necessarily mean that the code is wrong, but it's a good reason
 to double-check what the cast is claiming.
-
-## The lints you already have
-
-Most of the lints in this section are enabled by default. The exception is
-`clippy::unnecessary_safety_doc`, which we enabled above.
-
-`improper_ctypes` and `improper_ctypes_definitions` are rustc lints,
-warn-by-default, and you've encountered them already: they're what complained
-about the non-FFI-safe types back in Chapter 1. `improper_ctypes` covers the
-types you declare in an `extern` block; `improper_ctypes_definitions` covers the
-ones you define with `extern "C"`. Between them they catch most type-level
-mistakes long before a linker gets involved.
-
-`clippy::not_unsafe_ptr_arg_deref` is a correctness lint, so Clippy already
-marks it as deny rather than warn. It fires when a public safe function
-dereferences a raw-pointer argument even though its signature places no
-requirements on the caller. Either make the function unsafe and document its
-pointer contract, or keep it safe and accept a type that can be dereferenced
-safely. Don't silence the lint.
-
-`clippy::missing_safety_doc` flags a public `unsafe fn` whose docs have no
-`# Safety` section. Set `check-private-items = true` in `clippy.toml` to apply
-it to private items as well. This is worth doing in an FFI crate, where plenty
-of the interesting unsafe code isn't public.
-
-`clippy::unnecessary_safety_doc` is the converse: it flags `# Safety` sections
-on public safe functions and traits. A safe API should not have safety
-preconditions for its callers or implementors to uphold. This is a restriction
-lint and allow-by-default, so enable it explicitly.
 
 ## When the lint is wrong
 
