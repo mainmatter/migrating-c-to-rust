@@ -1,0 +1,9 @@
+# Step 1: the tests pass natively — that's the point, they say nothing about UB.
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_miri"]
+
+# Step 2: the same tests under Miri. Fails until the stub exists *and* the bug is fixed.
+[[verification]]
+command = "cargo"
+args = ["miri", "test", "-p", "bm_miri"]

@@ -57,6 +57,13 @@ name = "bm_high_quality_ffi_apis"
 version = "0.1.0"
 
 [[package]]
+name = "bm_miri"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "bm_validate_and_narrow"
 version = "0.1.0"
 
