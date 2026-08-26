@@ -15,9 +15,9 @@ obligations, and surface undocumented assumptions. They can't prove that a
 pointer is valid or that a C caller is honest, but they can make unchecked
 assumptions visible for review.
 
-## The lints you already have
+## Built-in lints
 
-Before adding anything, several useful lints are already enabled by default.
+You already have several useful lints enabled by default.
 
 `improper_ctypes` and `improper_ctypes_definitions` are rustc lints,
 warn-by-default, and you've encountered them already: they're what complained
@@ -40,16 +40,26 @@ of the interesting unsafe code isn't public.
 
 ## More lints to turn on
 
-Add these lints in the crate root:[^1]
+You can configure a lint in code:
 
 ```rust
-#![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::undocumented_unsafe_blocks)]
-#![warn(clippy::multiple_unsafe_ops_per_block)]
-#![warn(clippy::unnecessary_safety_doc)]
-#![warn(clippy::ptr_as_ptr)]
-#![warn(clippy::cast_ptr_alignment)]
-#![warn(clippy::transmute_ptr_to_ptr)]
+```
+
+Or you can use lint tables in `Cargo.toml`. We'll use `Cargo.toml` here to keep
+this crate-wide policy in one place:[^1]
+
+```toml
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+undocumented_unsafe_blocks = "warn"
+multiple_unsafe_ops_per_block = "warn"
+unnecessary_safety_doc = "warn"
+ptr_as_ptr = "warn"
+cast_ptr_alignment = "warn"
+transmute_ptr_to_ptr = "warn"
 ```
 
 This chapter focuses on Clippy, but `unsafe_op_in_unsafe_fn` is a compiler lint,
@@ -115,11 +125,11 @@ pub extern "C" fn bm_normalize_url() {
 **Note:** `cheadergen` recognizes `export_name`, so it emits `BMNormalizeURL` in
 the C header while the Rust function keeps its idiomatic name.
 
-## Where to configure them
+## Share lint settings across a workspace
 
-Crate-root attributes are fine for a single crate. Across a workspace, the lint
-tables in `Cargo.toml` are less work to keep in sync. They've been available
-since Rust 1.74:
+The configuration above applies to one crate. To use it across a workspace, put
+the tables in the root `Cargo.toml` instead. They've been available since Rust
+1.74:
 
 ```toml
 # Cargo.toml at the workspace root
