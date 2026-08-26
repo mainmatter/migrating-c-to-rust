@@ -56,8 +56,11 @@ either:
 This way we make sure that all invariants are either upheld by the function
 itself or correctly documented as a responsibility of the caller.
 
-At the moment this is checked by discipline and PR reviews but in the future
-this may soon find its way into Rust/Clippy proper.[^2]
+At the moment, the numbered-invariant convention is checked by discipline and PR
+review. Clippy can require `# Safety` documentation and comments on `unsafe`
+blocks, but it cannot verify that a local justification actually upholds an
+invariant. There are proposals for tools that could make this kind of
+traceability machine-checkable in the future.[^2]
 
 ## Mind the FFI tax
 

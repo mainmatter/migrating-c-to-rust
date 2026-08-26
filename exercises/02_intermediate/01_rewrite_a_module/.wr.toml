@@ -1,0 +1,26 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_rewrite_a_module"]
+
+[[verification]]
+command = "cargo"
+args = ["build", "-p", "bm_rewrite_a_module"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+  "-std=c11",
+  "-Ic_src",
+  "c_src/bookmark.c",
+  "c_src/cli.c",
+  "c_src/index.c",
+  "c_src/storage.c",
+  "c_src/tag.c",
+  "c_src/util.c",
+  "../../../target/debug/libbm_rewrite_a_module.a",
+  "-o",
+  "../../../target/debug/bm_rewrite_a_module",
+]
