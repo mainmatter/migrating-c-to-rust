@@ -1,0 +1,9 @@
+[package]
+name = "bm_rewrite_a_module"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["rlib", "staticlib"]
+path = "src/lib.rs"
