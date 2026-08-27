@@ -1,0 +1,7 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_clippy_lints"]
+
+[[verification]]
+command = "cargo"
+args = ["clippy", "-p", "bm_clippy_lints", "--all-targets", "--", "-D", "warnings"]
