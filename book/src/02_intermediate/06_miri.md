@@ -5,14 +5,17 @@ sane and you've learned about lint rules to enforce these earlier too. Lints and
 compiler settings suffer from not being able to observe behaviour though. They
 can only read your code as the compiler does and infer from that.
 
-We'll now introduce another class of tooling to complement the _static
-analysis_: _dynamic analysis_. In particular `Miri`.
+We'll now introduce another class of tooling to complement the static analysis:
+dynamic analysis with `Miri`.
 
 Miri is an interpreter for rustc's MIR (mid-level intermediate representation).
 It runs your code, checking each operation against the Rust Abstract Machine.
 Miri is especially useful for `unsafe` Rust since it can catch things like
 incorrect initialization, use after free, borrowing rule violations, etc. A
 perfect tool for the kinds of systems code we tend to translate from C to Rust.
+Do note that Miri requires a nightly compiler. This repository's
+`rust-toolchain.toml` already pins one with the `miri` component included, so
+the exercises work without any extra setup.
 
 ## What Miri Catches
 
@@ -31,7 +34,7 @@ the test.
 
 Miri is by design an interpreter, meaning it can only ever see code paths that
 actually executed. Codepaths never exercised by your test suite will not be
-visibile to Miri! This also means non-deterministic bugs need luck: A bug that
+visible to Miri! This also means non-deterministic bugs need luck: A bug that
 only happens on a specific thread interleaving will remain flaky. [^1] Miri is
 also very slow, expect ~3000–7000× in some cases.
 
@@ -55,7 +58,8 @@ also very slow, expect ~3000–7000× in some cases.
 > write `#[cfg_attr(miri, ignore)]`.
 >
 > Note that Miri (being an interpreter) also accepts any `--target` triple which
-> is handy to emaulate certain hardware features such as big-endian or 32-bit.
+> is handy to test certain target features such as big-endian or 32-bit without
+> running an actual emulator of some sort.
 
 ## Miri And C
 
@@ -104,8 +108,8 @@ name.
 One word of caution though: Miri passing with Rust stubs _obviously_ does not
 mean your codebase with the full C functions is correct. These stubs - written
 correctly - can give you confidence that the final product will also be correct,
-but do not substitue full program tests. It is easy to accidentally test your
-stubs behvaiour more than the actual C codes.
+but do not substitute full program tests. It is easy to accidentally test your
+stubs behaviour more than the actual C codes.
 
 ## Future Features
 
