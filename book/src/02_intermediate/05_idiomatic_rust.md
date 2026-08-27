@@ -19,38 +19,36 @@ to get us started:
 
 C functions make frequent use of so-called "out parameters", pointers that the
 function will write its outputs into. In a lot of situations this is great, the
-caller has the flexbility to allocate the output however it sees fit. But with
-this great flexbility comes great potential for confusion:
+caller has the flexibility to allocate the output however it sees fit. But with
+this great flexibility comes great potential for ambiguity:
 
 ```c
-int add(int *a, const int *b);
+int add(int a, int b, int *out);
 ```
 
-at a glance: what does this function return? how does it return? The second
-argument is a const pointer, we can relatively safely assume thats simply an
-argument. The first argument however is a mutable pointer, `add` could possibly
-write the output there, but it also returns `int` so maybe thats where the
-output goes?
+at a glance: what does this function return? how does it return? `out` is a
+mutable pointer, so `add` could write the output there, but it also returns
+`int` so maybe thats where the output goes?
 
 We don't really have a way of knowing for sure. Here is the equivalent Rust
 function:
 
 ```rust
-fn add(a: &i32, b: &i32) -> Option<i32>;
+fn add(a: i32, b: i32) -> Option<i32>;
 ```
 
-It becomes obvious that `add` is some kind of "checked" addition function that
+It becomes clearer that `add` is some kind of "checked" addition function that
 only sometimes returns an output, and sometimes fails.
 
-This is fundamentally a limitation of C's (lack of) type system as expressing
-fallibility necessarily means a return code of some sort which forces the output
-to be expressed through an out parameter. In Rusts more expressive type system
-we can write `Option<T>` to loudly signal the intent of our code to callers from
-the signature alone.
+This is fundamentally a limitation of what's possible with C's type system. A
+return code plus an out parameter is what you will often find in the wild, and
+nothing in the signature tells you which is which. In Rusts more expressive type
+system we can write `Option<T>` to loudly signal the intent of our code to
+callers from the signature alone.
 
 ## Error Codes
 
-Likewise, in C code you will usually see the following:
+Likewise, in C code you will often see the following:
 
 ```c
 #define ERR_OK 0
@@ -60,9 +58,13 @@ Likewise, in C code you will usually see the following:
 int doSomething();
 ```
 
-much like out parameters, the correct usage of this relies on conventions, good
+Or alternatively as a `typedef enum`, which is common in more modern code (this
+is also what `bm` does).
+
+Much like out parameters, the correct usage of this relies on conventions, good
 documentation and proper code review. The compiler will not catch you
-accidentally using the wrong constant, its all just `int`s after all!
+accidentally using the wrong constant, C converts these to and from `int`
+freely!
 
 In Rust we would express this using an `enum` (actually a combination of enums):
 
@@ -75,23 +77,22 @@ enum Error {
 fn doSomething() -> Result<(), Error>;
 ```
 
-here is a neat trick: since a Rust `enum` is just a `union` plus integer tag you
-can cast an enum to an integer! As long as the enum doesn't have fields the
-following works:
+here is a neat trick: an enum whose variants all carry no fields (a so-called
+_field-less_ enum) is nothing but an integer tag, and you can cast it to an
+integer with `as`:
 
 ```rust
 enum Error {
-    Foo,
-    Bar = 45, // excplicit tag
+    Foo,      // variants are numbered starting at zero
+    Bar = 45, // explicit tag
 }
 
 println!("{}", Error::Foo as usize); // prints 0
 println!("{}", Error::Bar as usize); // print 45
 ```
 
-by default enums have a `usize` tag and variants are just numbered starting at
-zero. If you want to make sure tags match your old C version exactly (for
-interop purposes for example) you might do this:
+If you want to make sure tags match your old C version exactly (for interop
+purposes for example) you might do this:
 
 ```rust
 #[repr(u32)] // make sure we're using "int"s too
@@ -181,21 +182,40 @@ for (size_t i = 0; i < b->n_tags; i++) {
 return 0;
 ```
 
-The literal translation is
-`for i in 0..b.tags.len() { if b.tags[i].contains(query) { return true; } }` and
-it compiles, but every `b.tags[i]` is a bounds check the optimizer may or may
-not be able to prove away, and clippy will nag you about it
-(`needless_range_loop`). Iterate the collection itself instead:
-`for tag in &b.tags`, with `.enumerate()` if you actually need the index and
-`.iter_mut()` if you need to change elements. Pointer-bumping loops like
-`while (*p)` over a string usually become `.bytes()`, `.chars()` or
-`split(',')`.
+The literal translation is:
+
+```rust
+for i in 0..b.tags.len() { if b.tags[i].contains(query) { return true; } }
+```
+
+It works, but every `b.tags[i]` is a bounds check the optimizer may or may not
+be able to prove away, and clippy will nag you about it (`needless_range_loop`).
+Iterate the collection itself instead: `for tag in &b.tags`, with `.enumerate()`
+if you actually need the index and `.iter_mut()` if you need to change elements.
 
 From there it is a short step to the combinators, and the loop above is just
-`any`:
+`any` and looks like this:
 
 ```rust
 b.tags.iter().any(|tag| tag.contains(query))
+```
+
+The other common shape is the pointer-bumping loop:
+
+```c
+for (const char *p = s; *p; p++) {
+    if (*p == ',')
+        n++;
+}
+```
+
+This one walks bytes until it hits the NUL terminator. In Rust the string knows
+its own length, so loops like these become `.bytes()` or `.chars()`.
+
+The pointer-bumping loop would look like this in Rust:
+
+```rust
+let n = s.bytes().filter(|&b| b == b',').count();
 ```
 
 A loop that searches for an element is `find` or `position`, one with a running
