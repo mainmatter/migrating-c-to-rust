@@ -1,0 +1,11 @@
+[package]
+name = "bm_allocators"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["rlib", "staticlib"]
+
+[build-dependencies]
+cc.workspace = true

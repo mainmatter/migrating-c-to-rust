@@ -1,0 +1,27 @@
+[package]
+name = "bm_clippy_lints"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+improper_ctypes = "warn"
+improper_ctypes_definitions = "warn"
+nonstandard_style = "warn"
+non_camel_case_types = "warn"
+non_upper_case_globals = "warn"
+non_snake_case = "warn"
+
+[lints.clippy]
+undocumented_unsafe_blocks = "warn"
+multiple_unsafe_ops_per_block = "warn"
+ptr_as_ptr = "warn"
+cast_ptr_alignment = "warn"
+transmute_ptr_to_ptr = "warn"
+not_unsafe_ptr_arg_deref = "deny"
+missing_safety_doc = "warn"
+unnecessary_safety_doc = "warn"
