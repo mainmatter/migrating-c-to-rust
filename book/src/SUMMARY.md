@@ -15,6 +15,7 @@
   - [Allocation, allocators, and mixing allocators]()
   - [Using lldb/gdb]()
   - [Clippy lints for unsafe Rust & static verification]()
+  - [Replacing C-isms with Rust-isms](./02_intermediate/05_idiomatic_rust.md)
   - [Performance benchmarking]()
   - [extern statics from Rust]()
 - [Chapter 3: Advanced]()
