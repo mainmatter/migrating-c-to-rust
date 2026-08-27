@@ -64,6 +64,13 @@ name = "bm_high_quality_ffi_apis"
 version = "0.1.0"
 
 [[package]]
+name = "bm_lldb_gdb"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "bm_rewrite_a_module"
 version = "0.1.0"
 
