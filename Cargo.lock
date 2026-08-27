@@ -38,12 +38,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4512299f36f043ab09a583e57bceb5a5aab7a73db1805848e8fef3c9e8c78b3"
 
 [[package]]
+name = "bm_allocators"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "bm_bindgen"
 version = "0.1.0"
 dependencies = [
  "bindgen",
  "cc",
 ]
+
+[[package]]
+name = "bm_clippy_lints"
+version = "0.1.0"
 
 [[package]]
 name = "bm_drift"
@@ -54,6 +65,17 @@ dependencies = [
 
 [[package]]
 name = "bm_high_quality_ffi_apis"
+version = "0.1.0"
+
+[[package]]
+name = "bm_lldb_gdb"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
+name = "bm_rewrite_a_module"
 version = "0.1.0"
 
 [[package]]

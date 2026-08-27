@@ -1,6 +1,9 @@
 /ff6 https://code.visualstudio.com
+/f23 https://doc.rust-lang.org/std/alloc/trait.Allocator.html
+/f2m https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html
 /ffp https://docs.rs/cheadergen/latest/cheadergen/config_reference/index.html
 /ffl https://docs.rs/cheadergen/latest/cheadergen/index.html
+/f2n https://docs.rs/libc/latest/libc/fn.malloc.html
 /fft https://github.com/LukeMathWalker/cheadergen
 /ffu https://github.com/LukeMathWalker/cheadergen/releases
 /ff9 https://github.com/dtolnay/cargo-expand
@@ -24,6 +27,7 @@
 /f28 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/07_high_quality_ffi_apis
 /f2b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/00_README
 /f25 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/05_idiomatic_rust
+/f2q https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/02_allocators
 /ffk https://github.com/mozilla/cbindgen
 /ffh https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md
 /ffe https://github.com/rust-lang/rust-bindgen
