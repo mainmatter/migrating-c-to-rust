@@ -27,6 +27,7 @@
   "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/06_validate_and_narrow": "f2v",
   "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/07_high_quality_ffi_apis": "f28",
   "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/00_README": "f2b",
+  "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/05_idiomatic_rust": "f25",
   "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/02_allocators": "f2q",
   "https://github.com/mozilla/cbindgen": "ffk",
   "https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md": "ffh",
