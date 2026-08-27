@@ -20,7 +20,7 @@
 //!    "first draft" wrapper below that the native tests never noticed. Read the
 //!    report (the backtrace points at the allocation) and fix `normalize`.
 
-use std::ffi::{c_char, CStr, CString};
+use std::ffi::{CStr, CString, c_char};
 
 /// Mirrors `BmResult` in `c_src/tag.h`.
 #[repr(C)]
