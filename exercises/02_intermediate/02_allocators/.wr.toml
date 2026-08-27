@@ -1,0 +1,24 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_allocators"]
+
+[[verification]]
+command = "cargo"
+args = ["build", "-p", "bm_allocators"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+  "-std=c11",
+  "-I.",
+  "c_test/test_rust_bookmark.c",
+  "../../../target/debug/libbm_allocators.a",
+  "-o",
+  "../../../target/debug/test_rust_bookmark",
+]
+
+[[verification]]
+command = "../../../target/debug/test_rust_bookmark"
