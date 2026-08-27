@@ -26,11 +26,14 @@
 /f2v https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/06_validate_and_narrow
 /f28 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/07_high_quality_ffi_apis
 /f2b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/00_README
-/f25 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/05_idiomatic_rust
 /f2q https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/02_allocators
+/f25 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/05_idiomatic_rust
+/f2e https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/06_miri
 /ffk https://github.com/mozilla/cbindgen
+/f2w https://github.com/rust-lang/miri/#testing-multiple-different-executions
 /ffh https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md
 /ffe https://github.com/rust-lang/rust-bindgen
+/f27 https://github.com/tokio-rs/loom
 /ff5 https://godbolt.org/z/E97EeoEP6
 /ffq https://godbolt.org/z/PzrM4a575
 /ffw https://godbolt.org/z/bGfocb43f
