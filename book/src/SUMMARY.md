@@ -16,6 +16,7 @@
   - [Using lldb/gdb]()
   - [Clippy lints for unsafe Rust & static verification]()
   - [Replacing C-isms with Rust-isms](./02_intermediate/05_idiomatic_rust.md)
+  - [Dynamic analysis with Miri](./02_intermediate/06_miri.md)
   - [Performance benchmarking]()
   - [extern statics from Rust]()
 - [Chapter 3: Advanced]()
