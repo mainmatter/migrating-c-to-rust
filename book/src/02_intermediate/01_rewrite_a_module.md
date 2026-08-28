@@ -9,7 +9,7 @@ it to Rust, one module at a time.
 Here is an overview of the C source code:
 
 ```text
-bm/
+exercises/_bm/src/
 ├── bookmark.c   the Bookmark type
 ├── cli.c        entry point, argument parsing
 ├── index.c      in-memory bookmark index
@@ -58,16 +58,16 @@ freed across the language boundary. We cover that problem in the next section.
 
 When possible, an incremental migration replaces the module's _object file_
 without changing the interface used by the remaining C code. The existing C
-header (`normalize.h` in this exercise) describes the ABI our Rust
-implementation must initially satisfy. We re-implement every function the header
-declares in Rust and export it under the same symbol name using
-`#[unsafe(no_mangle)]` and `extern "C"`, as you did in exercise 1.4:
+header (`normalize.h` in this example) describes the ABI our Rust implementation
+must initially satisfy. We re-implement every function the header declares in
+Rust and export it under the same symbol name using `#[unsafe(no_mangle)]` and
+`extern "C"`:
 
 ```rust
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn bm_normalize_url(
-    raw: *const c_char,
-    out: *mut c_char,
+    url: Option<NonNull<c_char>>,
+    out: Option<NonNull<c_char>>,
     out_len: usize,
 ) -> BmResult {
     // ...
@@ -115,16 +115,7 @@ safety nets:
   implementation and must keep passing, and
 - new Rust unit tests against the safe core, which will outlive the C tests.
 
-## Head to the exercise
-
-Head to the
-[`rewrite_a_module` exercise](../../../exercises/02_intermediate/01_rewrite_a_module/).
-You will replace `normalize.c` with Rust implementations of `bm_normalize_url`
-and `tag_normalize`. The supplied tests define the existing behavior, and the
-verification config links your Rust static library into the rest of the C
-program.
-
-**Tips**
+## Tips
 
 If the linker complains about an undefined symbol, inspect the symbols your Rust
 static library exports. The command depends on your toolchain and platform:
