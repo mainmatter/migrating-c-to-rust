@@ -1,0 +1,7 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_benchmarking"]
+
+[[verification]]
+command = "cargo"
+args = ["bench", "-p", "bm_benchmarking", "--bench", "normalize"]
