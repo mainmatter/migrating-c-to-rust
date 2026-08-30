@@ -98,5 +98,5 @@ implemented in C.
     on this OS+architecture combination".
 
 [^2]: Yes, generally speaking `libc` is distributed not as a static but as a
-    _dynamic_ library which is a completely different way of linking and calling
-    functions. We'll cover this in a later chapter in detail.
+    _dynamic_ library, which is a completely different way of linking and
+    calling functions.

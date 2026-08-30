@@ -120,9 +120,9 @@ safety nets:
 If the linker complains about an undefined symbol, inspect the symbols your Rust
 static library exports. The command depends on your toolchain and platform:
 
-- Unix-like systems: `nm target/debug/libbm_rewrite_a_module.a`
-- LLVM toolchains: `llvm-nm target/debug/libbm_rewrite_a_module.a`
-- Windows with MSVC: `dumpbin /symbols target\debug\bm_rewrite_a_module.lib`
+- Unix-like systems: `nm target/debug/lib<crate>.a`
+- LLVM toolchains: `llvm-nm target/debug/lib<crate>.a`
+- Windows with MSVC: `dumpbin /symbols target\debug\<crate>.lib`
 
 A missing `#[unsafe(no_mangle)]` is a common cause.
 

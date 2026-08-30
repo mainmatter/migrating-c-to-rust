@@ -1,8 +1,8 @@
 # Allocation, allocators, and mixing them
 
-In the previous exercise you replaced a whole C module with Rust while keeping
-the interface identical. But `bm` passes more than integers and borrowed strings
-across the boundary: it passes _ownership_. `bookmark_new` allocates a
+In the previous section you saw how to replace a whole C module with Rust while
+keeping the interface identical. But `bm` passes more than integers and borrowed
+strings across the boundary: it passes _ownership_. `bookmark_new` allocates a
 `Bookmark` that someone else will free later. Who frees it, and with what? This
 is where mixed-language codebases hide some of their nastiest bugs and most
 difficult design challenges.
@@ -200,8 +200,7 @@ There are several workable strategies:
 
 You can use tools like Valgrind, which gives every allocation a birth
 certificate: run the test binary under `valgrind --leak-check=full` and it will
-tell you not just that a block leaked, but which call stack allocated it. We'll
-go deeper on this in Chapter 3.
+tell you not just that a block leaked, but which call stack allocated it.
 
 ## Head to the exercise
 
