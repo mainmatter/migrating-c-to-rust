@@ -259,11 +259,9 @@ changes the code being measured.
 
 ## Head to the exercise
 
-Head to the
-[`benchmarking` exercise](../../../exercises/02_intermediate/05_benchmarking/).
-The exercise ships with the C benchmark. Replace the `bm_normalize_url_rust`
-stub and add the matching Rust benchmark, then run both and compare their median
-latencies.
+Head to the exercise in `exercises/02_intermediate/07_benchmarking`. It ships
+with the C benchmark. Replace the `bm_normalize_url_rust` stub and add the
+matching Rust benchmark, then run both and compare their median latencies.
 
 [^1]: See the [`test` library feature][unstable-test] in the Unstable Book for
     the current status of `#[bench]` and `test::Bencher`.
