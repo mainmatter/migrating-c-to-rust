@@ -1,19 +1,16 @@
 # High-quality FFI APIs
 
-We previously introduced two "mechanical" rules: always validating your input
-and not overloading primitives. Now we will introduce two more rules that are a
-bit more conceptual but have proven themselves _very_ useful.
-
-But don't let that fool you, the following rules are just as important as the
-previous two, if not more so.
+We previously introduced two "mechanical" rules: always validate your input, and
+don't overload primitives. The two that follow are more conceptual. Don't let
+that fool you: they are just as important as the first two, if not more so.
 
 ## Documentation, documentation, documentation
 
-Some invariants you can check at runtime. Many you can't — who owns this
-pointer, whether the string is copied or borrowed, whether `free` has run
-before, what each error variant means. Write them all down.[^1] Rust's
-`# Safety` convention (being just a comment) works with `extern "C"` functions
-too! `cheadergen` will emit them as C doc comments in the header files:
+Some invariants you can check at runtime. Many you can't: who owns this pointer,
+whether the string is copied or borrowed, whether `free` has run before, what
+each error variant means. Write them all down.[^1] Rust's `# Safety` convention,
+being just a comment, works with `extern "C"` functions too, and `cheadergen`
+emits them as C doc comments in the header files:
 
 ```rust
 /// Normalize a URL into the caller's buffer.
@@ -48,10 +45,9 @@ pub unsafe extern "C" fn bm_normalize_url(
 Note how we number safety invariants and force every inline safety comment to
 either:
 
-- Delegate upholding its local invariant to the surrounding function's safety
-  comment. In this case it MUST reference a numbered invariant
-- OR it must exhaustively explain why the local invariant is upheld by the code
-  itself.
+- delegate its local invariant to the surrounding function's safety comment, in
+  which case it must reference a numbered invariant; or
+- explain exhaustively why the code itself upholds the local invariant.
 
 This way we make sure that all invariants are either upheld by the function
 itself or correctly documented as a responsibility of the caller.
@@ -65,23 +61,23 @@ traceability machine-checkable in the future.[^2]
 ## Mind the FFI tax
 
 Every exposed function is API surface you'll maintain forever, an `unsafe`
-contract to keep correct, and a per-call cost the compiler can't optimise away.
+contract to keep correct, and a per-call cost the compiler can't optimize away.
 Cross-language LTO can inline across, at the cost of a real setup burden. The
-cheapest FFI function is the one you didn't expose. Expose coarse operations —
-`bm_thing_update_with(...)` over one setter per field — and treat the boundary
-as a small set of verbs, not a mirror of your internal struct.
+cheapest FFI function is the one you didn't expose. Expose coarse operations,
+such as `bm_thing_update_with(...)` over one setter per field, and treat the
+boundary as a small set of verbs, not a mirror of your internal struct.
 
 ## Head to the exercise
 
-Head to the exercise where we will update our exercise 06 solution with the new
-rule(s) we have learned.
+You'll update your solution to exercise 1.6 with the two rules from this
+section.
 
-[^1]: You may (jadedly) say that no one ever reads comments and you may actually
-    be correct. BUT, with the rise of LLMs _something_ does actually "read"
-    them. We've found that LLMs unsurprisingly struggle quite a bit with the
-    nuanced, unspoken invariants of FFI code. Turning as many of these unspoken
-    invariants into spoken ones helps you get better mileage out of these tools.
+[^1]: You may say, jadedly, that no one ever reads comments, and you may be
+    right. But with the rise of LLMs, _something_ does read them. We've found
+    that LLMs struggle with the nuanced, unspoken invariants of FFI code, which
+    is not surprising. Turning as many of these unspoken invariants into spoken
+    ones helps you get better mileage out of these tools.
 
 [^2]: There are a couple of related proposals, all in the "pre-RFC" stage. The
-    most interesting one being
-    https://github.com/safer-rust/safety-tags/blob/main/pre-RFC.md
+    most interesting is the
+    [safety-tags pre-RFC](https://github.com/safer-rust/safety-tags/blob/main/pre-RFC.md).

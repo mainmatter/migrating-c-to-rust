@@ -1,6 +1,6 @@
 # Using `lldb`/`gdb`
 
-At some point in a migration you'll hit a crash at the FFI boundary with little
+At some point in a migration, you'll hit a crash at the FFI boundary with little
 to go on. A C caller passes a string without the NUL terminator the API
 requires, or Rust hands C a pointer whose lifetime has ended. The process takes
 a `SIGSEGV` and dies before Rust can give you a tidy panic message or backtrace.
@@ -146,8 +146,8 @@ See the [stabilization PR][v0-mangling] and the
 
 ## Head to the exercise
 
-Head to the exercise, where a small C helper and its Rust binding disagree about
-something that only shows up once you call across the boundary. Build it with
+In this exercise a small C helper and its Rust binding disagree about something
+that only shows up once you call across the boundary. Build it with
 `cargo build -p bm_lldb_gdb`, then debug `target/debug/bm_lldb_gdb`. No
 `println!` allowed.
 

@@ -1,8 +1,8 @@
 # Exposing Rust to C with `cheadergen`
 
-So far, we've always called C from Rust. Now we flip. Remember that our goal is
-to _migrate_ C code to Rust. We'll eventually need C to call into our new Rust
-code!
+So far we've always called C from Rust. Now we go the other way: our goal is to
+_migrate_ C code to Rust, so eventually C will need to call into our new Rust
+code.
 
 To make a Rust function callable from C we'll need to first annotate it
 correctly:
@@ -17,8 +17,8 @@ pub extern "C" fn bm_strlower(s: *mut c_char) {
 ```
 
 Much like the FFI function declaration we saw in the first exercise, we instruct
-rustc to use a C-compatible calling convention through `extern "C" fn` (without
-it, Rust uses its own ABI that of course C knows nothing about).
+`rustc` to use a C-compatible calling convention through `extern "C" fn`
+(without it, Rust uses its own ABI, which of course C knows nothing about).
 
 `#[unsafe(no_mangle)]` keeps the symbol name verbatim in the compiled object.
 Otherwise Rust would emit a so-called _mangled_ symbol name, a pseudo-random
@@ -33,15 +33,14 @@ API. You could write it by hand, but you'd be maintaining two sources of truth.
 **[`cheadergen`][cheadergen]** (the inverse of [`bindgen`][bindgen]) generates C
 headers from Rust code.
 
-`cheadergen` (created and maintained by fellow Mainmatter engineer Luca
-Palmieri) will read your Rust code and automatically generate a C header for the
-relevant FFI-visible symbols.
+`cheadergen`, created and maintained by our colleague Luca Palmieri, reads your
+Rust code and generates a C header for the relevant FFI-visible symbols.
 
-Install the CLI by following the instructions here
-[https://github.com/LukeMathWalker/cheadergen/releases](https://github.com/LukeMathWalker/cheadergen/releases).
+Install the CLI from the
+[`cheadergen` releases page](https://github.com/LukeMathWalker/cheadergen/releases).
 
-Then you can run the following command in your crate root (e.g. the current
-exercise crate):
+Then you can run the following command in your crate root (for example, the
+current exercise crate):
 
 ```sh
 cheadergen generate
@@ -65,14 +64,14 @@ You can apply this attribute to any Rust type. It lets you configure per-type
 options such as renaming fields, skipping exporting, forcing exporting, and
 more. See the full documentation [here][cheadergen-macro].
 
-### A note on `cbindgen`
+## A note on `cbindgen`
 
-If you've been researching Rust FFI tooling, you undoubtedly came across
-[`cbindgen`][cbindgen], a _very similar_ tool maintained by Mozilla, and you may
-ask yourself: "Why did you just introduce me to this custom tool instead?"
+If you've been researching Rust FFI tooling, you've undoubtedly come across
+[`cbindgen`][cbindgen], a similar tool maintained by Mozilla, and you may be
+wondering: "Why did you just introduce me to this custom tool instead?"
 
 Well, we wouldn't have built a new tool if the existing one fit. `cbindgen`
-dates back to 2017, when the Rust ecosystem looked very different. To read your
+dates back to 2017, when the Rust ecosystem looked quite different. To read your
 Rust and emit headers, it had to parse the source itself with a custom
 `syn`-based parser. At the time, that was the only way, since the compiler
 didn't expose enough information.

@@ -49,6 +49,7 @@
   "https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md": "ffh",
   "https://github.com/rust-lang/rust-bindgen": "ffe",
   "https://github.com/rust-lang/rust/pull/151994": "f2c",
+  "https://github.com/safer-rust/safety-tags/blob/main/pre-RFC.md": "f2s",
   "https://github.com/tokio-rs/loom": "f27",
   "https://godbolt.org/z/E97EeoEP6": "ff5",
   "https://godbolt.org/z/PzrM4a575": "ffq",

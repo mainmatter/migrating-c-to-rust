@@ -14,7 +14,7 @@
   - [How to rewrite a module](./02_intermediate/01_rewrite_a_module.md)
   - [Allocation, allocators, and mixing them](./02_intermediate/02_allocators.md)
   - [Using lldb/gdb](./02_intermediate/03_lldb_gdb.md)
-  - [Clippy lints for unsafe Rust & static verification](./02_intermediate/04_clippy_lints.md)
+  - [Clippy lints for unsafe Rust and static verification](./02_intermediate/04_clippy_lints.md)
   - [Replacing C-isms with Rust-isms](./02_intermediate/05_idiomatic_rust.md)
   - [Dynamic analysis with Miri](./02_intermediate/06_miri.md)
   - [Performance benchmarking](./02_intermediate/07_benchmarking.md)

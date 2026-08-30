@@ -1,13 +1,13 @@
 # Generating Rust bindings with `bindgen`
 
 In the previous exercise you saw how easy it is for manual bindings to go out of
-sync, and the scary silent corruption that can cause. In this chapter we'll
-introduce a tool to avoid all of this called **[`bindgen`][bindgen]**. It's a
-library you call in your Rust build script to automatically generate Rust
-bindings to C code based in C header files. It runs libclang on a C header and
-emits matching Rust declarations: `extern` blocks, `#[repr(C)]` structs, integer
-constants. The header remains the single source of truth, with the Rust bindings
-being generated on every build.
+sync, and the scary silent corruption that causes. This section introduces a
+tool that avoids all of this: **[`bindgen`][bindgen]**. It's a library you call
+from your Rust build script to generate Rust bindings to C code from the C
+header files. It runs libclang on a C header and emits matching Rust
+declarations: `extern` blocks, `#[repr(C)]` structs, integer constants. The
+header remains the single source of truth, with the Rust bindings being
+generated on every build.
 
 You call `bindgen` from your build script like so:
 
@@ -35,8 +35,8 @@ unsafe extern "C" {
 }
 ```
 
-You can then pull in this generated file into your crate by using the `include!`
-macro like so:
+You can then pull this generated file into your crate with the `include!` macro
+like so:
 
 ```rust
 mod sys {
@@ -44,8 +44,8 @@ mod sys {
 }
 ```
 
-This is great, we've gained end-to-end type checking. A change in the C header
-will not silently corrupt our Rust code. But remember these bindings are as
+This is great: we've gained end-to-end type checking. A change in the C header
+will not silently corrupt our Rust code. But remember, these bindings are as
 `unsafe` as the C code itself. It's your responsibility to use them correctly.
 
 You would typically wrap them in a safe, idiomatic API. This is the common
@@ -54,7 +54,7 @@ You would typically wrap them in a safe, idiomatic API. This is the common
 
 ## Head to the exercise
 
-Replace the hand-written `extern` block from the previous chapter with `bindgen`
+Replace the hand-written `extern` block from the previous section with `bindgen`
 in `build.rs`. Safe wrappers and tests stay identical.
 
 <details><summary><b>Tip</b></summary>

@@ -2,15 +2,15 @@
 
 Welcome to the **"C to Rust Migration Book"**!
 
-This course will teach you techniques for migration C codebases to Rust.\
+This course will teach you techniques for migrating C codebases to Rust.\
 You'll learn how to maintain a safe mixed C-Rust codebase, incrementally migrate
-modules, translate common C idioms to Rust and learn the debugging tools to use
-when things inevitably break.
+modules, translate common C idioms to Rust, and use the debugging tools you'll
+need when things inevitably break.
 
 We assume prior knowledge of Rust and some C.
 
 You'll build up your knowledge in small, manageable steps. By the end of the
-course, you will have solved many exercises, and should be prepared to migrate
+course, you will have solved many exercises and should be prepared to migrate
 even larger C codebases to Rust.
 
 ## Methodology
@@ -19,9 +19,9 @@ This course is based on the "learn by doing" principle.\
 It has been designed to be interactive and hands-on.
 
 [Mainmatter](https://mainmatter.com/rust-consulting/) developed this course to
-be delivered in a classroom setting, over 4 days: each attendee advances through
-the lessons at their own pace, with an experienced instructor providing
-guidance, answering questions and diving deeper into the topics as needed.\
+be delivered in a classroom setting, over four days: each attendee advances
+through the lessons at their own pace, with an experienced instructor providing
+guidance, answering questions, and diving deeper into the topics as needed.\
 If you'd like to organize a private session for your company, please
 [get in touch](https://mainmatter.com/contact/).
 
@@ -78,7 +78,7 @@ To work through this course, you'll need:
   - [Visual Studio Code](https://code.visualstudio.com) with the
     [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer)
     extension.
-- A C compiler. The one provided by your Operating System will be good enough.
+- A C compiler. The one provided by your operating system will be good enough.
 
 ### Workshop runner
 
@@ -109,11 +109,11 @@ Enjoy the course!
 This course was written by [Jonas Kruckenberg](https://jonaskruckenberg.de),
 Engineering Consultant at [Mainmatter](https://mainmatter.com/rust-consulting/),
 and Artur Jakubiec.\
-Jonas Kruckenberg is a systems engineer and technologist focused on
-next-generation computing infrastructure. He is the lead author of k23, an
-experimental high-reliability operating system. As a TC39 Invited Expert, he
-helps shape the future of web by bringing non-browser perspectives to JavaScript
-language standardization.\
+Jonas Kruckenberg is a systems engineer working on operating systems and
+low-level infrastructure. He is the lead author of k23, an experimental
+high-reliability operating system. As a TC39 Invited Expert, he helps shape the
+future of the web by bringing non-browser perspectives to JavaScript language
+standardization.\
 Artur Jakubiec is a long-time C/C++ engineer and was one of the main developers
 of Cubasis. He is now a tech lead at a company building enterprise SaaS
 productivity software, currently migrating it from C++ to Rust.
