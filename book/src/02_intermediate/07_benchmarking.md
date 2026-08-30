@@ -8,9 +8,9 @@ benchmark. The problem is that one number tells you almost nothing. Your laptop
 may boost one run and throttle the next. The filesystem cache may already be
 warm, and your browser may wake up and steal a core.
 
-A _benchmark_ repeatedly measures a controlled workload. It can report how long
-one operation takes, its _latency_, or how many operations finish in a given
-time, its _throughput_. Our benchmark will measure the latency of one call to
+A _benchmark_ repeatedly measures a controlled workload. It can report
+_latency_, how long one operation takes, or _throughput_, how many operations
+finish in a given time. Our benchmark will measure the latency of one call to
 `bm_normalize_url`.
 
 A _profile_ answers a different question: where did a program spend CPU time,
@@ -100,9 +100,9 @@ pub unsafe extern "C" fn bm_normalize_url_rust(
 ) -> BmResult;
 ```
 
-Benchmark the first one against C and the Rust number carries a validation and
-an allocation that the C number does not. You have measured two different APIs,
-not two implementations of the same operation.
+If you benchmark the first one against C, the Rust number carries a validation
+and an allocation that the C number does not: you have measured two different
+APIs, not two implementations of the same operation.
 
 This does not mean the safe API is wrong. The allocation may well be the right
 design. It does mean you need to state what the benchmark includes.
@@ -151,7 +151,7 @@ faster workloads.
 > **Rule of thumb:** Benchmark the semantics you want to compare, not the
 > convenience API you happened to write first.
 
-Run both benchmarks from the workspace root:
+Check correctness first, then run both benchmarks, from the workspace root:
 
 ```bash
 cargo test -p bm_benchmarking
@@ -200,8 +200,8 @@ Treat a repeatable regression like any other bug:
 3. Change one thing, then rerun the same benchmark under the same conditions.
 4. If the regression remains, profile the slow path before changing more code.
 
-Keep the benchmark after the fix. It now reproduces the benchmark result that
-exposed the regression.
+Keep the benchmark after the fix. It is now the thing that will catch the
+regression if it comes back.
 
 > **CI tip:** A continuous-benchmarking tool such as [Bencher][bencher] can
 > store results over time and fail a pull request when performance regresses.
@@ -259,9 +259,9 @@ changes the code being measured.
 
 ## Head to the exercise
 
-Head to the exercise in `exercises/02_intermediate/07_benchmarking`. It ships
-with the C benchmark. Replace the `bm_normalize_url_rust` stub and add the
-matching Rust benchmark, then run both and compare their median latencies.
+The exercise is in `exercises/02_intermediate/07_benchmarking`. It ships with
+the C benchmark. Replace the `bm_normalize_url_rust` stub and add the matching
+Rust benchmark, then run both and compare their median latencies.
 
 [^1]: See the [`test` library feature][unstable-test] in the Unstable Book for
     the current status of `#[bench]` and `test::Bencher`.

@@ -14,9 +14,9 @@ Every allocation must be released through its corresponding deallocation API.
 That's the whole rule. C's `malloc`/`free`[^1] and Rust's global allocator are
 two independent bookkeeping systems[^2]. Handing a Rust-allocated pointer to C's
 `free` (or a `malloc`'d pointer to `Box::from_raw`) is undefined behavior, even
-if it happens to "work" on your machine, because both may forward to the same
-underlying `malloc` today. It might stop doing so tomorrow or not work at all on
-a different machine architecture.
+if it happens to "work" on your machine because both forward to the same
+underlying `malloc` today. They might stop doing so tomorrow, or not do so at
+all on a different architecture.
 
 ```text
 ┌──────────────┐  Box::into_raw   ┌──────────────┐
@@ -155,7 +155,7 @@ There are several workable strategies:
    implicit knowledge. Only use one when you have a specific interoperability
    need.
 
-5. **Use the Allocator API.** As of this writing the API is still experimental
+5. **Use the Allocator API.** As of this writing, the API is still experimental
    and only available on nightly Rust. It functions similarly to `GlobalAlloc`:
    you have to implement your own allocator, but unlike the global one, it is a
    lot more flexible and can be used on a per-variable basis. The new API adds
@@ -184,7 +184,7 @@ There are several workable strategies:
    let bar = Box::new_in(2, custom_alloc);
    ```
 
-   Both `foo` and `bar` will now use different allocators.
+   `foo` and `bar` now use different allocators.
 
    **Avoid if possible.** The same warning as for `GlobalAlloc` applies here:
    implementing an allocator is a non-trivial undertaking and is only worth it
@@ -198,27 +198,26 @@ There are several workable strategies:
 
 ## Spotting allocator mismatches
 
-You can use tools like Valgrind, which gives every allocation a birth
-certificate: run the test binary under `valgrind --leak-check=full` and it will
-tell you not just that a block leaked, but which call stack allocated it.
+Tools like Valgrind give every allocation a birth certificate: run the test
+binary under `valgrind --leak-check=full` and it will tell you not just that a
+block leaked, but which call stack allocated it.
 
 ## Head to the exercise
 
-Head to the exercise, where you'll port `bm`'s `Bookmark` type, including its
-allocation and deallocation functions, to Rust without leaking or double-freeing
-a single byte.
+You'll port `bm`'s `Bookmark` type, including its allocation and deallocation
+functions, to Rust without leaking or double-freeing a single byte.
 
-You'll practice both ownership directions from this chapter in
+You'll practice both ownership directions from this section in
 `exercises/02_intermediate/02_allocators`: C holding a Rust allocation, and Rust
 holding a C allocation.
 
 [^1]: `malloc`/`free` are standard C allocation functions, but nothing prevents
     you from using other allocation functions or even rolling your own. For the
-    sake of simplicity we will always refer to `malloc`/`free` in this chapter,
+    sake of simplicity, we will always refer to `malloc`/`free` in this section,
     but read it as `malloc`/`free` and all other custom (de)allocation
     functions.
 
-[^2]: Currently Rust's default global allocator is unspecified, but on many
+[^2]: Currently, Rust's default global allocator is unspecified, but on many
     platforms it _is_ the system `malloc`. Libraries such as cdylibs and
     staticlibs, however, are guaranteed to use the `System` allocator by
     default. Beware though: C's `malloc`/`free` API and Rust's global-allocation

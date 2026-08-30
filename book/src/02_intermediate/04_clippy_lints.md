@@ -1,8 +1,8 @@
-# Clippy lints for unsafe Rust & static verification
+# Clippy lints for unsafe Rust and static verification
 
-In the previous chapter we learned how to debug an application, but this will
-only get you so far in improving code quality: you hit a crash, then work
-backward to find the root cause.
+In the previous section we learned how to debug an application, but debugging
+only gets you so far: it starts from a crash you already have, and works
+backward to the root cause.
 
 Lints, on the other hand, help prevent certain issues in the first place. They
 catch a narrower set of problems and suspicious patterns before the code runs.
@@ -62,7 +62,7 @@ cast_ptr_alignment = "warn"
 transmute_ptr_to_ptr = "warn"
 ```
 
-This chapter focuses on Clippy, but `unsafe_op_in_unsafe_fn` is a compiler lint,
+This section focuses on Clippy, but `unsafe_op_in_unsafe_fn` is a compiler lint,
 not a Clippy lint. It's worth mentioning here because it makes unsafe operations
 explicit, which is the foundation for the Clippy lints that follow. An
 `unsafe fn` means its caller has extra obligations. It doesn't mean every unsafe
@@ -186,7 +186,7 @@ Run the lints with:
 cargo clippy --workspace --all-targets
 ```
 
-`--all-targets` matters here. Without it `cargo clippy` skips tests, and in
+`--all-targets` matters here. Without it, `cargo clippy` skips tests, and in
 these exercises the tests are where most of the FFI calls live.
 
 `cargo clippy --fix` can apply some mechanical fixes. It wants a clean Git tree
@@ -201,10 +201,10 @@ treat every FFI contract as something to validate at the boundary.
 
 ## Head to the exercise
 
-Head to the exercise, where you'll enable these lints on the crates from the
-earlier exercises and fix everything they flag. Some warnings are mechanical;
-others point to a real bug. The point isn't to make `cargo clippy` quiet. It's
-to understand and document every unsafe operation that remains.
+You'll enable these lints on the crates from the earlier exercises and fix
+everything they flag. Some warnings are mechanical; others point to a real bug.
+The point isn't to make `cargo clippy` quiet. It's to understand and document
+every unsafe operation that remains.
 
 [^1]: The complete list of Clippy lints is available at
     <https://rust-lang.github.io/rust-clippy/master/index.html>.

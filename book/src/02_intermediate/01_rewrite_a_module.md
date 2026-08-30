@@ -46,7 +46,7 @@ normalize → (no project dependencies)
 util      → (no project dependencies)
 ```
 
-For bm, we chose to start with `normalize.c`. It exposes two functions: one
+For `bm`, we chose to start with `normalize.c`. It exposes two functions: one
 normalizes URLs and the other normalizes tags. Both write into buffers supplied
 by the caller, so no memory changes ownership at the FFI boundary. Why not
 `util.c` or `bookmark.c`? Both seem suitable too. `util.c` is also small, but it
@@ -95,7 +95,7 @@ after:   cli.o, index.o, libnormalize.a (Rust), ...
 
 ## Structuring the Rust side
 
-Inside the crate we keep two layers, following the firewall pattern from chapter
+Inside the crate we keep two layers, following the firewall pattern from Chapter
 1.6:
 
 1. a thin `extern "C"` surface that validates raw pointers and converts C types

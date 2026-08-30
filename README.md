@@ -75,7 +75,7 @@ You can find the solutions to the exercises in the
 [`solutions` branch](https://github.com/mainmatter/migrating-c-to-rust/tree/solutions)
 of this repository.-->
 
-# License
+## License
 
 Copyright © 2024- Mainmatter GmbH (https://mainmatter.com), released under the
 [Creative Commons Attribution-NonCommercial 4.0 International license](https://creativecommons.org/licenses/by-nc/4.0/).
