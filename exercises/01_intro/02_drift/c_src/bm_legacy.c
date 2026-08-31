@@ -2,19 +2,25 @@
 //
 //     int bm_add(int a, int b);
 //
-// Comment out the correct definition and uncomment one of the drifted ones
-// below. Rerun `cargo test` after each swap and see what happens on your
-// machine.
+// Let's see what happens with different C definitions for the same symbol!
+// Uncomment one definition at a time and then run either `cargo test` in
+// this folder or `wr --recheck` from the root of the repository to see
+// what happens.
+//
+// The first compilation should fail with a linker error, since no definition
+// exists for `bm_add` at link time.
 
-// the correct version -- the test passes
-int bm_add(int a, int b) { return a + b; }
+// // A definition aligned with the Rust one. Tests should pass.
+// int bm_add(int a, int b) { return a + b; }
 
-// // drifted: reinterprets the arguments (and result) as floats
+// // Drifted! It interprets the arguments (and result) as floats rather than
+// // integers.
 // float bm_add(float a, float b) { return a + b; }
 
-// // drifted: one parameter too few -- the second argument is silently ignored
+// // Drifted: one parameter instead of two.
+// // The second argument is silently ignored!
 // int bm_add(int a) { return a; }
 
-// // drifted: 64-bit addition instead of 32-bit. Notice this one *still passes*
-// // on your machine probably!
+// // Drifted: 64-bit addition instead of 32-bit.
+// // This one *may still work* on your machine!
 // long long bm_add(long long a, long long b) { return a + b; }
