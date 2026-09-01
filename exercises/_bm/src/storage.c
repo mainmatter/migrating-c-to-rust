@@ -8,6 +8,7 @@
 #include "bookmark.h"
 #include "index.h"
 #include "internal.h"
+#include "normalize.h"
 #include "util.h"
 
 #define LINE_BUF (BM_MAX_URL_LEN + 4096)

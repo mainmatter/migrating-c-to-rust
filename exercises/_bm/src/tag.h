@@ -4,11 +4,6 @@
 
 #include "result.h"
 
-#define BM_MAX_TAG_LEN 64
-
-/* Trim, lowercase, reject empty. Writes into `out` (capacity out_len). */
-BmResult tag_normalize(const char *raw, char *out, size_t out_len);
-
 /*
  * Split argv-style "+rust" / "-python" words into add/rm lists. Default
  * (no prefix) is add. Output arrays and inner strings are heap-allocated;

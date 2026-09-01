@@ -7,6 +7,7 @@
 
 #include "bookmark.h"
 #include "internal.h"
+#include "normalize.h"
 #include "storage.h"
 #include "tag.h"
 #include "util.h"

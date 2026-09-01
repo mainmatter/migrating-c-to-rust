@@ -8,6 +8,7 @@
 
 #include "bookmark.h"
 #include "index.h"
+#include "normalize.h"
 #include "result.h"
 #include "tag.h"
 #include "util.h"
