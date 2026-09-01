@@ -11,12 +11,15 @@
 //!
 //! Requirements:
 //!   - The new Rust function must be callable from C, using the same symbol name, `bm_strlower`.
-//!   - Signature must equivalent the original C signature: `void bm_strlower(char *s)`.
+//!   - Signature must match the original C signature: `void bm_strlower(char *s)`.
 //!   - NULL input must be a no-op (don't crash).
 //!   - Lowercase ASCII in place.
 //!
-//! Hint: look up [`std::slice::from_raw_parts_mut`], [`std::str::from_utf8_mut`]
-//! and `make_ascii_lowercase`!
+//! Hint: [`std::ffi::CStr::from_ptr`] gets you the length,
+//! [`std::slice::from_raw_parts_mut`] turns the pointer into a mutable slice,
+//! and `make_ascii_lowercase` on that byte slice does the rest. No UTF-8
+//! validation needed: the C version happily lowercases bytes that aren't valid
+//! UTF-8, and so should yours.
 //!
 //! Once you're done, run:
 //!

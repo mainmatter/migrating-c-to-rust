@@ -29,11 +29,13 @@ layout that other languages can understand, we need to mark our structs with the
 `repr(C)` attribute.
 
 ```rust
-// we know the layout of this struct is always:
+// we know the layout of this struct is always (16 bytes in total, because the
+// `usize` gives the whole struct an alignment of 8):
 // - `a` - 8 bytes
 // - `b` - 1 byte
-// - 1 byte padding
-// - `c` two bytes
+// - 1 byte padding, so that `c` is 2-byte aligned
+// - `c` - 2 bytes
+// - 4 bytes trailing padding, so that the size is a multiple of the alignment
 #[repr(C)]
 struct Foo {
     a: usize,

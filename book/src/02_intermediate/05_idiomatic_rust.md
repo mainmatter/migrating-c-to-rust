@@ -95,7 +95,7 @@ If you want to make sure tags match your old C version exactly (for interop
 purposes, for example), you might do this:
 
 ```rust
-#[repr(u32)] // make sure we're using "int"s too
+#[repr(C)] // use the target's C ABI representation for enums
 enum Error {
     Foo = 0,
     Bar = 1,
@@ -104,7 +104,12 @@ enum Error {
 fn doSomething() -> Result<(), Error>;
 ```
 
-Now `Error` has the same layout and bit pattern as the original C version.
+`#[repr(C)]` gives `Error` the size and signedness a C compiler would pick for
+the equivalent `typedef enum` on the same target, so the two agree on the values
+they exchange. Reach for `#[repr(i32)]` when you want to pin the width yourself,
+which is what the `#define` version above needs, since it passes plain `int`s
+around. Don't reach for `#[repr(u32)]`: C's `int` is signed, and the difference
+surfaces the first time someone adds a negative error code.
 
 ## Strings
 

@@ -47,7 +47,7 @@ mod tests {
 
     #[test]
     fn reads_the_second_byte() {
-        let bytes = [b'a', b'b'];
+        let bytes = b"ab";
 
         // SAFETY: `bytes` has two initialized elements.
         assert_eq!(unsafe { second_byte(bytes.as_ptr()) }, b'b');
