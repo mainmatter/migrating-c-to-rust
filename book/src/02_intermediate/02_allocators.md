@@ -101,26 +101,26 @@ There are several workable strategies:
    ```rust
    use std::ptr::NonNull;
 
-   struct RustType {
-      foo: i32,
-      bar: i32
-   };
+   pub struct RustType {
+       foo: i32,
+       bar: i32,
+   }
 
    #[unsafe(no_mangle)]
    pub extern "C" fn rust_type_new(foo: i32, bar: i32) -> *mut RustType {
-      Box::into_raw(Box::new(RustType{ foo, bar }))
+       Box::into_raw(Box::new(RustType { foo, bar }))
    }
 
    #[unsafe(no_mangle)]
    pub extern "C" fn rust_type_free(b: Option<NonNull<RustType>>) {
-      // To match C's free(NULL) semantics, return immediately when b is null.
-      let Some(b) = b else {
-         return;
-      }
+       // To match C's free(NULL) semantics, return immediately when b is null.
+       let Some(b) = b else {
+           return;
+       };
 
-      // SAFETY: `b` was created by `rust_type_new` via Box::into_raw and is
-      // not used again after this call (documented in bookmark.h).
-      drop(unsafe { Box::from_raw(b.as_ptr()) });
+       // SAFETY: `b` was created by `rust_type_new` via Box::into_raw and is
+       // not used again after this call (documented in bookmark.h).
+       drop(unsafe { Box::from_raw(b.as_ptr()) });
    }
    ```
 
