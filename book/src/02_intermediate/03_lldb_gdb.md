@@ -20,7 +20,7 @@ debug = true
 
 If `build.rs` compiles the C code with `cc`, pass `-g` there too:
 
-```rust
+```rust,no_run
 cc::Build::new()
     .file("c_src/shout.c")
     .include("c_src")

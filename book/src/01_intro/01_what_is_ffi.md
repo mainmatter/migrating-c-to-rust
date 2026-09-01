@@ -33,9 +33,10 @@ Let's say for example we have a Rust program that needs to call the `time`
 function from `libc` (a C static library)[^2]. We would use the following
 construct:
 
-```rust,ignore
+```rust,no_run
+# type time_t = i64;
 unsafe extern "C" {
-    fn time(time: *mut time_t) -> time_t
+    fn time(time: *mut time_t) -> time_t;
 }
 ```
 

@@ -42,7 +42,7 @@ of the interesting unsafe code isn't public.
 
 You can configure a lint in code:
 
-```rust
+```rust,no_run
 #![warn(clippy::undocumented_unsafe_blocks)]
 ```
 
@@ -100,7 +100,7 @@ name trips `non_snake_case`. The group covering all three is
 Sometimes the name genuinely does have to match, and then an `allow` is the
 right solution. Scope it as tightly as you can:
 
-```rust
+```rust,no_run
 #[allow(non_camel_case_types)]
 pub struct bm_db_t {/* … */}
 ```
@@ -115,7 +115,7 @@ You can often avoid an `allow` for functions exposed to C. `no_mangle` uses the
 Rust function's name for the exported symbol, but `export_name` lets you choose
 a different name for the C API:
 
-```rust
+```rust,no_run
 #[unsafe(export_name = "BMNormalizeURL")]
 pub extern "C" fn bm_normalize_url() {
     // ...
@@ -152,7 +152,9 @@ workspace = true
 
 Consider a pointer that arrives across the FFI boundary:
 
-```rust
+```rust,no_run
+# use std::ffi::CStr;
+# let raw = c"https://example.com".as_ptr();
 // SAFETY: `raw` is non-null (checked above) and points to a valid
 // NUL-terminated byte sequence, as required by `bm_normalize_url`'s contract.
 let raw = unsafe { CStr::from_ptr(raw) };
@@ -164,7 +166,9 @@ without re-deriving them from the surrounding code.
 
 Compare that with this:
 
-```rust
+```rust,no_run
+# use std::ffi::CStr;
+# let raw = c"https://example.com".as_ptr();
 // SAFETY: this is fine
 let raw = unsafe { CStr::from_ptr(raw) };
 ```

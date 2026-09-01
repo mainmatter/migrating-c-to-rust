@@ -40,7 +40,7 @@ There are several workable strategies:
    null pointer from C becomes `None`; dropping a successfully created wrapper
    always calls back into C to free it.
 
-   ```rust
+   ```rust,no_run
    use std::ffi::CStr;
    use std::ptr::{self, NonNull};
 
@@ -90,7 +90,7 @@ There are several workable strategies:
    The basic pattern for this is to convert a `Box` to and from a raw pointer
    with `into_raw` and `from_raw`:[^3]
 
-   ```rust
+   ```rust,no_run
    let foo = Box::new(42);
    let ptr = Box::into_raw(foo);
    // This will convert the raw pointer back into a Box and when dropped free the memory:
@@ -98,7 +98,7 @@ There are several workable strategies:
    ```
    And a full FFI split would look something like this:
 
-   ```rust
+   ```rust,no_run
    use std::ptr::NonNull;
 
    pub struct RustType {
@@ -163,7 +163,7 @@ There are several workable strategies:
    trait and `Allocator` type parameters to many allocation-owning types, such
    as `Box` or `Vec`.
 
-   ```rust,ignore
+   ```rust,compile_fail
    pub struct Box<T, A = Global>()
    // Global is the global allocator implementing the Allocator trait
    where
@@ -174,7 +174,7 @@ There are several workable strategies:
    Additionally, it adds a few new functions where you can pass an allocator,
    for example `new_in`:
 
-   ```rust,ignore
+   ```rust,compile_fail
    #![feature(allocator_api)]
 
    use std::alloc::System;
