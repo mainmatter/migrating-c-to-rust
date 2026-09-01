@@ -88,7 +88,7 @@ pub extern "C" fn bm_read(/* … */, out_bytes: Option<NonNull<usize>>) -> BmRea
 ## Head to the exercise
 
 We'll continue the porting work by looking at `bm_normalize_url`, in
-`exercises/_bm/src/bookmark.c`. It will normalize a given URL by lowercasing it
+`exercises/_bm/src/normalize.c`. It will normalize a given URL by lowercasing it
 and writing the normalized string into the provided buffer. The exercise already
 contains our _"first draft"_ Rust translation: a naive transliteration from C to
 Rust that has a number of issues.

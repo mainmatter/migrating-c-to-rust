@@ -10,14 +10,21 @@ Here is an overview of the C source code:
 
 ```text
 exercises/_bm/src/
-├── bookmark.c   the Bookmark type
-├── cli.c        entry point, argument parsing
-├── index.c      in-memory bookmark index
-├── normalize.c  URL and tag normalization
-├── result.h     shared result codes and error-string helper
-├── storage.c    on-disk persistence of .bm files
-├── tag.c        tag parsing and matching
-└── util.c       string helpers
+├── bookmark.c    the Bookmark type
+├── bookmark.h
+├── cli.c         entry point, argument parsing
+├── index.c       in-memory bookmark index
+├── index.h
+├── internal.h    definitions shared by index.c and storage.c
+├── normalize.c   URL and tag normalization
+├── normalize.h
+├── result.h      shared result codes and error-string helper
+├── storage.c     on-disk persistence of .bm files
+├── storage.h
+├── tag.c         tag parsing and matching
+├── tag.h
+├── util.c        string helpers
+└── util.h
 ```
 
 ## Picking the first module
@@ -37,14 +44,21 @@ The right choice depends on the codebase, but a few guidelines help:
 - Keep the change small enough to review and, if necessary, revert.
 
 ```text
-cli      → index, tag, normalize
-index    → bookmark, storage, tag, normalize, util
-storage  → bookmark, normalize, util
-tag      → normalize, util
-bookmark → util
+cli       → bookmark, index, normalize, result, tag, util
+index     → bookmark, internal, normalize, storage, tag, util
+storage   → bookmark, index, internal, normalize, util
+tag       → normalize, util
+bookmark  → util
 normalize → (no project dependencies)
 util      → (no project dependencies)
 ```
+
+Two things are worth noting. `normalize` and `util` are the only real leaves:
+every other module pulls in at least one of its siblings. And `index` and
+`storage` include each other, so this is not the clean tree the file names
+suggest. Tangles like that are normal in code that has been maintained for a
+while, and they are exactly what you want to know before choosing where to
+start.
 
 For `bm`, we chose to start with `normalize.c`. It exposes two functions: one
 normalizes URLs and the other normalizes tags. Both write into buffers supplied

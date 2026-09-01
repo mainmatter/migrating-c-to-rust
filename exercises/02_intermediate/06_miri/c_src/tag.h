@@ -2,8 +2,9 @@
 
 #include <stddef.h>
 
-/* A slice of the legacy bookmark-manager C API (see exercises/_bm/src/tag.h).
- * This is the not-yet-ported module our Rust code still has to call. */
+/* A slice of the legacy bookmark-manager C API (see
+ * exercises/_bm/src/normalize.h). This is the not-yet-ported module our Rust
+ * code still has to call. */
 
 typedef enum {
   BM_OK = 0,
