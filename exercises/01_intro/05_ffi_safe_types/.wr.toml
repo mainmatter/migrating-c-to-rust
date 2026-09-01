@@ -4,7 +4,7 @@ args = ["build"]
 
 [[verification]]
 command = "cheadergen"
-args = ["generate", "--lang", "c", "--output-dir", "c_test", "-p", "ffi_safe_types"]
+args = ["generate", "--lang", "c", "--output-dir", "c_test", "-p", "bm_ffi_safe_types"]
 
 [[verification]]
 command = "cc"
@@ -14,7 +14,7 @@ args = [
   "-std=c11",
   "-I.",
   "c_test/test_tag_describe.c",
-  "../../../target/debug/libffi_safe_types.a",
+  "../../../target/debug/libbm_ffi_safe_types.a",
   "-o",
   "../../../target/debug/test_tag_describe",
 ]

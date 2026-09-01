@@ -24,7 +24,7 @@
 //! Once you're done, run:
 //!
 //! ```bash
-//! cheadergen generate --lang c --output-dir c_test -p cheadergen
+//! cheadergen generate --lang c --output-dir c_test -p bm_cheadergen
 //! ```
 //!
 //! to generate the C header from your Rust code!

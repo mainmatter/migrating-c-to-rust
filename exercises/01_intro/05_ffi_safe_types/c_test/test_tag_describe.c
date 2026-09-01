@@ -6,7 +6,7 @@
  *   cargo build
  *   cc -Wall -Wextra -std=c11 -I. \
  *      c_test/test_tag_describe.c \
- *      ../../../target/debug/libffi_safe_types.a \
+ *      ../../../target/debug/libbm_ffi_safe_types.a \
  *      -o ../../../target/debug/test_tag_describe
  *   ../../../target/debug/test_tag_describe
  *
@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ffi_safe_types.h"
+#include "bm_ffi_safe_types.h"
 
 int main(void) {
   /* A plain ASCII tag round-trips through `bm_tag_describe`. */

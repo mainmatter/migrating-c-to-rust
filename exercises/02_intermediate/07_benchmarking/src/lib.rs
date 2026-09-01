@@ -5,6 +5,8 @@ pub type BmResult = i32;
 
 pub const BM_OK: BmResult = 0;
 pub const BM_ERR_INVALID_URL: BmResult = 3;
+pub const BM_ERR_INVALID_BUFFER: BmResult = 6;
+pub const BM_ERR_BUFFER_TOO_SMALL: BmResult = 7;
 
 #[no_mangle]
 pub unsafe extern "C" fn bm_normalize_url_rust(

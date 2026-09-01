@@ -35,6 +35,10 @@ const char *bm_result_to_str(BmResult r) {
     return "I/O error";
   case BM_ERR_CORRUPT:
     return "corrupt database";
+  case BM_ERR_INVALID_BUFFER:
+    return "invalid buffer";
+  case BM_ERR_BUFFER_TOO_SMALL:
+    return "buffer too small";
   }
   return "unknown error";
 }
