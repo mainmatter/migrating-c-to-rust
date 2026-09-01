@@ -7,11 +7,11 @@ On paper that is everything you need, and it's tempting to go ahead and rewrite
 your project now. Take your C API and translate it one-for-one into Rust.
 
 The problem is that often you can't, and just as often you shouldn't. Real-world
-C is complicated, idiosyncratic, and (let's admit it!) full of skeletons in the
-closet. You're likely thinking about a Rust rewrite not just to address security
-problems or performance issues; rewriting in Rust is a chance to clean up your
-codebase: re-establish module boundaries, drop legacy assumptions, write the
-module you wished you had.
+C is complicated, idiosyncratic, and (let's admit it!) full of skeletons. You're
+likely thinking about a Rust rewrite not just to address security problems or
+performance issues; rewriting in Rust is a chance to clean up your codebase:
+re-establish module boundaries, drop legacy assumptions, write the module you
+wished you had.
 
 At the same time big-bang rewrites (where you replace the entire codebase at
 once) famously never work. Which leaves a problem: you have a clean Rust
