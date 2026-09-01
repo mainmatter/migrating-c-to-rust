@@ -14,7 +14,7 @@ args = [
   "-std=c11",
   "-I.",
   "c_test/test_tag_describe.c",
-  "../../../target/debug/libcheadergen.a",
+  "../../../target/debug/libffi_safe_types.a",
   "-o",
   "../../../target/debug/test_tag_describe",
 ]

@@ -1,7 +1,7 @@
 [[verification]]
 command = "cargo"
-args = ["test", "-p", "bm_validate_and_narrow"]
+args = ["test", "-p", "bm_high_quality_ffi_apis"]
 
 [[verification]]
 command = "cargo"
-args = ["clippy", "-p", "bm_validate_and_narrow", "--", "-D", "warnings"]
+args = ["clippy", "-p", "bm_high_quality_ffi_apis", "--", "-D", "warnings"]
