@@ -265,6 +265,13 @@ The exercise is in `exercises/02_intermediate/07_benchmarking`. It ships with
 the C benchmark. Replace the `bm_normalize_url_rust` stub and add the matching
 Rust benchmark, then run both and compare their median latencies.
 
+The parity test compares return codes on every input, but compares the output
+buffers only when the call succeeded. The C version lowercases into the caller's
+buffer before it looks for a tab, so it writes into `out` even on inputs it
+rejects. Your port validates first, so it doesn't. That is a difference
+differential testing is supposed to surface, and one worth keeping: the test
+pins it down rather than asking you to reproduce it.
+
 [^1]: See the [`test` library feature][unstable-test] in the Unstable Book for
     the current status of `#[bench]` and `test::Bencher`.
 
