@@ -71,8 +71,8 @@ promise to the compiler: "this is the correct signature of this symbol, trust
 me". We commonly refer to it as a **binding**.
 
 Get the signature wrong and your Rust program will pass garbage to the FFI
-function without any way to check this at compile time. The exact implementation
-won't be known until link time, much later than the compiler's type-checking
+function without any way to check this at compile-time. The exact implementation
+won't be known until link-time, much later than the compiler's type-checking
 pass. This is why bindings are marked `unsafe`: you as the programmer have to
 ensure signatures are correct.
 
