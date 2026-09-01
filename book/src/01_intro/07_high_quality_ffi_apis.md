@@ -12,7 +12,7 @@ each error variant means. Write them all down.[^1] Rust's `# Safety` convention,
 being just a comment, works with `extern "C"` functions too, and `cheadergen`
 emits them as C doc comments in the header files:
 
-```rust,ignore
+```rust,compile_fail
 /// Normalize a URL into the caller's buffer.
 ///
 /// # Ownership

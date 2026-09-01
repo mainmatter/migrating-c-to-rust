@@ -88,7 +88,7 @@ worthwhile exercise in itself.
 
 You would usually have something like this:
 
-```rust
+```rust,no_run
 #[cfg(miri)]
 mod stubs {
     #[unsafe(no_mangle)]

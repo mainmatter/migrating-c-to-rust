@@ -48,7 +48,7 @@ harness = false
 `harness = false` tells Cargo not to start its built-in test harness. The
 benchmark binary supplies its own `main` function and starts Divan instead:
 
-```rust
+```rust,no_run
 fn main() {
     divan::main();
 }
@@ -56,7 +56,7 @@ fn main() {
 
 The build script compiles the original C implementation:
 
-```rust
+```rust,no_run
 // Sample build.rs
 fn main() {
     cc::Build::new()
@@ -87,7 +87,7 @@ BmResult bm_normalize_url(const char *raw, char *out, size_t out_len);
 
 Porting it gives you a choice, and this decides what you are able to measure:
 
-```rust
+```rust,compile_fail
 // Safe and idiomatic. Not comparable: it allocates, and reaching it from
 // C's `const char *` costs a UTF-8 check on the way in.
 pub fn normalize_url(raw: &str) -> Result<String, InvalidUrl>;
@@ -110,7 +110,9 @@ design. It does mean you need to state what the benchmark includes.
 For a direct port comparison, take the second signature, and give both
 implementations the same input and equivalent reusable output buffers:
 
-```rust
+```rust,no_run
+# use std::ffi::c_char;
+# type BmResult = i32;
 unsafe extern "C" {
     #[link_name = "bm_normalize_url"] // bind the C symbol under a second name
     fn bm_normalize_url_c(raw: *const c_char, out: *mut c_char, out_len: usize) -> BmResult;
@@ -234,7 +236,7 @@ hotpath-alloc = ["hotpath/hotpath-alloc"]
 
 Mark the functions you want to measure and the application's entry point:
 
-```rust
+```rust,no_run
 #[hotpath::measure] // time every call to this function
 fn normalize_url(raw: &str) -> String {
     // ...

@@ -73,7 +73,8 @@ int bm_add(int a, int b);
 but now in the Rust code, we expect it to return 64-bit integers instead of
 32-bit integers:
 
-```rust
+```rust,no_run
+# use std::ffi::c_longlong;
 unsafe extern "C" {
     fn bm_add(a: c_longlong, b: c_longlong) -> c_longlong;
 }

@@ -33,7 +33,7 @@ a mutable pointer, so `add` could write the output there, but it also returns
 We don't really have a way of knowing for sure. Here is the equivalent Rust
 function:
 
-```rust,ignore
+```rust,compile_fail
 fn add(a: i32, b: i32) -> Option<i32>;
 ```
 
@@ -68,7 +68,7 @@ freely.
 
 In Rust we would express this using an `enum` (actually a combination of enums):
 
-```rust,ignore
+```rust,compile_fail
 enum Error {
     Foo,
     Bar,
@@ -81,7 +81,7 @@ Here is a neat trick: an enum whose variants carry no fields (a so-called
 _field-less_ enum) is nothing but an integer tag, and you can cast it to an
 integer with `as`:
 
-```rust
+```rust,no_run
 enum Error {
     Foo,      // variants are numbered starting at zero
     Bar = 45, // explicit tag
@@ -94,7 +94,7 @@ println!("{}", Error::Bar as usize); // print 45
 If you want to make sure tags match your old C version exactly (for interop
 purposes, for example), you might do this:
 
-```rust,ignore
+```rust,compile_fail
 #[repr(C)] // use the target's C ABI representation for enums
 enum Error {
     Foo = 0,
@@ -120,7 +120,7 @@ Strings deserve extra care. The obvious translation would be `char *` => `&str`
 void greet(const char *name);
 ```
 
-```rust,ignore
+```rust,compile_fail
 fn greet(name: &str);
 ```
 
@@ -152,7 +152,7 @@ int open_file(const char *path, int flags);
 constants, the `|`, `&`, and `!` operators, and methods like `contains`,
 `insert`, and `remove`:
 
-```rust,ignore
+```rust,compile_fail
 use bitflags::bitflags;
 
 bitflags! {
@@ -189,8 +189,12 @@ return 0;
 
 The literal translation is:
 
-```rust,ignore
+```rust,no_run
+# struct Bookmark { tags: Vec<String> }
+# fn matches(b: &Bookmark, query: &str) -> bool {
 for i in 0..b.tags.len() { if b.tags[i].contains(query) { return true; } }
+# false
+# }
 ```
 
 It works, but every `b.tags[i]` is a bounds check the optimizer may or may not
@@ -201,8 +205,11 @@ if you actually need the index and `.iter_mut()` if you need to change elements.
 From there it is a short step to the combinators, and the loop above is just
 `any` and looks like this:
 
-```rust,ignore
+```rust,no_run
+# struct Bookmark { tags: Vec<String> }
+# fn matches(b: &Bookmark, query: &str) -> bool {
 b.tags.iter().any(|tag| tag.contains(query))
+# }
 ```
 
 The other common shape is the pointer-bumping loop:
@@ -219,7 +226,8 @@ its own length, so loops like these become `.bytes()` or `.chars()`.
 
 The pointer-bumping loop would look like this in Rust:
 
-```rust,ignore
+```rust,no_run
+# let s = "rust,ffi,c";
 let n = s.bytes().filter(|&b| b == b',').count();
 ```
 

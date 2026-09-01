@@ -63,7 +63,7 @@ must initially satisfy. We re-implement every function the header declares in
 Rust and export it under the same symbol name using `#[unsafe(no_mangle)]` and
 `extern "C"`:
 
-```rust
+```rust,compile_fail
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn bm_normalize_url(
     url: Option<NonNull<c_char>>,

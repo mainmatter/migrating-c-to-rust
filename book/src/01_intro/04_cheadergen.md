@@ -7,7 +7,7 @@ code.
 To make a Rust function callable from C we'll need to first annotate it
 correctly:
 
-```rust
+```rust,no_run
 use std::ffi::c_char;
 
 #[unsafe(no_mangle)]

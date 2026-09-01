@@ -28,7 +28,7 @@ change the struct layout at any time (it is "undefined")[^1]. To have a stable
 layout that other languages can understand, we need to mark our structs with the
 `repr(C)` attribute.
 
-```rust
+```rust,no_run
 // we know the layout of this struct is always (16 bytes in total, because the
 // `usize` gives the whole struct an alignment of 8):
 // - `a` - 8 bytes
@@ -56,7 +56,7 @@ except the fields don't have names.
 
 The `repr(..)` attribute can also be used on `enum`s:
 
-```rust,ignore
+```rust,no_run
 // This corresponds to named u8 constants, where A = 0, B = 1, C = 2
 #[repr(u8)]
 enum Foo {
@@ -65,6 +65,7 @@ enum Foo {
     C,
 }
 
+# mod explicit_tags {
 // You can of course also assign explicit tags
 #[repr(u8)]
 enum Foo {
@@ -72,7 +73,8 @@ enum Foo {
     B = 2,
     C = 8,
 }
-
+# }
+# mod c_abi {
 // repr(C) also works and uses the "default enum size and sign for the target platform's C ABI"
 #[repr(C)]
 enum Foo {
@@ -80,13 +82,14 @@ enum Foo {
     B,
     C,
 }
+# }
 ```
 
 You can use enums with fields even though they don't have an inherent C
 equivalent. Rust defines a stable mapping
 [here](https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md).
 
-```rust,ignore
+```rust,no_run
 // A definition like this...
 #[repr(u8)]
 enum TwoCases {
@@ -101,15 +104,18 @@ union TwoCasesRepr {
 }
 
 #[repr(u8)]
+#[derive(Clone, Copy)]
 enum TwoCasesTag {
     A,
     B,
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)] // union fields have to be Copy
 struct TwoCasesVariantA(TwoCasesTag, u8, u16);
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 struct TwoCasesVariantB(TwoCasesTag, u16);
 ```
 
@@ -123,15 +129,18 @@ an attribute that can only be used on types with a single sized field. It
 guarantees that the layout of the outer type will be exactly the same as that of
 the inner type.
 
-```rust,ignore
+```rust,no_run
 // Foo is guaranteed to have the same representation as `*const u8`!
 #[repr(transparent)]
 struct Foo(*const u8);
 
+# mod generic {
+# use std::marker::PhantomData;
 // because this is concerned with _sized_ fields (fields that have a size)
 // fields that have no size such as PhantomData can still be used!
 #[repr(transparent)]
 struct Foo<T>(*const u8, PhantomData<T>);
+# }
 ```
 
 `repr(transparent)` comes in handy if you need to cast pointers or `transmute`
