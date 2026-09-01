@@ -22,20 +22,20 @@ extra setup.
 When interpreting your Rust code, Miri tracks the initialization state and
 provenance of each allocation. It will flag reads outside the bounds of your
 allocation, before it's correctly initialized (unless you use `MaybeUninit`), or
-after it's freed. Miri will also catch data races including weak-memory
-reorderings and aliasing violations (writing through a mutable reference while
-other code still holds references to the allocation too) such as can happen with
-complex unsafe code. It also catches memory leaks: if a test ends without
-freeing every allocation, for example through `Box::into_raw` or
+after it's freed. Miri also catches data races, including weak-memory
+reorderings, and the aliasing violations that complex unsafe code tends to
+produce, such as writing through a mutable reference while other code still
+holds references to the same allocation. It also catches memory leaks: if a test
+ends without freeing every allocation, for example through `Box::into_raw` or
 `CString::into_raw` without a matching `from_raw`, Miri will fail the test.
 
 ## The downsides
 
 Miri is by design an interpreter, meaning it can only ever see code paths that
-actually executed. Code paths never exercised by your test suite are invisible
-to Miri. This also means non-deterministic bugs need luck: a bug that only
-happens on a specific thread interleaving will remain flaky.[^1] Miri is also
-slow: expect a 3,000–7,000× slowdown in some cases.
+actually execute. Code paths never exercised by your test suite are invisible to
+Miri. This also means non-deterministic bugs need luck: a bug that only happens
+on a specific thread interleaving will remain flaky.[^1] Miri is also slow:
+expect a 3,000–7,000× slowdown in some cases.
 
 > ## Quick Miri cheat sheet
 >

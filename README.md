@@ -2,7 +2,7 @@
 
 You've got a C codebase you'd like to move to Rust, but you're not sure where to
 start?\
-This course is for you!
+This course is for you.
 
 You'll learn techniques for migrating C codebases to Rust by solving exercises.\
 You'll learn how to maintain a safe mixed C-Rust codebase, incrementally migrate
@@ -12,10 +12,10 @@ need when things inevitably break — one exercise at a time.
 > [!NOTE]
 > This course has been written by
 > [Mainmatter](https://mainmatter.com/rust-consulting/).\
-> It's one of the trainings in
+> It's one of the workshops in
 > [our portfolio of Rust workshops](https://mainmatter.com/services/workshops/rust/).\
 > Check out our [landing page](https://mainmatter.com/rust-consulting/) if
-> you're looking for Rust consulting or training!
+> you're looking for Rust consulting or training.
 
 ## Getting started
 
@@ -29,7 +29,7 @@ We recommend you work on a branch, so you can easily track your progress and
 pull in updates from the main repository, if needed:
 
 ```bash
-cd c-to-rust-migration-book
+cd migrating-c-to-rust
 git checkout -b my-solutions
 ```
 
@@ -79,5 +79,3 @@ of this repository.-->
 
 Copyright © 2024- Mainmatter GmbH (https://mainmatter.com), released under the
 [Creative Commons Attribution-NonCommercial 4.0 International license](https://creativecommons.org/licenses/by-nc/4.0/).
-</content>
-</invoke>

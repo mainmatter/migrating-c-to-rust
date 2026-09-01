@@ -16,13 +16,14 @@ pub extern "C" fn bm_strlower(s: *mut c_char) {
 }
 ```
 
-Much like the FFI function declaration we saw in the first exercise, we instruct
-`rustc` to use a C-compatible calling convention through `extern "C" fn`
-(without it, Rust uses its own ABI, which of course C knows nothing about).
+Much like in the FFI function declaration we saw in the first exercise, we
+instruct `rustc` to use a C-compatible calling convention through
+`extern "C" fn` (without it, Rust uses its own ABI, which of course C knows
+nothing about).
 
 `#[unsafe(no_mangle)]` keeps the symbol name verbatim in the compiled object.
 Otherwise Rust would emit a so-called _mangled_ symbol name, a pseudo-random
-identifier that in regular Rust code prevents two equally named types or
+identifier that in regular Rust code prevents two identically named types or
 functions from causing "duplicate symbol" linking errors.
 
 In this case we do want the symbol name to be the same plain identifier we gave

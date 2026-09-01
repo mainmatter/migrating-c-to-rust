@@ -15,9 +15,8 @@ FFI-safe and guaranteed to have the same representation as `*mut T`.
 Note that C's `int` type and Rust's `i32`, for example, _almost always_ mean the
 same thing. But because the C standard's definition of these types is loose,
 there exist architectures for which this is not true. This is rare enough that
-the Rust team decided Rust's integer types are FFI-safe. If you want to be
-absolutely sure though, you can use the `std::ffi::c_*` types such as `c_int` or
-`c_longlong`.
+the Rust team decided Rust's integer types are FFI-safe. If you want to be sure,
+though, you can use the `std::ffi::c_*` types such as `c_int` or `c_longlong`.
 
 ## `repr(C)`
 
@@ -137,9 +136,9 @@ between types.
 
 ## Types that cannot cross the FFI boundary
 
-This list is long, but as a rule of thumb: any type with _generics_, and any
-more complex Rust struct that is not explicitly FFI-safe (such as `String`),
-cannot be shared.
+The list is long, but as a rule of thumb, two kinds of type cannot be shared:
+anything generic, and any Rust type that is not explicitly FFI-safe, such as
+`String`.
 
 _Generics_ are not FFI-safe because the compiler will monomorphize a concrete
 version of the struct for each type passed into the generic. If we pass the type

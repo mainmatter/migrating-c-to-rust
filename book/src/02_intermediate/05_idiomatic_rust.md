@@ -8,7 +8,7 @@ backgrounds.
 Translating between programming languages runs into the same problem as
 translating between human ones. You can do a _literal_ translation of a function
 or module, but it won't be right: it won't sit well with the code around it, it
-will cause confusion, and it will destroy the confidence in the code that the
+will cause confusion, and it will destroy confidence in the code that the
 rewrite was supposed to build.
 
 The good news is that these translations follow fairly regular patterns and are
@@ -30,8 +30,7 @@ At a glance: what does this function return, and how does it return it? `out` is
 a mutable pointer, so `add` could write the output there, but it also returns
 `int`, so maybe that's where the output goes?
 
-We don't really have a way of knowing for sure. Here is the equivalent Rust
-function:
+We have no way of knowing for sure. Here is the equivalent Rust function:
 
 ```rust
 fn add(a: i32, b: i32) -> Option<i32>;
@@ -58,10 +57,10 @@ Likewise, in C code you will often see the following:
 int doSomething();
 ```
 
-Or alternatively as a `typedef enum`, which is common in more modern code (this
-is also what `bm` does).
+You may also see it written as a `typedef enum`, which is common in more modern
+code and is what `bm` does.
 
-Much like out parameters, correct usage relies on conventions, good
+Much like with out parameters, correct usage relies on conventions, good
 documentation, and proper code review. The compiler will not catch you
 accidentally using the wrong constant: C converts these to and from `int`
 freely.

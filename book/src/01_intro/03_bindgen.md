@@ -3,11 +3,10 @@
 In the previous exercise you saw how easy it is for manual bindings to go out of
 sync, and the scary silent corruption that causes. This section introduces a
 tool that avoids all of this: **[`bindgen`][bindgen]**. It's a library you call
-from your Rust build script to generate Rust bindings to C code from the C
-header files. It runs libclang on a C header and emits matching Rust
-declarations: `extern` blocks, `#[repr(C)]` structs, integer constants. The
-header remains the single source of truth, with the Rust bindings being
-generated on every build.
+from your Rust build script to generate Rust bindings to C code from C header
+files. It runs libclang on a C header and emits matching Rust declarations:
+`extern` blocks, `#[repr(C)]` structs, integer constants. The header remains the
+single source of truth, with the Rust bindings being generated on every build.
 
 You call `bindgen` from your build script like so:
 

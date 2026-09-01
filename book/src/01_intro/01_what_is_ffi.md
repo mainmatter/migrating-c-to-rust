@@ -3,10 +3,10 @@
 Programming language design has taken many different paths over the years. We
 have C-like languages that are compiled all the way down to machine code, but we
 also have interpreted languages, lazy languages, languages that compile to a
-portable bytecode, garbage collected languages, and so much more.
+portable bytecode, garbage-collected languages, and so much more.
 
 As software engineers, we do not want to duplicate work unnecessarily. So what
-happens when work exists in a language other than the one you're using?
+happens when work exists in a language other than the one we're using?
 
 When developing in Python, for example, we don't want to port all the code we
 need just to use it. Instead, we rely on infrastructure that lets us call
@@ -43,10 +43,9 @@ Before we dissect the syntax though: you may have already noticed that nowhere
 in this snippet do we ask for `libc`. Why is that?
 
 This is because object file formats (ELF on Linux, Mach-O on macOS, PE on
-Windows) are all quite old and therefore quite simplistic. They have _one global
-namespace_, called a _symbol table_, that all functions (and statics) share. So
-you cannot say "call `time` from `libc`", you can only say "call a function
-named `time`".
+Windows) are all old and therefore simplistic. They have _one global namespace_,
+called a _symbol table_, that all functions (and statics) share. So you cannot
+say "call `time` from `libc`", you can only say "call a function named `time`".
 
 When a compiler builds a program, all function calls reference the function _by
 symbol_ ("call function named `X`"). To make this actually executable, we need
@@ -72,8 +71,8 @@ promise to the compiler: "this is the correct signature of this symbol, trust
 me". We commonly refer to it as a **binding**.
 
 Get the signature wrong and your Rust program will pass garbage to the FFI
-function without any way to check this at compile-time. The exact implementation
-won't be known until link-time, much later than the compiler's type-checking
+function without any way to check this at compile time. The exact implementation
+won't be known until link time, much later than the compiler's type-checking
 pass. This is why bindings are marked `unsafe`: you as the programmer have to
 ensure signatures are correct.
 

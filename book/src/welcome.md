@@ -55,7 +55,7 @@ We also recommend you work on a branch, so you can easily track your progress
 and pull in updates from the main repository, if needed:
 
 ```bash
-cd c-to-rust-migration-book
+cd migrating-c-to-rust
 git checkout -b my-solutions
 ```
 

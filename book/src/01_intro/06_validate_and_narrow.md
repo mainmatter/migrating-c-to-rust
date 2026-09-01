@@ -7,11 +7,11 @@ On paper that is everything you need, and it's tempting to go ahead and rewrite
 your project now. Take your C API and translate it one-for-one into Rust.
 
 The problem is that often you can't, and just as often you shouldn't. Real-world
-C is complicated, idiosyncratic, and (let's admit it!) full of skeletons. You're
-likely thinking about a Rust rewrite not just to address security problems or
-performance issues; rewriting in Rust is a chance to clean up your codebase:
-re-establish module boundaries, drop the legacy assumptions, write the module
-you wished you had.
+C is complicated, idiosyncratic, and (let's admit it!) full of skeletons in the
+closet. You're likely thinking about a Rust rewrite not just to address security
+problems or performance issues; rewriting in Rust is a chance to clean up your
+codebase: re-establish module boundaries, drop legacy assumptions, write the
+module you wished you had.
 
 At the same time big-bang rewrites (where you replace the entire codebase at
 once) famously never work. Which leaves a problem: you have a clean Rust
@@ -26,8 +26,9 @@ Many people think FFI is about _type translation_. That's true as far as it
 goes, but it's like saying programming is about typing words into a computer: it
 misses the point. The _main_ job of your FFI interface is **establishing
 confidence**. In a legacy codebase you rarely know with 100% certainty that
-reality matches your assumptions: some caller might actually pass a nullptr, the
-`*const c_char` that used to be UTF-8 might now hold binary data.
+reality matches your assumptions: some caller might actually pass a null
+pointer, or the `*const c_char` that used to be UTF-8 might now hold binary
+data.
 
 The FFI boundary is your chance to turn legacy uncertainty into known-good state
 before it crosses into your new system. Uncertainty leaks. Your FFI must be a
@@ -48,7 +49,7 @@ option. For example: at Mainmatter, we encourage contributors to use
 `Option<NonNull<T>>` instead of `*mut T` as much as possible, for the simple
 reason that a `*mut T` can be dereferenced directly (`*ptr`), which triggers UB
 if the pointer is null. You would have to add a manual `if ptr.is_null() {}`
-check before every pointer dereference. With `Option<NonNull<T>>` on the other
+check before every pointer dereference. With `Option<NonNull<T>>`, on the other
 hand, the type system _forces_ you to handle the `None` case explicitly. Even
 the laziest `.unwrap()` will result in a loud panic instead of potentially
 silent UB.
