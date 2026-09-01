@@ -1,6 +1,6 @@
 //! This tiny FFI module has been copied from C and needs a lint pass.
 //!
-//! Run `wr check` from this directory to see the complete lint set. Fix every
+//! Run `wr` from the repository root to see the complete lint set. Fix every
 //! warning without disabling a lint. Keep the public API's intent: raw-pointer
 //! functions must document their safety contract, and FFI functions must use
 //! FFI-safe types.

@@ -12,7 +12,7 @@ each error variant means. Write them all down.[^1] Rust's `# Safety` convention,
 being just a comment, works with `extern "C"` functions too, and `cheadergen`
 emits them as C doc comments in the header files:
 
-```rust
+```rust,ignore
 /// Normalize a URL into the caller's buffer.
 ///
 /// # Ownership
@@ -26,7 +26,7 @@ emits them as C doc comments in the header files:
 /// - `BmResult::ErrInvalidUrl` if `url` is null or not valid UTF-8.
 /// - `BmResult::ErrBufferTooSmall` if the result wouldn't fit in `out_len` bytes.
 ///
-/// [valid]:
+/// [valid]: https://doc.rust-lang.org/std/ptr/index.html#safety
 #[no_mangle]
 pub unsafe extern "C" fn bm_normalize_url(
     url: Option<NonNull<c_char>>,

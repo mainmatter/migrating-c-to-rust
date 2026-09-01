@@ -55,7 +55,7 @@ You would typically wrap them in a safe, idiomatic API. This is the common
 ## Head to the exercise
 
 Replace the hand-written `extern` block from the previous section with `bindgen`
-in `build.rs`. Safe wrappers and tests stay identical.
+in `build.rs`. The tests stay identical.
 
 <details><summary><b>Tip</b></summary>
 

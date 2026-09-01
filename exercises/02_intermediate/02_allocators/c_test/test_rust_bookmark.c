@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 int main(void) {
@@ -25,5 +26,6 @@ int main(void) {
   assert(rust_bookmark_new("https://example.com", NULL, 1) == NULL);
   rust_bookmark_free(NULL);
 
+  printf("ok\n");
   return 0;
 }

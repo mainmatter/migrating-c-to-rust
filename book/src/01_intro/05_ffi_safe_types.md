@@ -56,7 +56,7 @@ except the fields don't have names.
 
 The `repr(..)` attribute can also be used on `enum`s:
 
-```rust
+```rust,ignore
 // This corresponds to named u8 constants, where A = 0, B = 1, C = 2
 #[repr(u8)]
 enum Foo {
@@ -86,7 +86,7 @@ You can use enums with fields even though they don't have an inherent C
 equivalent. Rust defines a stable mapping
 [here](https://github.com/rust-lang/rfcs/blob/master/text/2195-really-tagged-unions.md).
 
-```rust
+```rust,ignore
 // A definition like this...
 #[repr(u8)]
 enum TwoCases {
@@ -123,7 +123,7 @@ an attribute that can only be used on types with a single sized field. It
 guarantees that the layout of the outer type will be exactly the same as that of
 the inner type.
 
-```rust
+```rust,ignore
 // Foo is guaranteed to have the same representation as `*const u8`!
 #[repr(transparent)]
 struct Foo(*const u8);

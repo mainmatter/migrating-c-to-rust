@@ -202,6 +202,10 @@ Tools like Valgrind give every allocation a birth certificate: run the test
 binary under `valgrind --leak-check=full` and it will tell you not just that a
 block leaked, but which call stack allocated it.
 
+Valgrind has no Apple Silicon support, so on an M-series Mac reach for `leaks`,
+for AddressSanitizer via `-Zsanitizer=address`, or, for the Rust side of the
+boundary, for Miri, which we cover in a later section.
+
 ## Head to the exercise
 
 You'll port `bm`'s `Bookmark` type, including its allocation and deallocation
