@@ -80,17 +80,22 @@ unsafe extern "C" {
 ```
 
 How will this example fail? If you try it yourself, you will notice that it
-doesn't. The reason is that modern CPUs pass function arguments in registers and
-these registers are always _word-sized_, meaning 64-bit on 64-bit machines. This
-means that internally even 32-bit ints are passed as 64-bit integers instead.
+doesn't. Function arguments are passed in registers, and on a 64-bit machine
+those registers are 64 bits wide, so a 32-bit `int` occupies one of them with
+room to spare. What the upper half of the register holds is not something the
+declaration can rely on: some ABIs require a narrow integer to be sign-extended
+across the full register, others leave the high bits unspecified entirely.
+Nothing widens the argument on your behalf. Reading it back as a 64-bit integer
+just happens to give the right answer here.
 
 You can see this in Compiler Explorer here:
 [The correct version](https://godbolt.org/z/PzrM4a575) passes `a` and `b` in the
 `a0` and `a1` registers (the `li a0, 1` and `li a1, 2` lines do the loading) and
-passes the return value in the `a0` register. Those registers are 64-bit
-registers though and so you can see the
+passes the return value in the `a0` register. Those registers are 64 bits wide,
+so you can see the
 [incorrect `c_longlong`-expecting version](https://godbolt.org/z/E97EeoEP6)
-**just works** because the registers were 64-bit anyway.
+**just works**: the values are small and positive, and nothing has put anything
+else in the upper halves of `a0` and `a1`.
 
 Now, if your 64-bit numbers stay below the 32-bit max value, everything just
 happens to work. But it is _very_ fragile. As you can see here,

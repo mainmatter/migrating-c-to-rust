@@ -201,10 +201,10 @@ treat every FFI contract as something to validate at the boundary.
 
 ## Head to the exercise
 
-You'll enable these lints on the crates from the earlier exercises and fix
-everything they flag. Some warnings are mechanical; others point to a real bug.
-The point isn't to make `cargo clippy` quiet. It's to understand and document
-every unsafe operation that remains.
+You'll work through a small FFI module with the full lint set already switched
+on. Some warnings are mechanical, others point to a real bug. The point isn't to
+make `cargo clippy` quiet. It's to understand and document every unsafe
+operation that remains.
 
 [^1]: The complete list of Clippy lints is available at
     <https://rust-lang.github.io/rust-clippy/master/index.html>.

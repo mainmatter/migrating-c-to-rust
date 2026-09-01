@@ -86,7 +86,7 @@ fn embedded_tab_is_rejected() {
 
 #[test]
 fn non_utf8_is_rejected() {
-    let input: Vec<u8> = vec![b'h', b't', b't', b':', 0x80];
+    let input: Vec<u8> = vec![b'h', b't', b't', b':', 0x80, 0];
     let mut output = vec![0u8; 64];
 
     let ret = unsafe {
