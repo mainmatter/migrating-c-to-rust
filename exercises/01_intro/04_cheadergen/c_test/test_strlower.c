@@ -4,10 +4,10 @@
  * Build & run by hand (from this crate's directory):
  *
  *   cargo build
- *   cheadergen generate --lang c --output-dir c_test -p cheadergen
+ *   cheadergen generate --lang c --output-dir c_test -p bm_cheadergen
  *   cc -Wall -Wextra -std=c11 -I. \
  *      c_test/test_strlower.c \
- *      ../../../target/debug/libcheadergen.a \
+ *      ../../../target/debug/libbm_cheadergen.a \
  *      -o ../../../target/debug/test_strlower
  *   ../../../target/debug/test_strlower
  *
@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "cheadergen.h"
+#include "bm_cheadergen.h"
 
 int main(void) {
   char mixed[] = "HELLO World 123";

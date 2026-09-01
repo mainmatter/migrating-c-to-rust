@@ -10,7 +10,7 @@ args = [
   "-std=c11",
   "-I.",
   "c_test/test_strlower.c",
-  "../../../target/debug/libcheadergen.a",
+  "../../../target/debug/libbm_cheadergen.a",
   "-o",
   "../../../target/debug/test_strlower",
 ]

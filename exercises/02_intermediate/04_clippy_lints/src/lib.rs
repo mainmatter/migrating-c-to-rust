@@ -1,9 +1,11 @@
 //! This tiny FFI module has been copied from C and needs a lint pass.
 //!
-//! Run `wr` from the repository root to see the complete lint set. Fix every
-//! warning without disabling a lint. Keep the public API's intent: raw-pointer
-//! functions must document their safety contract, and FFI functions must use
-//! FFI-safe types.
+//! Run `wr` from the repository root to see the complete lint set. Resolve
+//! every warning, either by fixing the code or, where the code is right and the
+//! lint cannot know that, with an `allow` scoped as tightly as possible and a
+//! comment explaining why the operation is sound. Keep the public API's intent:
+//! raw-pointer functions must document their safety contract, and FFI functions
+//! must use FFI-safe types.
 
 use core::mem;
 

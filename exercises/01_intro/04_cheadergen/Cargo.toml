@@ -1,5 +1,5 @@
 [package]
-name = "cheadergen"
+name = "bm_cheadergen"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

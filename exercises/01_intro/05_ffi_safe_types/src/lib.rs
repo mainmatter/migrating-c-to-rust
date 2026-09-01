@@ -2,6 +2,8 @@ pub struct Tag {
     pub name: String,
 }
 
+// From this exercise on, `wr` regenerates the C header for you before it builds
+// the harness, so you don't have to run `cheadergen generate` by hand again.
 #[no_mangle]
 pub extern "C" fn bm_tag_describe(tag: Tag) -> String {
     // `Tag` and `String` are both types that aren't FFI-safe. We need to replace

@@ -86,8 +86,8 @@ us build something with better diagnostics and fewer surprises.
 ## Head to the exercise
 
 You'll port the `bm_strlower` function to Rust and call
-`cheadergen generate --lang c --output-dir c_test -p cheadergen` to generate the
-header automatically.
+`cheadergen generate --lang c --output-dir c_test -p bm_cheadergen` to generate
+the header automatically.
 
 [bindgen]: https://rust-lang.github.io/rust-bindgen/
 [cheadergen]: https://github.com/LukeMathWalker/cheadergen
