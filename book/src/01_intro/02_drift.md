@@ -124,7 +124,7 @@ generated assembly.
 
 [^1]: Yes, the LLVM bitcode embedded by toolchains for LTO (Rust's
     `-Clto=thin -Cembed-bitcode=yes` and Clang's `-flto=thin`) _does_ carry the
-    information to catch problems like this at link time and it _is_
+    information to catch problems like this at link-time and it _is_
     cross-language, but linkers do not generally validate it. (The `wasm-ld`
     linker does, but only for Wasm.) The reasons are many, the most important
     being that validating it would break existing compiler optimizations. You
