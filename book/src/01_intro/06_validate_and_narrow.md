@@ -53,7 +53,7 @@ hand, the type system _forces_ you to handle the `None` case explicitly. Even
 the laziest `.unwrap()` will result in a loud panic instead of potentially
 silent UB.
 
-```rust
+```rust,ignore
 // `*mut T` silently accepts null. You'll remember to check. Until you don't.
 pub extern "C" fn bm_do_thing(input: *mut Thing) -> BmResult { /* … */
 }
@@ -77,7 +77,7 @@ up. Rust gives you better tools: `bool` for yes/no, an enum for branching
 outcomes, an out-parameter for the count. These types usually translate well
 into C headers too, so use them.
 
-```rust
+```rust,ignore
 #[repr(C)]
 pub enum BmReadStatus { Ok, Eof, IoError }
 

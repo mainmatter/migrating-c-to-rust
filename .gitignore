@@ -10,4 +10,5 @@ progress.db
 CLAUDE.md
 voice-prompt.md
 INSTRUCTOR.md
-exercises/01_intro/05_cheadergen/c_test/cheadergen.h
+exercises/01_intro/04_cheadergen/c_test/cheadergen.h
+exercises/01_intro/05_ffi_safe_types/c_test/ffi_safe_types.h

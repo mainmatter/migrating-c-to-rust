@@ -111,12 +111,10 @@ troubleshoot in the worst case.
 
 ## Head to the exercise
 
-<!-- BRIDGE GAP (Jonas): the prose above frames drift as the hand-written *Rust
-     binding* going stale. The exercise inverts this: the binding stays fixed
-     and correct-looking while the *C implementation* drifts underneath it.
-     Consider a sentence here noting the mismatch (and thus the bug) is
-     identical either way -- doing it from the C side just keeps the Rust crate
-     compiling so you can actually run it and watch the fallout. -->
+The exercise turns this around: the Rust binding stays fixed and correct-looking
+while the C implementation drifts underneath it. It is the same mismatch, and
+therefore the same bug, from either side. Drifting the C side just keeps the
+Rust crate compiling, so you can run it and watch what happens.
 
 Play with the different "drifted" C implementations of `bm_add` to see what
 happens on your machine. Feel free to also play around a bit with the Compiler

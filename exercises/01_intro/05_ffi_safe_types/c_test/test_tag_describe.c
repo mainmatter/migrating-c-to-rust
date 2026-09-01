@@ -8,10 +8,9 @@
  *      c_test/test_tag_describe.c \
  *      ../../../target/debug/libffi_safe_types.a \
  *      -o ../../../target/debug/test_tag_describe
- *   ./target/debug/test_tag_describe
+ *   ../../../target/debug/test_tag_describe
  *
- * The `-I.` flag picks up the header that `cheadergen` writes into the crate
- * root via `build.rs`.
+ * The `-I.` flag picks up the header that `cheadergen` writes into `c_test/`.
  */
 
 #include <assert.h>

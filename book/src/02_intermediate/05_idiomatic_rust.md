@@ -33,7 +33,7 @@ a mutable pointer, so `add` could write the output there, but it also returns
 We don't really have a way of knowing for sure. Here is the equivalent Rust
 function:
 
-```rust
+```rust,ignore
 fn add(a: i32, b: i32) -> Option<i32>;
 ```
 
@@ -55,7 +55,7 @@ Likewise, in C code you will often see the following:
 #define ERR_FOO 1
 #define ERR_BAR 2
 
-int doSomething();
+int do_something();
 ```
 
 Or alternatively as a `typedef enum`, which is common in more modern code (this
@@ -68,13 +68,13 @@ freely.
 
 In Rust we would express this using an `enum` (actually a combination of enums):
 
-```rust
+```rust,ignore
 enum Error {
     Foo,
     Bar,
 }
 
-fn doSomething() -> Result<(), Error>;
+fn do_something() -> Result<(), Error>;
 ```
 
 Here is a neat trick: an enum whose variants carry no fields (a so-called
@@ -94,14 +94,14 @@ println!("{}", Error::Bar as usize); // print 45
 If you want to make sure tags match your old C version exactly (for interop
 purposes, for example), you might do this:
 
-```rust
+```rust,ignore
 #[repr(C)] // use the target's C ABI representation for enums
 enum Error {
     Foo = 0,
     Bar = 1,
 }
 
-fn doSomething() -> Result<(), Error>;
+fn do_something() -> Result<(), Error>;
 ```
 
 `#[repr(C)]` gives `Error` the size and signedness a C compiler would pick for
@@ -120,7 +120,7 @@ Strings deserve extra care. The obvious translation would be `char *` => `&str`
 void greet(const char *name);
 ```
 
-```rust
+```rust,ignore
 fn greet(name: &str);
 ```
 
@@ -152,7 +152,7 @@ int open_file(const char *path, int flags);
 constants, the `|`, `&`, and `!` operators, and methods like `contains`,
 `insert`, and `remove`:
 
-```rust
+```rust,ignore
 use bitflags::bitflags;
 
 bitflags! {
@@ -189,7 +189,7 @@ return 0;
 
 The literal translation is:
 
-```rust
+```rust,ignore
 for i in 0..b.tags.len() { if b.tags[i].contains(query) { return true; } }
 ```
 
@@ -201,7 +201,7 @@ if you actually need the index and `.iter_mut()` if you need to change elements.
 From there it is a short step to the combinators, and the loop above is just
 `any` and looks like this:
 
-```rust
+```rust,ignore
 b.tags.iter().any(|tag| tag.contains(query))
 ```
 
@@ -219,7 +219,7 @@ its own length, so loops like these become `.bytes()` or `.chars()`.
 
 The pointer-bumping loop would look like this in Rust:
 
-```rust
+```rust,ignore
 let n = s.bytes().filter(|&b| b == b',').count();
 ```
 
