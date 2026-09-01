@@ -1,16 +1,16 @@
 # High-quality FFI APIs
 
-We previously introduced two "mechanical" rules: always validate your input, and
-don't overload primitives. The two that follow are more conceptual. Don't let
-that fool you: they are just as important as the first two, if not more so.
+We previously introduced two "mechanical" rules: always validate your inputs,
+and don't overload primitives. The two that follow are more conceptual. Don't
+let that fool you: they are just as important as the first two, if not more so.
 
 ## Documentation, documentation, documentation
 
 Some invariants you can check at runtime. Many you can't: who owns this pointer,
-whether the string is copied or borrowed, whether `free` has run before, what
+whether the string is copied or borrowed, whether `free` has already run, what
 each error variant means. Write them all down.[^1] Rust's `# Safety` convention,
 being just a comment, works with `extern "C"` functions too, and `cheadergen`
-emits them as C doc comments in the header files:
+emits those sections as C doc comments in the header files:
 
 ```rust,compile_fail
 /// Normalize a URL into the caller's buffer.
@@ -62,10 +62,11 @@ traceability machine-checkable in the future.[^2]
 
 Every exposed function is API surface you'll maintain forever, an `unsafe`
 contract to keep correct, and a per-call cost the compiler can't optimize away.
-Cross-language LTO can inline across, at the cost of a real setup burden. The
-cheapest FFI function is the one you didn't expose. Expose coarse operations,
-such as `bm_thing_update_with(...)` over one setter per field, and treat the
-boundary as a small set of verbs, not a mirror of your internal struct.
+Cross-language LTO can inline across the boundary, at the cost of a real setup
+burden. The cheapest FFI function is the one you didn't expose. Prefer coarse
+operations, such as `bm_thing_update_with(...)`, over one setter per field, and
+treat the boundary as a small set of verbs, not a mirror of your internal
+struct.
 
 ## Head to the exercise
 

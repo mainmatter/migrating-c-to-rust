@@ -95,7 +95,7 @@ after:   cli.o, index.o, libnormalize.a (Rust), ...
 
 ## Structuring the Rust side
 
-Inside the crate we keep two layers, following the firewall pattern from Chapter
+Inside the crate we keep two layers, following the firewall pattern from section
 1.6:
 
 1. a thin `extern "C"` surface that validates raw pointers and converts C types

@@ -47,12 +47,12 @@ be its own self-contained universe.
 And even if we had a mechanism to share information between compilation units,
 we would need to make it language-agnostic so that a C compilation unit and a
 Rust compilation unit can interoperate. How would that even work with wildly
-different type systems? [^1]
+different type systems?[^1]
 
 So compilers have resorted to _manual escape hatches_ like the `extern "C"`
 block you wrote. You as the programmer promise to the compiler that a function
-with given name and given signature will exist at link-time and the compiler
-takes your word for it.
+with a given name and a given signature will exist at link time, and the
+compiler takes your word for it.
 
 ## Possible consequences
 
@@ -107,8 +107,8 @@ This example is particularly scary, because for 99% of inputs and deployment
 configurations the mistake is virtually consequence-free. The addition will
 continue to work as expected. But as soon as the input is unusual, the
 deployment target is different, _or you add code that will make the compiler
-change the generated code even a bit_ this will be a bug that takes you weeks to
-troubleshoot in the worst case.
+change the generated code even a bit_, this will be a bug that takes you weeks
+to troubleshoot in the worst case.
 
 ## Head to the exercise
 
@@ -124,7 +124,7 @@ generated assembly.
 
 [^1]: Yes, the LLVM bitcode embedded by toolchains for LTO (Rust's
     `-Clto=thin -Cembed-bitcode=yes` and Clang's `-flto=thin`) _does_ carry the
-    information to catch problems like this at link-time and it _is_
+    information to catch problems like this at link time and it _is_
     cross-language, but linkers do not generally validate it. (The `wasm-ld`
     linker does, but only for Wasm.) The reasons are many, the most important
     being that validating it would break existing compiler optimizations. You
