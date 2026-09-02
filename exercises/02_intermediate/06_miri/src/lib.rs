@@ -20,7 +20,7 @@
 //!    "first draft" wrapper below that the native tests never noticed. Read the
 //!    report (the backtrace points at the allocation) and fix `normalize`.
 
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 
 /// Mirrors `BmResult` in `c_src/tag.h`.
 #[repr(C)]
@@ -45,13 +45,13 @@ unsafe extern "C" {
 pub fn normalize(raw: &str) -> Result<String, BmResult> {
     // Hand the string over to C. `into_raw` gives us a stable `*mut c_char`
     // that C is free to read for as long as it likes.
-    let raw = CString::new(raw)
-        .map_err(|_| BmResult::ErrInvalidUrl)?
-        .into_raw();
+    let raw = CString::new(raw).map_err(|_| BmResult::ErrInvalidUrl)?;
 
     let mut out = [0 as c_char; BM_MAX_TAG_LEN];
 
-    let result = unsafe { tag_normalize(raw, out.as_mut_ptr(), out.len()) };
+    // SAFETY: `raw` is a NUL-terminated C string that outlives the call, and
+    // `out` is valid for writes of `out.len()` bytes.
+    let result = unsafe { tag_normalize(raw.as_ptr(), out.as_mut_ptr(), out.len()) };
     if result != BmResult::Ok {
         return Err(result);
     }
@@ -64,19 +64,55 @@ pub fn normalize(raw: &str) -> Result<String, BmResult> {
         .map_err(|_| BmResult::ErrInvalidUrl)
 }
 
-// #[cfg(miri)]
-// mod stubs {
-//     use super::*;
+#[cfg(miri)]
+mod stubs {
+    use super::*;
 
-//     #[unsafe(no_mangle)]
-//     unsafe extern "C" fn tag_normalize(
-//         raw: *const c_char,
-//         out: *mut c_char,
-//         out_len: usize,
-//     ) -> BmResult {
-//         todo!()
-//     }
-// }
+    /// A Rust stand-in for `tag_normalize` from `c_src/tag.c`.
+    ///
+    /// # Safety
+    ///
+    /// Same contract as `tag_normalize`: `raw` must be NUL-terminated and `out`
+    /// must be valid for writes of `out_len` bytes.
+    #[unsafe(no_mangle)]
+    unsafe extern "C" fn tag_normalize(
+        raw: *const c_char,
+        out: *mut c_char,
+        out_len: usize,
+    ) -> BmResult {
+        if raw.is_null() || out.is_null() || out_len == 0 {
+            return BmResult::ErrInvalidUrl;
+        }
+
+        // SAFETY: the caller guarantees `raw` points at a NUL-terminated string.
+        let raw = unsafe { CStr::from_ptr(raw) };
+
+        // Skip leading whitespace, then take everything up to the next
+        // whitespace or ',', lowercased.
+        let tag: Vec<c_char> = raw
+            .to_bytes()
+            .iter()
+            .copied()
+            .skip_while(u8::is_ascii_whitespace)
+            .take_while(|b| !b.is_ascii_whitespace() && *b != b',')
+            .map(|b| b.to_ascii_lowercase() as c_char)
+            .collect();
+
+        // `out_len` includes the NUL, so a tag of exactly `out_len` bytes does
+        // not fit. An empty result is an error too.
+        if tag.is_empty() || tag.len() >= out_len {
+            return BmResult::ErrInvalidUrl;
+        }
+
+        // SAFETY: `tag.len() < out_len` was just checked, and the caller
+        // guarantees `out` is valid for writes of `out_len` bytes.
+        unsafe { std::ptr::copy_nonoverlapping(tag.as_ptr(), out, tag.len()) };
+        // SAFETY: `tag.len() < out_len`, so this index is still inside `out`.
+        unsafe { out.add(tag.len()).write(0) };
+
+        BmResult::Ok
+    }
+}
 
 #[cfg(test)]
 mod tests {

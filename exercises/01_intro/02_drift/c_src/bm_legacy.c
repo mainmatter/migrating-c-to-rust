@@ -11,7 +11,7 @@
 // exists for `bm_add` at link time.
 
 // // A definition aligned with the Rust one. Tests should pass.
-// int bm_add(int a, int b) { return a + b; }
+int bm_add(int a, int b) { return a + b; }
 
 // // Drifted! It interprets the arguments (and result) as floats rather than
 // // integers.
