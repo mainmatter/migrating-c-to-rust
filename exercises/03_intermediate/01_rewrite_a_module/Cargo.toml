@@ -6,4 +6,5 @@ license.workspace = true
 
 [lib]
 # TODO 1 OF 2: Configure this crate to produce a static library that C can link.
-# crate-type = ["staticlib"]
+crate-type = ["staticlib"]
+

@@ -13,7 +13,9 @@
 
 /// Return the version of the `bm` interface.
 // TODO 2 OF 2: Use the C ABI and export the exact `bm_version` symbol.
-pub fn bm_version() -> u32 {
+#[unsafe(no_mangle)]
+pub extern "C" fn bm_version() -> u32 {
+
     1
 }
 

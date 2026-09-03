@@ -5,8 +5,14 @@
 /// `a` and `b` must be non-null, aligned, and point to two different
 /// initialized `i32`s that nothing else accesses during the call.
 pub unsafe fn swap_values(a: *mut i32, b: *mut i32) {
-    // TODO: swap the two values, reading and writing through the pointers.
-    todo!()
+    // SAFETY: the caller guarantees both pointers are non-null, aligned,
+    // point to distinct initialized `i32`s, and are not accessed elsewhere.
+    unsafe {
+        let tmp = a.read();
+        a.write(b.read());
+        b.write(tmp);
+    }
+
 }
 
 #[cfg(test)]

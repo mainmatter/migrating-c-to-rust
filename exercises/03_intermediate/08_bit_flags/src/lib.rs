@@ -24,18 +24,22 @@ pub fn update_fields(
     enable: BookmarkFields,
     disable: BookmarkFields,
 ) -> Result<BookmarkFields, FieldsError> {
-    // TODO 1 OF 2: Reject fields present in both `enable` and `disable`.
-    // Otherwise insert the enabled fields and remove the disabled fields.
-    let _ = (current, enable, disable);
-    Err(FieldsError::ConflictingChanges)
+    if enable.intersects(disable) {
+        return Err(FieldsError::ConflictingChanges);
+    }
+    let mut fields = current;
+    fields.insert(enable);
+    fields.remove(disable);
+    Ok(fields)
+
 }
 
 /// Strictly convert raw C masks, apply the update, and return raw result bits.
 pub fn update_fields_from_c(current: u32, enable: u32, disable: u32) -> Result<u32, FieldsError> {
-    // TODO 2 OF 2: Convert all three masks with `from_bits`, call
-    // `update_fields`, and return the updated mask with `bits()`.
-    let _ = (current, enable, disable);
-    Err(FieldsError::UnknownBits)
+    let from_c = |raw| BookmarkFields::from_bits(raw).ok_or(FieldsError::UnknownBits);
+    update_fields(from_c(current)?, from_c(enable)?, from_c(disable)?).map(|fields| fields.bits())
+
+
 }
 
 #[cfg(test)]
