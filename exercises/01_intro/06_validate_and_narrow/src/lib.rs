@@ -1,5 +1,5 @@
 use std::{
-    ffi::{c_char, CStr},
+    ffi::{CStr, c_char},
     ptr::NonNull,
 };
 
@@ -11,7 +11,8 @@ pub enum NormalizeUrlOutcome {
     OutBufferIsTooShort = 7,
 }
 
-/// Returns whether a given
+/// Returns whether `b` may appear in a URL unescaped (RFC 3986 unreserved,
+/// reserved, and the `%` of a percent-escape).
 const fn is_url_safe(b: u8) -> bool {
     matches!(b, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9'
         | b'-' | b'.' | b'_' | b'~'
@@ -43,7 +44,6 @@ pub unsafe extern "C" fn bm_normalize_url(
             return OutBufferIsTooShort;
         };
         if !is_url_safe(*b) {
-            println!("{b:?} is not URL safe");
             return InvalidUrl;
         }
         *slot = b.to_ascii_lowercase();
