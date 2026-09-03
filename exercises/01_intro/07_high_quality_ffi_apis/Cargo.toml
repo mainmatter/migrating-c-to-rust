@@ -7,6 +7,13 @@ license.workspace = true
 [lib]
 path = "src/lib.rs"
 
+[lints.rust]
+# `undocumented_unsafe_blocks` below only fires on *explicit* `unsafe {}`
+# blocks, and in edition 2021 the body of an `unsafe fn` is already implicitly
+# unsafe. Without this, a solution that writes no explicit blocks needs no
+# `// SAFETY:` comments at all and the lint below never fires.
+unsafe_op_in_unsafe_fn = "deny"
+
 [lints.clippy]
 # The section is about per-block `// SAFETY:` comments, which `missing_safety_doc`
 # does not cover. This lint is what actually checks them.
