@@ -11,6 +11,7 @@
  *   ../../../target/debug/test_ffi_surface
  */
 
+#include <assert.h>
 #include <stdio.h>
 
 #include "ffi_surface.h"
@@ -19,6 +20,12 @@ int main(void) {
   /* Calling it is the whole point: the symbol has to exist under the name the
    * C API promises, whatever the Rust function ends up being called. */
   BMNormalizeURL();
+
+  /* `copy_bytes` hands back what it was given, which also pins the parameter
+   * as pointer-shaped: an FFI-safe-but-wrong type such as `usize` would not
+   * round-trip an address. */
+  unsigned char buf[4] = {1, 2, 3, 4};
+  assert(copy_bytes(buf) == buf);
 
   printf("ok\n");
   return 0;

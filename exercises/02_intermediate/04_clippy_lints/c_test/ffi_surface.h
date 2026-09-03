@@ -11,3 +11,6 @@
 #pragma once
 
 void BMNormalizeURL(void);
+
+/* Hands back the buffer it was given. */
+unsigned char *copy_bytes(unsigned char *bytes);
