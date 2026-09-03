@@ -1,27 +1,59 @@
-use std::ffi::c_char;
+use std::{
+    ffi::{CStr, c_char},
+    ptr::NonNull,
+};
+
+#[repr(i32)]
+pub enum NormalizeUrlOutcome {
+    Success,
+    InvalidUrl = 3,
+    InvalidOutBuffer = 6,
+    OutBufferIsTooShort = 7,
+}
+
+/// Returns whether `b` may appear in a URL unescaped (RFC 3986 unreserved,
+/// reserved, and the `%` of a percent-escape).
+const fn is_url_safe(b: u8) -> bool {
+    matches!(b, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9'
+        | b'-' | b'.' | b'_' | b'~'
+        | b':' | b'/' | b'?' | b'#' | b'[' | b']' | b'@'
+        | b'!' | b'$' | b'&' | b'\'' | b'(' | b')' | b'*' | b'+' | b',' | b';' | b'='
+        | b'%')
+}
 
 /// Normalize `url` (lowercase ASCII) into the caller-provided `out` buffer.
-///
-/// Returns 0 on success, -1 on error.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bm_normalize_url(
-    url: *const c_char,
-    out: *mut c_char,
+    url: Option<NonNull<c_char>>,
+    out: Option<NonNull<c_char>>,
     out_len: usize,
-) -> i32 {
-    let mut len = 0;
-    while *url.add(len) != 0 {
-        len += 1;
+) -> NormalizeUrlOutcome {
+    use NormalizeUrlOutcome::*;
+
+    let Some(url) = url else { return InvalidUrl };
+    let url = unsafe { CStr::from_ptr(url.as_ptr()) };
+    let Some(out) = out else {
+        return InvalidOutBuffer;
+    };
+    let output_slice: &mut [u8] =
+        unsafe { std::slice::from_raw_parts_mut(out.as_ptr().cast(), out_len) };
+
+    let url = url.to_bytes();
+    for (i, b) in url.iter().enumerate() {
+        let Some(slot) = output_slice.get_mut(i) else {
+            return OutBufferIsTooShort;
+        };
+        if !is_url_safe(*b) {
+            return InvalidUrl;
+        }
+        *slot = b.to_ascii_lowercase();
     }
 
-    for i in 0..len {
-        // raw pointer arithmetic, yuck...
-        let b = *url.add(i) as u8;
-        let normalized = if b.is_ascii_uppercase() { b + 32 } else { b };
-        *out.add(i) = normalized as c_char;
-    }
-    *out.add(len) = 0;
+    // Null termination
+    let Some(slot) = output_slice.get_mut(url.len()) else {
+        return OutBufferIsTooShort;
+    };
+    *slot = 0;
 
-    // we only ever return success?
-    0
+    Success
 }
