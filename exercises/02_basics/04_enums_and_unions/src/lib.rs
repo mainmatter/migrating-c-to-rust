@@ -40,10 +40,21 @@ pub enum Event {
 
 impl From<&Event> for CEvent {
     fn from(event: &Event) -> Self {
-        // TODO: set the tag for each variant, and write its data into the
-        // matching union field. `Started` has no data, but `data` still needs
-        // a value.
-        todo!()
+        match *event {
+            Event::Started => CEvent {
+                kind: EVENT_STARTED,
+                data: CEventData { code: 0 },
+            },
+            Event::Exited(code) => CEvent {
+                kind: EVENT_EXITED,
+                data: CEventData { code },
+            },
+            Event::Progress(ratio) => CEvent {
+                kind: EVENT_PROGRESS,
+                data: CEventData { ratio },
+            },
+        }
+
     }
 }
 

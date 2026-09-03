@@ -17,14 +17,16 @@ pub fn lower(byte: u8) -> u8 {
     // when you remove the `as i8` cast.
     //
     // TODO: make it build for both targets.
-    unsafe { to_lower(byte as i8) as u8 }
+    // SAFETY: `to_lower` accepts any `char` value and has no other requirements.
+    unsafe { to_lower(byte as c_char) as u8 }
+
 }
 
 /// Returns whether `byte` is an ASCII letter.
 pub fn is_ascii_letter(byte: u8) -> bool {
-    // TODO: call `is_letter`, with the same care. C answers yes-or-no questions
-    // with an `int`.
-    todo!()
+    // SAFETY: `is_letter` accepts any `char` value and has no other requirements.
+    unsafe { is_letter(byte as c_char) != 0 }
+
 }
 
 #[cfg(test)]

@@ -21,12 +21,24 @@
 // compiler reports for the declarations above.
 use std::ffi::c_int;
 
-// TODO: mirror `struct Point`.
-pub struct Point;
+#[repr(C)]
+pub struct Point {
+    pub x: f64,
+    pub y: f64,
+}
+
 
 // TODO: mirror `struct Shape`. C may leave `parent` null, so pick a Rust type
 // that says so: an `Option` around a non-null pointer.
-pub struct Shape;
+#[repr(C)]
+pub struct Shape {
+    pub kind: u8,
+    pub name: [std::ffi::c_char; 16],
+    pub origin: Point,
+    pub parent: Option<std::ptr::NonNull<Shape>>,
+    pub id: u32,
+}
+
 
 // TODO: `Fd` is a wrapper that C never sees: it passes a plain `int`. Make it a
 // tuple struct around a `c_int`, with the attribute that guarantees the same
@@ -36,7 +48,9 @@ pub struct Shape;
 // C can accept. Note that the compiler can't tell the two candidate attributes
 // apart here: it accepts either, and the ABI guarantee is the reason to prefer
 // one of them.
-pub struct Fd;
+#[repr(transparent)]
+pub struct Fd(c_int);
+
 
 /// Closes a file descriptor. Here it only hands the number back.
 #[unsafe(no_mangle)]
