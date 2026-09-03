@@ -21,6 +21,7 @@ unsafe extern "C" {
     pub fn upstream_bytes(bytes: Vec<u8>);
 }
 
+#[unsafe(no_mangle)]
 pub extern "C" fn copy_bytes(bytes: Vec<u8>) -> Vec<u8> {
     bytes
 }

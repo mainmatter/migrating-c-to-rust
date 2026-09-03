@@ -6,6 +6,10 @@ license.workspace = true
 
 [lib]
 path = "src/lib.rs"
+# `staticlib` so `wr` can link the C harness in `c_test/` against this crate and
+# let the linker check the exported symbol names. `lib` stays so that
+# `cargo test` and the `tests/` target still work.
+crate-type = ["lib", "staticlib"]
 
 [lints.rust]
 unsafe_op_in_unsafe_fn = "deny"

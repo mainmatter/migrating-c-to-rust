@@ -5,3 +5,24 @@ args = ["test", "-p", "bm_clippy_lints"]
 [[verification]]
 command = "cargo"
 args = ["clippy", "-p", "bm_clippy_lints", "--all-targets", "--", "-D", "warnings"]
+
+[[verification]]
+command = "cargo"
+args = ["build", "-p", "bm_clippy_lints"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+  "-std=c11",
+  "-I.",
+  "c_test/test_ffi_surface.c",
+  "../../../target/debug/libbm_clippy_lints.a",
+  "-o",
+  "../../../target/debug/test_ffi_surface",
+]
+
+[[verification]]
+command = "../../../target/debug/test_ffi_surface"
