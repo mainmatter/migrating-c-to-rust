@@ -28,10 +28,17 @@ pub fn change_bookmark_id(
     old_id: u32,
     new_id: u32,
 ) -> Result<(), ChangeIdError> {
-    // TODO 1 OF 2: Change `old_id` in place. Return `NotFound` if it does not
-    // exist and `Duplicate` if another bookmark already has `new_id`.
-    let _ = (index, old_id, new_id);
-    Err(ChangeIdError::NotFound)
+    let position = index
+        .ids
+        .iter()
+        .position(|&id| id == old_id)
+        .ok_or(ChangeIdError::NotFound)?;
+    if new_id != old_id && index.ids.contains(&new_id) {
+        return Err(ChangeIdError::Duplicate);
+    }
+    index.ids[position] = new_id;
+    Ok(())
+
 }
 
 /// Map the typed Rust result back to the C API's status codes.
@@ -45,10 +52,16 @@ pub unsafe extern "C" fn bm_change_bookmark_id_ffi(
     old_id: u32,
     new_id: u32,
 ) -> BmStatus {
-    // TODO 2 OF 2: Borrow `index`, call `change_bookmark_id`, and map its
-    // result to a `BmStatus`.
-    let _ = (index, old_id, new_id);
-    BmStatus::NotFound
+    // SAFETY: the caller guarantees `index` points to a valid `BookmarkIndex`
+    // that nothing else borrows during the call.
+    let index = unsafe { &mut *index };
+
+    match change_bookmark_id(index, old_id, new_id) {
+        Ok(()) => BmStatus::Ok,
+        Err(ChangeIdError::NotFound) => BmStatus::NotFound,
+        Err(ChangeIdError::Duplicate) => BmStatus::Duplicate,
+    }
+
 }
 
 #[cfg(test)]

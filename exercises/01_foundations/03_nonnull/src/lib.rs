@@ -9,9 +9,12 @@ pub struct Counter {
 ///
 /// `counter` must be null, or point to a valid `Counter`.
 pub unsafe fn counter_value(counter: *mut Counter) -> Option<u32> {
-    // TODO: turn the raw pointer into an `Option<NonNull<Counter>>`, then read
-    // the value only when there is a counter.
-    todo!()
+    std::ptr::NonNull::new(counter).map(|counter| {
+        // SAFETY: `counter` is non-null, and the caller guarantees a non-null
+        // pointer points to a valid `Counter`.
+        unsafe { counter.as_ref() }.value
+    })
+
 }
 
 #[cfg(test)]

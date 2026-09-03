@@ -22,8 +22,10 @@ pub struct Stats {
 /// `stats_free`.
 #[unsafe(no_mangle)]
 pub extern "C" fn stats_new() -> *mut Stats {
-    // TODO: put a `Stats` on the heap and hand ownership of it to C.
-    std::ptr::null_mut()
+    Box::into_raw(Box::new(Stats {
+        samples: Vec::new(),
+    }))
+
 }
 
 /// Records one sample.
@@ -34,8 +36,10 @@ pub extern "C" fn stats_new() -> *mut Stats {
 /// call may use the same `Stats` for the duration of this one.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn stats_add(stats: *mut Stats, sample: i32) {
-    // TODO: borrow the `Stats` mutably for this call, and add the sample.
-    let _ = (stats, sample);
+    // SAFETY: the caller guarantees a live `Stats` that nothing else uses.
+    let stats = unsafe { &mut *stats };
+    stats.samples.push(sample);
+
 }
 
 /// Returns the sum of the samples.
@@ -46,9 +50,10 @@ pub unsafe extern "C" fn stats_add(stats: *mut Stats, sample: i32) {
 /// call may modify the same `Stats` for the duration of this call.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn stats_sum(stats: *const Stats) -> i64 {
-    // TODO: borrow the `Stats` for this call, and add up its samples.
-    let _ = stats;
-    0
+    // SAFETY: the caller guarantees a live `Stats` that nothing modifies.
+    let stats = unsafe { &*stats };
+    stats.samples.iter().map(|&sample| i64::from(sample)).sum()
+
 }
 
 /// Frees a `Stats`, including its samples. Passing null does nothing.
@@ -58,8 +63,12 @@ pub unsafe extern "C" fn stats_sum(stats: *const Stats) -> i64 {
 /// `stats` must be null, or come from `stats_new` and not be used afterwards.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn stats_free(stats: *mut Stats) {
-    // TODO: take ownership back from C, and drop it.
-    let _ = stats;
+    if !stats.is_null() {
+        // SAFETY: the pointer came from `Box::into_raw` in `stats_new`, and the
+        // caller won't use it again.
+        drop(unsafe { Box::from_raw(stats) });
+    }
+
 }
 
 // Part two: a C type that Rust only ever sees as a pointer.
@@ -70,10 +79,12 @@ pub unsafe extern "C" fn stats_free(stats: *mut Stats) {
 
 use std::ptr::NonNull;
 
-// TODO: replace this with a type that stands for "a C struct whose layout is
-// none of my business": no public fields, neither `Send` nor `Sync`, and not
-// `Unpin`.
-pub struct Buffer;
+#[repr(C)]
+pub struct Buffer {
+    _data: (),
+    _marker: std::marker::PhantomData<(*mut u8, std::marker::PhantomPinned)>,
+}
+
 
 unsafe extern "C" {
     fn buffer_new() -> *mut Buffer;
@@ -90,24 +101,36 @@ pub struct OwnedBuffer(NonNull<Buffer>);
 impl OwnedBuffer {
     /// Creates a buffer, or returns `None` if the C library couldn't.
     pub fn new() -> Option<Self> {
-        // TODO: call `buffer_new`, and turn a null pointer into `None`.
-        todo!()
+        // SAFETY: `buffer_new` returns either a valid buffer or null.
+        let buffer = unsafe { buffer_new() };
+        NonNull::new(buffer).map(OwnedBuffer)
+
     }
 
     /// Appends `byte`.
     pub fn push(&mut self, byte: u8) {
-        // TODO: call `buffer_push`.
-        todo!()
+        // SAFETY: the buffer is live until `drop`, and `&mut self` means no
+        // other call uses it.
+        unsafe { buffer_push(self.0.as_ptr(), byte) }
+
     }
 
     /// Returns how many bytes the buffer holds.
     pub fn len(&self) -> usize {
-        // TODO: call `buffer_len`.
-        todo!()
+        // SAFETY: the buffer is live until `drop`.
+        unsafe { buffer_len(self.0.as_ptr()) }
+
     }
 }
 
-// TODO: free the buffer when an `OwnedBuffer` goes out of scope.
+impl Drop for OwnedBuffer {
+    fn drop(&mut self) {
+        // SAFETY: the buffer came from `buffer_new`, and `OwnedBuffer` is its
+        // only owner, so it is freed exactly once.
+        unsafe { buffer_free(self.0.as_ptr()) }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

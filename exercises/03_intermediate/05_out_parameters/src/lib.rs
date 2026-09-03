@@ -4,9 +4,11 @@ pub const BM_BOOKMARKS_PER_PAGE: usize = 20;
 
 /// Return the zero-based page and slot for `bookmark_index`.
 pub fn page_location(bookmark_index: usize) -> (usize, usize) {
-    // TODO 1 OF 2: Return `(page, slot)` using `BM_BOOKMARKS_PER_PAGE`.
-    let _ = bookmark_index;
-    (0, 0)
+    (
+        bookmark_index / BM_BOOKMARKS_PER_PAGE,
+        bookmark_index % BM_BOOKMARKS_PER_PAGE,
+    )
+
 }
 
 /// Preserve the C header while delegating the calculation to `page_location`.
@@ -20,9 +22,14 @@ pub unsafe extern "C" fn bm_page_location_ffi(
     out_page: *mut usize,
     out_slot: *mut usize,
 ) {
-    // TODO 2 OF 2: Call `page_location` and write both returned values to the
-    // output pointers.
-    let _ = (bookmark_index, out_page, out_slot);
+    let (page, slot) = page_location(bookmark_index);
+
+    // SAFETY: the caller guarantees both pointers are valid and writable.
+    unsafe {
+        out_page.write(page);
+        out_slot.write(slot);
+    }
+
 }
 
 #[cfg(test)]

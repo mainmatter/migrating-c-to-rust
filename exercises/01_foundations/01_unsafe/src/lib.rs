@@ -1,11 +1,10 @@
 /// Returns the last byte of `bytes`, or `None` if `bytes` is empty.
 pub fn last_byte(bytes: &[u8]) -> Option<u8> {
-    // TODO: return the last byte, reading it with `get_unchecked`.
-    //
-    // `get_unchecked` skips the bounds check that indexing does, which makes it
-    // an `unsafe` function: you have to call it from an `unsafe` block, and it
-    // is on you to pass an index that is in bounds.
-    todo!()
+    if bytes.is_empty() {
+        return None;
+    }
+    // SAFETY: `bytes` is not empty, so `bytes.len() - 1` is in bounds.
+    Some(unsafe { *bytes.get_unchecked(bytes.len() - 1) })
 }
 
 #[cfg(test)]

@@ -4,8 +4,8 @@ use std::ffi::c_char;
 
 /// Return a tag without its optional `#` prefix.
 pub fn tag_name(tag: &str) -> &str {
-    // TODO 1 OF 2: Strip one leading `#`, or return `tag` unchanged.
-    tag
+    tag.strip_prefix('#').unwrap_or(tag)
+
 }
 
 /// Convert a C string to UTF-8 and return its tag name as a borrowed pointer.
@@ -19,10 +19,23 @@ pub fn tag_name(tag: &str) -> &str {
 /// must be a valid, writable pointer.
 #[unsafe(export_name = "bm_tag_name")]
 pub unsafe extern "C" fn bm_tag_name_ffi(tag: *const c_char, out_len: *mut usize) -> *const u8 {
-    // TODO 2 OF 2: Reject null, borrow the input as `CStr`, convert it to
-    // `&str`, call `tag_name`, write its byte length, and return its pointer.
-    let _ = (tag, out_len);
-    std::ptr::null()
+    let name = if tag.is_null() {
+        None
+    } else {
+        // SAFETY: `tag` is non-null, and the caller guarantees it points to a
+        // live, NUL-terminated byte string.
+        let tag = unsafe { std::ffi::CStr::from_ptr(tag) };
+        tag.to_str().ok().map(tag_name)
+    };
+    let (pointer, len) = match name {
+        Some(name) => (name.as_ptr(), name.len()),
+        None => (std::ptr::null(), 0),
+    };
+
+    // SAFETY: the caller guarantees `out_len` is valid and writable.
+    unsafe { out_len.write(len) };
+    pointer
+
 }
 
 #[cfg(test)]

@@ -19,8 +19,13 @@
 /// initialized `i32`s that stay alive and unmodified for the duration of the
 /// call.
 pub unsafe fn sum(items: *const i32, len: usize) -> i32 {
-    // TODO: turn `items` and `len` into a `&[i32]`, then sum it.
-    todo!()
+    if len == 0 {
+        return 0;
+    }
+    // SAFETY: `len` is non-zero, so the caller guarantees the whole contract.
+    let items = unsafe { std::slice::from_raw_parts(items, len) };
+    items.iter().sum()
+
 }
 
 /// Multiplies each of the `len` `i32`s starting at `items` by `factor`, in
@@ -32,8 +37,15 @@ pub unsafe fn sum(items: *const i32, len: usize) -> i32 {
 /// initialized `i32`s that stay alive for the duration of the call and that
 /// nothing else accesses during it.
 pub unsafe fn multiply(items: *mut i32, len: usize, factor: i32) {
-    // TODO: turn `items` and `len` into a `&mut [i32]`, then multiply each item.
-    todo!()
+    if len == 0 {
+        return;
+    }
+    // SAFETY: `len` is non-zero, so the caller guarantees the whole contract.
+    let items = unsafe { std::slice::from_raw_parts_mut(items, len) };
+    for item in items {
+        *item *= factor;
+    }
+
 }
 
 #[cfg(test)]
