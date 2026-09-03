@@ -32,8 +32,7 @@ pub unsafe extern "C" fn rust_bookmark_new(
     // TODO 1 OF 2:
     // Allocate `bookmark` with `Box`, then transfer ownership to C by
     // returning a raw pointer.
-
-    todo!()
+    Box::into_raw(Box::new(bookmark))
 }
 
 /// Release a bookmark previously returned by [`rust_bookmark_new`].
@@ -53,6 +52,5 @@ pub unsafe extern "C" fn rust_bookmark_free(bookmark: Option<NonNull<RustBookmar
 
     // TODO 2 OF 2:
     // Take ownership of the allocation back from C and let Rust drop it.
-
-    todo!()
+    let _ = Box::from_raw(bookmark.as_ptr());
 }

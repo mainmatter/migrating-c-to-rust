@@ -9,9 +9,9 @@
 
 #![cfg(test)] // This module is only used by the test harness.
 
-use crate::given::{OwnedCBookmark, bookmark_free, bookmark_new};
+use crate::given::{bookmark_free, bookmark_new, OwnedCBookmark};
 use std::ffi::CStr;
-use std::ptr::{self, NonNull};
+use std::ptr::NonNull;
 
 impl OwnedCBookmark {
     /// Ask the legacy C API to allocate a bookmark.
@@ -22,7 +22,8 @@ impl OwnedCBookmark {
         //
         // Hint 1: `OwnedCBookmark` takes a `NonNull<CBookmark>`
         // Hint 2: You don't need to worry about the tags for this exercise. You can pass a null pointer and zero for the tag array and count.
-        todo!()
+        let raw = unsafe { bookmark_new(url.as_ptr(), std::ptr::null(), 0) };
+        NonNull::new(raw).map(Self)
     }
 }
 
@@ -34,6 +35,6 @@ impl Drop for OwnedCBookmark {
         // Return the pointer to the C function that owns the deallocation API.
         //
         // Hint: take the pointer out of the `bookmark` `NonNull` wrapper and free it with a C function
-        todo!()
+        unsafe { bookmark_free(bookmark.as_ptr()) };
     }
 }

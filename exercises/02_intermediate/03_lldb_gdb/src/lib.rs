@@ -4,17 +4,17 @@
 //! breakpoint on `bm_shout`, then inspect its arguments and the mixed stack.
 //! The C header is the source of truth for the function signature.
 
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 
 unsafe extern "C" {
-    fn bm_shout(label: *const c_char, out: *mut c_char, out_len: usize) -> i32;
+    fn bm_shout(out: *mut c_char, out_len: usize, label: *const c_char) -> i32;
 }
 
 pub fn shout(label: &CStr) -> Result<String, i32> {
     let mut out = [0_u8; 64];
 
     // SAFETY: `label` is NUL-terminated and `out` points to 64 writable bytes.
-    let status = unsafe { bm_shout(label.as_ptr(), out.as_mut_ptr().cast::<c_char>(), out.len()) };
+    let status = unsafe { bm_shout(out.as_mut_ptr().cast::<c_char>(), out.len(), label.as_ptr()) };
 
     if status != 0 {
         return Err(status);
