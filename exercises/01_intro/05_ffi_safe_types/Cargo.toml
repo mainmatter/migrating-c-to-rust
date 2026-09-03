@@ -6,3 +6,10 @@ license.workspace = true
 
 [lib]
 crate-type = ["staticlib"]
+
+# The chapter tells the learner to fix the compiler's FFI-safety warnings, so
+# make that the thing which actually fails the build. Without this, `cargo
+# build` only warns and the exercise is gated by the C compiler choking on the
+# opaque typedef instead.
+[lints.rust]
+improper_ctypes_definitions = "deny"
