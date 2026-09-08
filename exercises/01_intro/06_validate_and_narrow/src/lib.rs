@@ -2,7 +2,8 @@ use std::ffi::c_char;
 
 /// Normalize `url` (lowercase ASCII) into the caller-provided `out` buffer.
 ///
-/// Returns 0 on success, -1 on error.
+/// Hint: Check the test suite to determine what to return in the different
+/// error cases.
 #[no_mangle]
 pub unsafe extern "C" fn bm_normalize_url(
     url: *const c_char,
