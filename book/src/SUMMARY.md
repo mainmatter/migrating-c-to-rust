@@ -2,6 +2,12 @@
 
 [Welcome](welcome.md)
 
+- [Chapter 0: Unsafe Rust foundations](./00_foundations/00_README.md)
+  - [`unsafe` and safety contracts](./00_foundations/01_unsafe.md)
+  - [References vs raw pointers](./00_foundations/02_raw_pointers.md)
+  - [`NonNull<T>` and niches](./00_foundations/03_nonnull.md)
+  - [Memory layout: size, alignment, and `repr`](./00_foundations/04_layout.md)
+  - [`MaybeUninit` and `UnsafeCell`](./00_foundations/05_uninit_and_interior.md)
 - [Chapter 1: Basics](./01_intro/00_README.md)
   - [What is FFI? Calling C from Rust](./01_intro/01_what_is_ffi.md)
   - [When hand-written bindings drift](./01_intro/02_drift.md)

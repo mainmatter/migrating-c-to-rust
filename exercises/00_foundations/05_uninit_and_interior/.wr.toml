@@ -1,0 +1,10 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "foundations_uninit_and_interior"]
+
+# `cargo test` passes even if `assume_init` runs before the return value is
+# checked, which is the undefined behavior this section is about. Miri catches
+# it, so it gates the exercise too.
+[[verification]]
+command = "cargo"
+args = ["miri", "test", "-p", "foundations_uninit_and_interior"]
