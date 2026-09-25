@@ -1,9 +1,13 @@
 /f2h https://bencher.dev/
 /ff6 https://code.visualstudio.com
 /f29 https://doc.rust-lang.org/cargo/commands/cargo-bench.html
+/f0j https://doc.rust-lang.org/reference/behavior-considered-undefined.html
 /f2a https://doc.rust-lang.org/stable/rustc/symbol-mangling/v0.html
 /f23 https://doc.rust-lang.org/std/alloc/trait.Allocator.html
 /f2m https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html
+/f0m https://doc.rust-lang.org/std/option/index.html#representation
+/f0k https://doc.rust-lang.org/std/ptr/index.html#provenance
+/f0n https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html
 /f2p https://doc.rust-lang.org/unstable-book/library-features/test.html
 /f2y https://docs.rs/cargo-samply/latest/cargo_samply/
 /f2l https://docs.rs/cc/latest/cc/struct.Build.html#method.opt_level
@@ -27,6 +31,12 @@
 /ffc https://github.com/mainmatter/c-to-rust-migration-book/tree/main/exercises/01_intro/07_high_quality_ffi_apis
 /ffa https://github.com/mainmatter/c-to-rust-migration-book/tree/main/exercises/02_intermediate/00_README
 /ffz https://github.com/mainmatter/migrating-c-to-rust
+/f0a https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/00_README
+/f0b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/01_unsafe
+/f0c https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/02_raw_pointers
+/f0d https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/03_nonnull
+/f0p https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/04_layout
+/f0q https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/05_uninit_and_interior
 /f2f https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/00_README
 /f22 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/01_what_is_ffi
 /f2z https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/02_drift
