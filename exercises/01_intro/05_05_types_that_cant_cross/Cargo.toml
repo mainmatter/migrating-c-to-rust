@@ -1,5 +1,5 @@
 [package]
-name = "bm_ffi_safe_types"
+name = "ffi_types_that_cant_cross"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
