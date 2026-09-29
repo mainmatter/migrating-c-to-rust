@@ -60,31 +60,31 @@ suggest. Tangles like that are normal in code that has been maintained for a
 while, and they are exactly what you want to know before choosing where to
 start.
 
-For `bm`, we chose to start with `normalize.c`. It exposes two functions: one
-normalizes URLs and the other normalizes tags. Both write into buffers supplied
-by the caller, so no memory changes ownership at the FFI boundary. Why not
-`util.c` or `bookmark.c`? Both seem suitable too. `util.c` is also small, but it
-is mostly thin wrappers around C string and allocation functions. `bookmark.c`
-contains more substantial logic, but it allocates values that must later be
-freed across the language boundary. We cover that problem in the next section.
+The exercise uses an even smaller boundary than these production modules: a
+one-function `bm_version` module. Its behavior is intentionally trivial so that
+the work is limited to replacing a C object file with a Rust static library.
+Later exercises add pointers, allocation, error handling, and API redesign.
 
 ## Preserve the existing contract
 
 When possible, an incremental migration replaces the module's _object file_
 without changing the interface used by the remaining C code. The existing C
-header (`normalize.h` in this example) describes the ABI our Rust implementation
-must initially satisfy. We re-implement every function the header declares in
-Rust and export it under the same symbol name using `#[unsafe(no_mangle)]` and
-`extern "C"`:
+header describes the ABI our Rust implementation must initially satisfy. The
+exercise's header contains this declaration:
 
-```rust,compile_fail
+```c
+#include <stdint.h>
+
+uint32_t bm_version(void);
+```
+
+The Rust replacement must export the same function under the same symbol name
+and use the C ABI:
+
+```rust,no_run
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn bm_normalize_url(
-    url: Option<NonNull<c_char>>,
-    out: Option<NonNull<c_char>>,
-    out_len: usize,
-) -> BmResult {
-    // ...
+pub extern "C" fn bm_version() -> u32 {
+    1
 }
 ```
 
@@ -100,34 +100,38 @@ we can introduce a small compatibility layer and improve the interface
 separately.
 
 After that, all you have to do is link against the replacement library written
-in Rust instead of the original one written in C.
+in Rust instead of the original one written in C. Cargo must first produce the
+right kind of artifact:
+
+```toml
+[lib]
+crate-type = ["staticlib"]
+```
 
 ```text
-before:  cli.o, index.o, normalize.o (C), ...
-after:   cli.o, index.o, libnormalize.a (Rust), ...
+before:  test_bm_version.o + bm_version.o (C)
+after:   test_bm_version.o + libbm_version.a (Rust)
 ```
 
 ## Structuring the Rust side
 
-Inside the crate we keep two layers, following the firewall pattern from section
-1.6:
-
-1. a thin `extern "C"` surface that validates raw pointers and converts C types
-   at the boundary, and
-2. a safe, idiomatic core that does the actual work with `&str`, `String`, and
-   `Result`.
-
-The safe core is where all new logic lives, and it's plain Rust: unit-testable
-with `cargo test`, no `unsafe` in sight. The FFI layer should stay boring.
+For a substantial module, keep the two layers from the firewall pattern in
+section 1.6: a thin `extern "C"` surface that converts C representations and a
+safe Rust core that implements the behavior. `bm_version` takes no arguments and
+returns a fixed-width integer, so in this case the exported function can remain
+the entire implementation.
 
 ## Verifying behavior parity
 
-A rewrite is only done when the observable behavior is unchanged. We have two
-safety nets:
+A rewrite is only done when the observable behavior is unchanged. The exercise
+uses the same C caller twice:
 
-- the module's existing C test suite, which now links against our Rust
-  implementation and must keep passing, and
-- new Rust unit tests against the safe core, which will outlive the C tests.
+1. first it links the caller with `bm_version.c` and runs the all-C baseline;
+2. then it omits `bm_version.c`, links the unchanged caller with the Rust
+   archive, and runs it again.
+
+A Rust unit test independently checks the function's return value. The C link is
+what proves that the archive exposes the ABI and symbol promised by the header.
 
 ## Tips
 
@@ -141,6 +145,14 @@ static library exports. The command depends on your toolchain and platform:
 A missing `#[unsafe(no_mangle)]` is a common cause.
 
 While both implementations still exist, you can also run the same inputs through
-the C and Rust versions and compare their return values and output buffers. This
-is called differential testing. It catches small differences in behavior that
-the existing tests may not cover.
+the C and Rust versions and compare their results. This is called differential
+testing. The exercise uses the simpler form of running the same assertions
+against both implementations.
+
+## Head to the exercise
+
+The exercise in `exercises/02_intermediate/01_rewrite_a_module` replaces
+`bm_version.c`. Configure the crate to produce a static library, then make the
+provided Rust function satisfy `bm_version.h` without changing the header or the
+C caller. There is no algorithm to port: the exercise focuses on the build
+artifact, ABI, symbol name, and link step.
