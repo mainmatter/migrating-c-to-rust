@@ -1,0 +1,39 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_version"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+  "-std=c11",
+  "c_test/test_bm_version.c",
+  "c_test/bm_version.c",
+  "-o",
+  "../../../target/debug/test_bm_version_c",
+]
+
+[[verification]]
+command = "../../../target/debug/test_bm_version_c"
+
+[[verification]]
+command = "cargo"
+args = ["build", "-p", "bm_version"]
+
+[[verification]]
+command = "cc"
+args = [
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+  "-std=c11",
+  "c_test/test_bm_version.c",
+  "../../../target/debug/libbm_version.a",
+  "-o",
+  "../../../target/debug/test_bm_version_rust",
+]
+
+[[verification]]
+command = "../../../target/debug/test_bm_version_rust"

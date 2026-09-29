@@ -108,6 +108,10 @@ name = "bm_validate_and_narrow"
 version = "0.1.0"
 
 [[package]]
+name = "bm_version"
+version = "0.1.0"
+
+[[package]]
 name = "bm_what_is_ffi"
 version = "0.1.0"
 dependencies = [
