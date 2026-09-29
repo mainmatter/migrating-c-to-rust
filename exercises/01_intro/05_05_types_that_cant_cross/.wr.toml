@@ -1,10 +1,10 @@
 [[verification]]
 command = "cargo"
-args = ["build"]
+args = ["build", "-p", "ffi_types_that_cant_cross"]
 
 [[verification]]
 command = "cheadergen"
-args = ["generate", "--lang", "c", "--output-dir", "c_test", "-p", "bm_ffi_safe_types"]
+args = ["generate", "--lang", "c", "--output-dir", "c_test", "-p", "ffi_types_that_cant_cross"]
 
 [[verification]]
 command = "cc"
@@ -14,7 +14,7 @@ args = [
   "-std=c11",
   "-I.",
   "c_test/test_tag_describe.c",
-  "../../../target/debug/libbm_ffi_safe_types.a",
+  "../../../target/debug/libffi_types_that_cant_cross.a",
   "-o",
   "../../../target/debug/test_tag_describe",
 ]

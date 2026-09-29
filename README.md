@@ -62,6 +62,16 @@ section until you've solved the exercise for the current one.
   system) to make sure you're running on the latest stable version.
 - A **C compiler**. The one provided by your operating system will be good
   enough.
+- Two extra **compilation targets**. One exercise type-checks your bindings
+  against platforms that disagree with yours, which needs their standard
+  libraries:
+
+  ```bash
+  rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+  ```
+
+  Nothing is compiled or linked for those targets, so you don't need a cross
+  compiler.
 - _(Optional but recommended)_ An IDE with Rust autocompletion support. We
   recommend one of the following:
   - [RustRover](https://www.jetbrains.com/rust/);

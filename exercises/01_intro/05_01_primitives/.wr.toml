@@ -1,0 +1,29 @@
+# The bindings in this exercise have to hold on targets that disagree about the
+# signedness of C's `char`. Both checks only type-check, so neither one needs a
+# C compiler or a linker for the other target.
+
+[[verification]]
+command = "cargo"
+args = [
+  "check",
+  "-p",
+  "ffi_primitives",
+  "--tests",
+  "--target",
+  "x86_64-unknown-linux-gnu", # `c_char` is `i8` here
+]
+
+[[verification]]
+command = "cargo"
+args = [
+  "check",
+  "-p",
+  "ffi_primitives",
+  "--tests",
+  "--target",
+  "aarch64-unknown-linux-gnu", # `c_char` is `u8` here
+]
+
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "ffi_primitives"]

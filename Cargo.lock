@@ -82,10 +82,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bm_ffi_safe_types"
-version = "0.1.0"
-
-[[package]]
 name = "bm_high_quality_ffi_apis"
 version = "0.1.0"
 
@@ -222,6 +218,36 @@ dependencies = [
  "libc",
  "windows-sys",
 ]
+
+[[package]]
+name = "ffi_enums_and_unions"
+version = "0.1.0"
+
+[[package]]
+name = "ffi_opaque_types"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
+name = "ffi_primitives"
+version = "0.1.0"
+dependencies = [
+ "cc",
+]
+
+[[package]]
+name = "ffi_slices"
+version = "0.1.0"
+
+[[package]]
+name = "ffi_structs"
+version = "0.1.0"
+
+[[package]]
+name = "ffi_types_that_cant_cross"
+version = "0.1.0"
 
 [[package]]
 name = "find-msvc-tools"
