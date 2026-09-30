@@ -1,11 +1,14 @@
 /f2h https://bencher.dev/
 /ff6 https://code.visualstudio.com
 /f29 https://doc.rust-lang.org/cargo/commands/cargo-bench.html
+/fzx https://doc.rust-lang.org/nightly/unstable-book/language-features/pattern-types.html
 /f0j https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+/fz6 https://doc.rust-lang.org/src/core/ptr/unique.rs.html
 /f2a https://doc.rust-lang.org/stable/rustc/symbol-mangling/v0.html
 /f23 https://doc.rust-lang.org/std/alloc/trait.Allocator.html
 /f2m https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html
 /f0m https://doc.rust-lang.org/std/option/index.html#representation
+/fzv https://doc.rust-lang.org/std/ptr/fn.read_unaligned.html
 /f0k https://doc.rust-lang.org/std/ptr/index.html#provenance
 /f0n https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html
 /f2p https://doc.rust-lang.org/unstable-book/library-features/test.html

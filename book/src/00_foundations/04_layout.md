@@ -23,19 +23,32 @@ assert_eq!((size_of::<[u32; 3]>(), align_of::<[u32; 3]>()), (12, 4));
 ```
 
 For primitives, alignment usually equals size. Alignment comes from the
-hardware: an aligned value can be loaded with a single instruction, and some
-architectures raise a fault for a load that isn't aligned. Rust doesn't
-distinguish between architectures here. Accessing a value through a misaligned
-pointer is undefined behavior on every target, including those whose
-instructions handle misaligned access without complaint.
+hardware: misaligned loads and stores can be much slower than aligned accesses,
+sometimes requiring the compiler to emit multiple instructions; on some
+architectures they even raise a fault. Rust doesn't distinguish between
+architectures here. Accessing a value through a misaligned pointer is undefined
+behavior on every target, including those whose instructions handle misaligned
+access without complaint.[^1]
 
-An array's size is its element size times its length, with nothing in between,
-which is what turns indexing into a multiplication.
+## How a struct gets its size and alignment
 
-Two cases are worth knowing, because they don't follow from the above:
+A struct's size and alignment follow from its fields, by three rules:
+
+1. the alignment of the struct is the largest alignment among its fields;
+2. each field sits at the next offset that is a multiple of its own alignment;
+3. the size of the struct is rounded up to a multiple of its own alignment.
+
+An array is a bit simpler. `[T; N]` has the alignment of `T` and a size of
+exactly `N` times the size of `T`, with nothing in between, which is what turns
+indexing into a multiplication. No padding is needed between the elements,
+because the size of `T` is already a multiple of its alignment: every element
+lands on an address that suits it.
+
+Two cases are worth knowing, because they don't follow from those rules:
 
 - **Some types have size 0.** The unit type `()` and a struct with no fields
-  occupy no bytes, and have an alignment of 1.
+  occupy no bytes and have an alignment of 1. They are called _zero-sized
+  types_, or ZSTs.
 - **Not every reference is one word.** A `&u8` is a single address, 8 bytes on a
   64-bit target. A `&[u8]` is 16: an address plus a length. The same holds for
   `&str`. Those extra bytes are the reason a slice cannot be handed to C as a
@@ -87,17 +100,13 @@ offset  0      1              4             8      9          12
         ├ flag ┼──── pad ─────┼─── value ───┼ tag ─┼─── pad ───┤
 ```
 
-Three bytes of padding follow `flag`, because `value` needs an address that is a
-multiple of 4. The struct's alignment is 4, the largest among its fields, and
-its size is rounded up to a multiple of that alignment, which adds three more
-bytes at the end.
+Three bytes of padding follow `flag`, because the next offset that suits
+`value`'s alignment is 4. The struct takes the largest alignment among its
+fields, which is also 4, and its size is rounded up to a multiple of that,
+adding three more bytes after `tag`.
 
-That trailing padding is what makes arrays of structs work. Each element starts
-where the previous one ended, so a size that is a multiple of the alignment
-keeps every element aligned.
-
-Six bytes of data, twelve bytes in memory. Padding is the cost of a fixed field
-order.
+That's 6 bytes of data in 12 bytes of memory. Padding is the cost of a fixed
+field order.
 
 ## No guarantees by default
 
@@ -157,3 +166,10 @@ types on paper and write the numbers down as constants, which the tests compare
 against what the compiler reports. Then take a `repr(C)` struct that carries 14
 bytes of fields in 24 bytes of memory, and reorder its fields so it carries them
 in 16.
+
+[^1]: When the data really is misaligned, such as a struct read straight out of
+    a network packet, reach for
+    [`ptr::read_unaligned`](https://doc.rust-lang.org/std/ptr/fn.read_unaligned.html)
+    and its `write_unaligned` counterpart. They copy the bytes without ever
+    forming a misaligned reference, at the cost of the slower access the
+    hardware needs for it.

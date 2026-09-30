@@ -2,11 +2,8 @@
 
 C has one kind of pointer. Whether a `T *` may be null, who owns the memory
 behind it, and how long it stays valid are all conventions, written down in
-documentation if you're lucky. Rust has two kinds: references, which carry those
-guarantees in the type system, and raw pointers, which carry none of them.
-Everything that crosses the FFI boundary arrives as a raw pointer, so you need
-to know exactly what you give up and what you take on when you convert between
-the two.
+documentation if you're lucky. Rust has references instead, and a reference
+carries those guarantees in its type.
 
 ## What a reference guarantees
 
@@ -17,7 +14,7 @@ A reference, `&T` or `&mut T`, is always:
 - pointing to a **live, initialized, valid** `T`,
 - valid for its **lifetime**, which the borrow checker enforces,
 - subject to the **aliasing rules**: either any number of `&T`, or exactly one
-  `&mut T`. While a `&T` exists, the value behind it doesn't change.
+  `&mut T`.[^1]
 
 These guarantees aren't only there to protect you. The compiler optimizes based
 on them. Because a `&mut T` is the only way to reach its value, the compiler can
@@ -29,10 +26,12 @@ undefined behavior, even if you never read through it.
 
 ## Raw pointers
 
-Raw pointers come in two flavors: `*const T` and `*mut T`. They are Rust's
-equivalent of C's `const T *` and `T *`, and they guarantee nothing. A raw
-pointer may be null, dangling, misaligned, or pointing to memory that is being
-mutated through another pointer at the same time.
+Those guarantees are exactly what a pointer from C cannot offer, so for that
+Rust has raw pointers: `*const T` and `*mut T`. They are Rust's equivalent of
+C's `const T *` and `T *`, and they come with none of the guarantees Rust has
+for references. A raw pointer may be null, dangling, misaligned, or pointing to
+memory that is being mutated through another pointer at the same time.
+Everything that crosses the FFI boundary arrives as one.
 
 Creating one is safe. Dereferencing one is `unsafe`, because that's the moment
 all those possibilities matter:
@@ -60,7 +59,10 @@ Raw pointers have a small API of their own. The methods you'll use most are:
 - `cast` to change the pointee type, the equivalent of a C pointer cast,
 - `add` for pointer arithmetic, which is `unsafe` because the result must stay
   within the same allocation,
-- `read` and `write` to copy a value out or in without creating a reference.
+- `read` and `write` to copy a value out or in without creating a reference,
+- `copy_to` and `copy_from` to move a range of data at once, the equivalent of
+  C's `memmove`. The `_nonoverlapping` variants are `memcpy` for when the
+  pointers don't overlap.
 
 ### Mutability is about where a pointer came from
 
@@ -93,8 +95,9 @@ println!("{r}");
 ```
 
 The borrow checker only tracks references, so it has no idea `p` and `r` point
-to the same value. Miri, a dynamic checker for unsafe Rust, does catch it and
-reports undefined behavior.
+to the same value. Miri does catch it and reports undefined behavior;
+[Dynamic analysis with Miri](../02_intermediate/06_miri.md) puts it to work on a
+real port.
 
 ## From raw pointer to reference
 
@@ -106,11 +109,10 @@ that:
 - `ptr.as_ref()` and `ptr.as_mut()` do the same, but return `None` for a null
   pointer.
 
-Both are `unsafe`, and both are the point where you take on everything in the
-list at the top of this section. One more condition comes with them: the
-lifetime. A reference created from a raw pointer can have any lifetime the
-caller asks for, because the compiler has nothing to derive it from. It's up to
-you to tie it to something meaningful:
+Both are `unsafe` because this is where you promise everything the list at the
+top of this section guarantees. A reference made from a raw pointer gets
+whatever lifetime the caller asks for, since the compiler has nothing to derive
+it from, so tie it to something meaningful:
 
 ```rust,no_run
 pub struct Config {
@@ -145,14 +147,21 @@ caller could keep the reference around long after the C library freed the
 
 Keep in mind that C's `const` is a convention. A C function that takes a
 `const T *` can still cast it away and write through it. If you pass it a
-pointer derived from a `&T`, you are trusting that it doesn't.[^1]
+pointer derived from a `&T`, you are trusting that it doesn't.[^2]
 
 ## Head to the exercise
 
 The exercise is one function: swap the two `i32`s that a pair of raw pointers
 point to.
 
-[^1]: Raw pointers carry more than an address. Each pointer also has a
+[^1]: A `&T` usually means the value behind it can't change while the reference
+    is alive, but a type can opt out of that by wrapping the field in an
+    `UnsafeCell`, which is how `Cell`, `RefCell`, `Mutex`, and the atomics work.
+    That is called interior mutability, and
+    [`MaybeUninit` and `UnsafeCell`](05_uninit_and_interior.md) covers it.
+    Everything else here assumes a plain `&T`.
+
+[^2]: Raw pointers carry more than an address. Each pointer also has a
     _provenance_: the allocation and permissions it was derived from. Two
     pointers with the same address can differ in what they're allowed to access.
     You rarely need to think about this in day-to-day FFI code, but it's the

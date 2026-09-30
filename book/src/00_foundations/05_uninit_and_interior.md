@@ -56,7 +56,7 @@ undefined behavior the moment it exists, well before C gets a chance to
 overwrite it.
 
 **Initializing is wasted work.** A 4 KiB buffer that a C function is about to
-fill doesn't need to be zeroed first. In a read loop, that's a memset per
+fill doesn't need to be zeroed first. In a read loop, that's a `memset` per
 iteration that has no effect on the result.
 
 ### Using `MaybeUninit`
@@ -202,10 +202,10 @@ impl Counter {
 }
 ```
 
-`get` hands back a `*mut T`, and everything you do with it is `unsafe`, because
-`UnsafeCell` only removes an assumption the compiler would otherwise make. It
-provides no synchronization: two overlapping accesses are still a data race,
-including a C thread writing while Rust reads.
+`UnsafeCell::get` hands back a `*mut T`, and everything you do with it is
+`unsafe`, because `UnsafeCell` only removes an assumption the compiler would
+otherwise make. It provides no synchronization: two overlapping accesses are
+still a data race, including a C thread writing while Rust reads.
 
 One consequence is easy to miss. A type containing an `UnsafeCell` is not
 `Sync`, so Rust won't let you share it across threads until you state that the
