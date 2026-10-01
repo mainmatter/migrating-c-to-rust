@@ -44,13 +44,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4512299f36f043ab09a583e57bceb5a5aab7a73db1805848e8fef3c9e8c78b3"
 
 [[package]]
-name = "bm_allocators"
-version = "0.1.0"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "bm_benchmarking"
 version = "0.1.0"
 dependencies = [
@@ -218,6 +211,10 @@ dependencies = [
  "libc",
  "windows-sys",
 ]
+
+[[package]]
+name = "ffi_allocators"
+version = "0.1.0"
 
 [[package]]
 name = "ffi_enums_and_unions"
