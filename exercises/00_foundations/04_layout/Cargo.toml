@@ -1,0 +1,8 @@
+[package]
+name = "foundations_layout"
+version.workspace = true
+edition = "2024"
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
