@@ -79,6 +79,15 @@ To work through this course, you'll need:
     [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer)
     extension.
 - A C compiler. The one provided by your operating system will be good enough.
+- Two extra compilation targets. One exercise type-checks your bindings against
+  platforms that disagree with yours, which needs their standard libraries:
+
+  ```bash
+  rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+  ```
+
+  Nothing is compiled or linked for those targets, so you don't need a cross
+  compiler.
 
 ### Workshop runner
 

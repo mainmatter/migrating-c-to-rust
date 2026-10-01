@@ -4,6 +4,7 @@
 /f2a https://doc.rust-lang.org/stable/rustc/symbol-mangling/v0.html
 /f23 https://doc.rust-lang.org/std/alloc/trait.Allocator.html
 /f2m https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html
+/fzx https://doc.rust-lang.org/std/slice/fn.from_raw_parts.html
 /f2p https://doc.rust-lang.org/unstable-book/library-features/test.html
 /f2y https://docs.rs/cargo-samply/latest/cargo_samply/
 /f2l https://docs.rs/cc/latest/cc/struct.Build.html#method.opt_level
@@ -32,7 +33,11 @@
 /f2z https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/02_drift
 /f24 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/03_bindgen
 /f2x https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/04_cheadergen
-/f26 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_ffi_safe_types
+/f0u https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_01_primitives
+/f0s https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_02_structs
+/f0t https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_03_enums_and_unions
+/f0r https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_04_slices
+/f0v https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/05_05_opaque_types
 /f2v https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/06_validate_and_narrow
 /f28 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/07_high_quality_ffi_apis
 /f2b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_intermediate/00_README

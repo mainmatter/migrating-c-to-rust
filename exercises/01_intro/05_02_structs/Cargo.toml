@@ -1,0 +1,17 @@
+[package]
+name = "ffi_structs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[build-dependencies]
+cc.workspace = true
+
+# The exercise asks the learner to give `Fd` a representation C can accept, so
+# make that the thing which fails the build rather than a warning. Keeping it
+# here means the gate isn't in the file they edit.
+[lints.rust]
+improper_ctypes_definitions = "deny"
