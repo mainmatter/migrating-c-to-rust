@@ -35,52 +35,8 @@ There are several workable strategies:
    function, `bookmark_free`. Keep allocation and deallocation within the same C
    API; export the functions through FFI to Rust.
 
-   Here is the complete shape of that wrapper. `OwnedCBookmark` owns the C
-   allocation, so callers cannot accidentally pass it to Rust's allocator. A
-   null pointer from C becomes `None`; dropping a successfully created wrapper
-   always calls back into C to free it.
-
-   ```rust,no_run
-   use std::ffi::CStr;
-   use std::ptr::{self, NonNull};
-
-   #[repr(C)]
-   // An opaque type, C owns the layout and allocation.
-   struct CBookmark {
-       _data: (),
-       _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
-   }
-
-   // FFI (de)allocation functions
-   unsafe extern "C" {
-       fn bookmark_new(
-           url: *const std::ffi::c_char,
-           tags: *const *const std::ffi::c_char,
-           n_tags: usize,
-       ) -> *mut CBookmark;
-       fn bookmark_free(bookmark: *mut CBookmark);
-   }
-
-   // The Rust wrapper
-   struct OwnedCBookmark(NonNull<CBookmark>);
-
-   impl OwnedCBookmark {
-       fn new(url: &CStr) -> Option<Self> {
-           // SAFETY: `url` is NUL-terminated. This example passes no tags,
-           // matching the C function's documented null-and-zero contract.
-           let bookmark = unsafe { bookmark_new(url.as_ptr(), ptr::null(), 0) };
-           NonNull::new(bookmark).map(Self)
-       }
-   }
-
-   impl Drop for OwnedCBookmark {
-       fn drop(&mut self) {
-           // SAFETY: this pointer came from `bookmark_new` and this wrapper is
-           // its unique owner, so `bookmark_free` is called exactly once.
-           unsafe { bookmark_free(self.0.as_ptr()) };
-       }
-   }
-   ```
+   [Opaque types](../01_intro/05_05_opaque_types.md) shows the shape of such a
+   wrapper.
 
 2. **Use Rust allocators from C.** A Rust type that crosses the boundary will
    need a matching `_new`/`_free` pair exported through FFI. `_new` in Rust is
@@ -96,33 +52,9 @@ There are several workable strategies:
    // This will convert the raw pointer back into a Box and when dropped free the memory:
    let _foo = unsafe { Box::from_raw(ptr) };
    ```
-   And a full FFI split would look something like this:
 
-   ```rust,no_run
-   use std::ptr::NonNull;
-
-   pub struct RustType {
-       foo: i32,
-       bar: i32,
-   }
-
-   #[unsafe(no_mangle)]
-   pub extern "C" fn rust_type_new(foo: i32, bar: i32) -> *mut RustType {
-       Box::into_raw(Box::new(RustType { foo, bar }))
-   }
-
-   #[unsafe(no_mangle)]
-   pub extern "C" fn rust_type_free(b: Option<NonNull<RustType>>) {
-       // To match C's free(NULL) semantics, return immediately when b is null.
-       let Some(b) = b else {
-           return;
-       };
-
-       // SAFETY: `b` was created by `rust_type_new` via Box::into_raw and is
-       // not used again after this call (documented in bookmark.h).
-       drop(unsafe { Box::from_raw(b.as_ptr()) });
-   }
-   ```
+   [Opaque types](../01_intro/05_05_opaque_types.md) shows the full
+   `_new`/`_free` pair.
 
 3. **Transfer ownership of a C allocation across the boundary.** Use this when
    one language calls a C allocation API, transfers ownership of the result to
@@ -208,12 +140,10 @@ boundary, for Miri, which we cover in a later section.
 
 ## Head to the exercise
 
-You'll port `bm`'s `Bookmark` type, including its allocation and deallocation
-functions, to Rust without leaking or double-freeing a single byte.
-
-You'll practice both ownership directions from this section in
-`exercises/02_intermediate/02_allocators`: C holding a Rust allocation, and Rust
-holding a C allocation.
+In `exercises/02_intermediate/02_allocators`, you'll write a global allocator
+that wraps the system allocator and counts every allocation and deallocation.
+Then you'll use it to track down a leak: a pair of functions hands strings to C,
+and one of them never gives the memory back.
 
 [^1]: `malloc`/`free` are standard C allocation functions, but nothing prevents
     you from using other allocation functions or even rolling your own. For the
