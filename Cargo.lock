@@ -244,10 +244,9 @@ version = "0.1.0"
 [[package]]
 name = "ffi_structs"
 version = "0.1.0"
-
-[[package]]
-name = "ffi_types_that_cant_cross"
-version = "0.1.0"
+dependencies = [
+ "cc",
+]
 
 [[package]]
 name = "find-msvc-tools"

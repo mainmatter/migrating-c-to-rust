@@ -1,16 +1,14 @@
 # Structs in FFI
 
-When C and Rust share a struct, they share raw bytes. C reads a field by adding
-its offset to the struct's address, and it computes that offset from the struct
-definition in the header. If Rust puts the field somewhere else, C reads the
-wrong bytes, and neither compiler can tell you. Getting a struct across the
-boundary means pinning down where each field goes, and checking that both sides
-ended up with the same answer.
+When C and Rust share a struct, they share raw bytes. C keeps the definition
+order of struct fields. Rust is allowed to reorder fields to save space.[^1] If
+Rust puts a field somewhere else, C reads the wrong bytes. Getting a struct
+across the boundary means ensuring the layout is identical.
 
-## `repr(C)`: the C rules
+## Matching C's layout
 
-`#[repr(C)]` tells Rust to lay a struct out the way a C compiler would, which
-takes four rules:
+`#[repr(C)]` tells Rust to lay out a struct the way a C compiler would,
+following these rules:
 
 1. Place the fields in declaration order.
 2. Put each field at the next offset that is a multiple of its alignment, adding
@@ -30,38 +28,90 @@ struct Record {
 ```
 
 ```rust,no_run
-use std::mem::offset_of;
-
 #[repr(C)]
 pub struct Record {
     pub kind: u8,
     pub id: u64,
     pub flags: u16,
 }
-
-const _: () = {
-    assert!(offset_of!(Record, kind) == 0); // 1 byte, then 7 bytes of padding
-    assert!(offset_of!(Record, id) == 8); // 8 bytes
-    assert!(offset_of!(Record, flags) == 16); // 2 bytes, then 6 bytes of padding
-    assert!(align_of::<Record>() == 8); // from `id`
-    assert!(size_of::<Record>() == 24); // 18 rounded up to a multiple of 8
-};
 ```
 
 ```text
-offset  0      1                      8                      16       18       24
-        ├ kind ┼───────── pad ────────┼────────── id ────────┼─ flags ┼── pad ──┤
+offset  0      1                      8                      16       18           24
+        ├ kind ┼───────── pad ────────┼────────── id ────────┼─ flags ┼──── pad ────┤
 ```
 
-Eight of those 24 bytes are padding, and they're there because the order is
-fixed. The same struct without `repr(C)` fits in 16, and ordering the fields
-largest-first gets you to 16 while staying C-compatible.[^1]
+Of those 24 bytes, more than half are padding. With `repr(C)`, the declaration
+order is the layout, so when you control both sides, putting the largest fields
+first keeps the padding down.
 
-Those `const` assertions are cheap insurance. They fail the build the moment
-someone reorders a field or changes a type on one side only. `bindgen` emits the
-same kind of checks for every struct it generates.
+## What can go in the fields
 
-## `repr(transparent)`
+`repr(C)` fixes where each field goes, but not what goes in it. A struct can
+only cross the boundary if all of its fields can, and these types are safe to
+use as fields:
+
+- **Primitives and raw pointers**, mapped as in
+  [Primitive types in FFI](05_01_primitives.md).
+- **Other `repr(C)` structs**, nested by value, as well as enums and unions with
+  a C-compatible `repr`, which the next section covers.
+- **Fixed-size arrays.** A C field `char name[16]` is `[c_char; 16]` in Rust,
+  stored inline in the struct, exactly as in C.
+- **Nullable pointers as an `Option`.** `Option<NonNull<T>>`, `Option<&T>`, and
+  `Option<extern "C" fn(...)>` are guaranteed to be one pointer wide, with
+  `None` as null. They describe a C pointer field that may be null more
+  precisely than a raw pointer does.
+
+Types whose layout Rust keeps to itself, such as `String`, `Vec<T>`,
+`Box<dyn Trait>`, tuples, and slices, can't go in a shared struct. The
+`improper_ctypes` lint helps here. When a struct appears in an `extern` block,
+it warns if the struct lacks `repr(C)` or has a field that can't cross.
+
+C code often zeroes a struct and then sets only the fields it cares about, as in
+`struct options opts = {0};`. The Rust equivalent is `unsafe { mem::zeroed() }`,
+which is sound only when all zeros is a valid value for every field. That holds
+for integers, raw pointers, and an `Option` around a pointer, but not for a
+`NonNull`, a `bool`, or a reference.
+
+## By value or by pointer
+
+A C function can take or return a struct by value, or work through a pointer to
+one:
+
+```c
+struct Point {
+    double x;
+    double y;
+};
+
+struct Point midpoint(struct Point a, struct Point b);
+void translate(struct Point *point, double dx, double dy);
+```
+
+```rust,no_run
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Point {
+    pub x: f64,
+    pub y: f64,
+}
+
+unsafe extern "C" {
+    fn midpoint(a: Point, b: Point) -> Point;
+    fn translate(point: *mut Point, dx: f64, dy: f64);
+}
+```
+
+By value, the callee gets its own copy, and nothing is shared once the call
+returns. Whether that copy travels in registers or on the stack is up to the
+target's ABI. That suits small, plain data like a `Point`.
+
+Pass a pointer instead when the struct is large, when the callee should modify
+the caller's copy, as `translate` does, or when C holds on to the struct after
+the call returns. A pointer also makes ownership a question again: who allocated
+the struct, who frees it, and how long it stays valid.
+
+## Wrapping a single value
 
 `#[repr(transparent)]` is for structs with exactly one non-zero-sized field. It
 guarantees that the struct has the same layout _and_ the same function-call ABI
@@ -76,27 +126,13 @@ use std::ffi::c_int;
 pub struct Fd(c_int);
 ```
 
-A one-field `#[repr(C)]` struct has the same size and alignment as its field
-too, so it's worth being clear about what `transparent` adds on top.
+A one-field `repr(C)` struct has the same size and alignment as its field too,
+but some ABIs pass a struct differently from the bare value inside it.
+`repr(transparent)` guarantees they're passed the same way, so declaring
+`fn close(fd: Fd) -> c_int;` in an `unsafe extern "C"` block matches C's
+`int close(int fd)` on every target.
 
-The first thing is the function-call ABI. As far as a target's ABI is concerned,
-a `repr(C)` struct is a struct, and several ABIs pass or return a struct
-differently from the bare value inside it, for example on the stack instead of
-in a register. `repr(transparent)` guarantees that the wrapper is passed and
-returned exactly like the field, so `extern "C" fn close(fd: Fd) -> c_int`
-really does match C's `int close(int fd)` everywhere.
-
-The second is that the field's representation carries over to types built on the
-wrapper. A `#[repr(transparent)] struct Handle(NonNull<T>)` keeps the field's
-niche, so `Option<Handle>` is still one pointer wide, which is guaranteed for a
-`repr(transparent)` wrapper. Transmuting between the wrapper and the field stays
-sound as well.
-
-In practice the compiler usually treats a one-field `repr(C)` struct the same
-way. `repr(transparent)` is what turns "usually" into a guarantee that holds
-across targets and compiler versions.
-
-## `repr(packed)`
+## Packed and over-aligned structs
 
 `#[repr(packed)]` removes all padding, which means fields may end up misaligned.
 It matches `#pragma pack(1)` and `__attribute__((packed))` in C, and you'll
@@ -112,8 +148,8 @@ pub struct Header {
 const _: () = assert!(size_of::<Header>() == 5 && align_of::<Header>() == 1);
 ```
 
-Because a reference must always be aligned, Rust won't let you borrow a field of
-a packed struct:
+Because a reference must always be aligned, Rust won't let you borrow a
+misaligned field of a packed struct:
 
 ```rust,compile_fail
 # #[repr(C, packed)]
@@ -122,15 +158,13 @@ a packed struct:
 #     pub len: u32,
 # }
 fn len(header: &Header) -> &u32 {
-    // error[E0793]: reference to field of packed struct is unaligned
+    // error: reference to field of packed struct is unaligned
     &header.len
 }
 ```
 
 Copy the field out instead, with `let len = header.len;`. The compiler knows the
-field may be misaligned and generates a safe load for it.
-
-## `repr(align(N))`
+field may be misaligned and generates an unaligned load for it.
 
 `#[repr(align(N))]` raises a type's alignment to `N`, which must be a power of
 two. It matches `__attribute__((aligned(N)))` in GCC and Clang. You need it when
@@ -146,49 +180,31 @@ pub struct DmaBuffer {
 const _: () = assert!(align_of::<DmaBuffer>() == 64 && size_of::<DmaBuffer>() == 64);
 ```
 
-You can't combine `packed` and `align` on the same type. The compiler rejects it
-with error E0587.
+You can't combine `packed` and `align` on the same type.
 
-## Bitfields
+## C features Rust has no equivalent for
 
-C can give a field a width in bits:
+A few C struct declarations can't be mirrored in Rust at all:
 
-```c
-struct Packet {
-    unsigned version : 4;
-    unsigned kind    : 4;
-    unsigned length  : 24;
-};
-```
+- **Bitfields**, fields with a width in bits, as in `unsigned version : 4;`. C
+  leaves their exact layout up to each compiler.
+- **Flexible array members**, a trailing array without a length, as in
+  `char data[];`. The struct's real size is only known at runtime, while a Rust
+  struct's size is fixed at compile time.
+- **Anonymous structs and unions**, nested without a name, whose fields C
+  reaches as if they belonged to the outer struct. Rust requires every type to
+  have a name.
 
-Rust has no equivalent, and no `repr` adds one. C also leaves much of this to
-the implementation: which end of the storage unit the first field starts at,
-whether a field may straddle a unit boundary, and whether a plain `int` bitfield
-is signed or unsigned. Two compilers can lay the same declaration out
-differently.
-
-`bindgen` deals with it by generating one opaque storage field plus getters and
-setters that do the shifting and masking for you. The struct works, but it is no
-longer something you read field by field.
-
-When you own both sides, keep the bit twiddling in one place: expose accessor
-functions from C, or mirror the struct as plain integers and write the shifts
-yourself.
-
-## Zero-sized types
-
-Rust has types that take up no space at all, such as `()` and a struct without
-fields. C doesn't. An empty struct isn't valid standard C, and C compilers that
-accept one as an extension disagree on its size. Keep zero-sized types off the
-FFI boundary. The compiler warns when one ends up in an `extern` signature.
+`bindgen` can handle each of these, so when a header uses them, generate the
+bindings rather than writing them by hand.
 
 ## Head to the exercise
 
-The exercise lists three C declarations in comments, with the matching Rust
-fields already written out. What's missing is the `repr` attribute on each type:
-a struct that follows C's layout rules, a packed one, and a wrapper around an
-`int`. The tests check size, alignment, and field offsets against what a C
-compiler produces.
+The exercise gives you a C header, and you write the matching Rust types from
+scratch. `Point` is a plain struct of two `double`s. `Shape` holds an array, a
+nested `Point`, and a pointer that may be null. `WireHeader` is packed, and `Fd`
+wraps an `int`. The tests compare the size, alignment, and field offsets of each
+type against what the C compiler reports for the same header.
 
 [^1]: You can watch the compiler do this in
     [Compiler Explorer](https://godbolt.org/z/bxh5eqM8z), which prints the
