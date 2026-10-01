@@ -2,9 +2,8 @@
 //
 //     char to_lower(char byte);
 //     int  is_letter(char byte);
-//     void lower_bytes(char *bytes, size_t len);
 //
-// The bindings are already correct. The three wrappers below are the job: they
+// The bindings are already correct. The two wrappers below are the job: they
 // speak `u8` and `bool`, so every value converts on its way across.
 //
 // `wr` type-checks this crate for two targets: `c_char` is `i8` on x86_64-unknown-linux-gnu, and `u8` on
@@ -14,7 +13,6 @@ use std::ffi::{c_char, c_int};
 unsafe extern "C" {
     pub fn to_lower(byte: c_char) -> c_char;
     pub fn is_letter(byte: c_char) -> c_int;
-    pub fn lower_bytes(bytes: *mut c_char, len: usize);
 }
 
 /// Lowercases an ASCII letter, and returns any other byte unchanged.
@@ -30,14 +28,6 @@ pub fn lower(byte: u8) -> u8 {
 pub fn is_ascii_letter(byte: u8) -> bool {
     // TODO: call `is_letter`, with the same care. C answers yes-or-no questions
     // with an `int`.
-    todo!()
-}
-
-/// Lowercases the ASCII letters in `bytes`, in place.
-pub fn lower_all(bytes: &mut [u8]) {
-    // TODO: call `lower_bytes`. The slice stays a `[u8]`; only the pointer
-    // changes type. `pointer::cast` takes that type from the signature, so it
-    // can't pick the wrong one.
     todo!()
 }
 
@@ -75,14 +65,5 @@ mod tests {
         assert!(is_ascii_letter(b'q'));
         assert!(is_ascii_letter(b'Q'));
         assert!(!is_ascii_letter(b'7'));
-    }
-
-    #[test]
-    fn lowercases_a_slice_in_place() {
-        let mut bytes = *b"Ferris\xC3\xA9";
-
-        lower_all(&mut bytes);
-
-        assert_eq!(&bytes, b"ferris\xC3\xA9");
     }
 }

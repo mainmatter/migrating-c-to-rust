@@ -13,11 +13,11 @@ args = [
   "-Wextra",
   "-std=c11",
   "-I.",
-  "c_test/test_counter.c",
+  "c_test/test_stats.c",
   "../../../target/debug/libffi_opaque_types.a",
   "-o",
-  "../../../target/debug/test_counter",
+  "../../../target/debug/test_stats",
 ]
 
 [[verification]]
-command = "../../../target/debug/test_counter"
+command = "../../../target/debug/test_stats"
