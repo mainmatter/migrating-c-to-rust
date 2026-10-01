@@ -1,64 +1,42 @@
 # Error codes
 
-C APIs commonly reserve integer values for success and different failures:
+C APIs commonly report the outcome of an operation with an enum, with one
+variant for success and one for each kind of failure:
 
 ```c
-#define BM_OK 0
-#define BM_ERR_NOT_FOUND 1
-#define BM_ERR_IO 2
-#define BM_ERR_INVALID_INPUT 3
+typedef enum {
+    BM_OK = 0,
+    BM_ERR_NOT_FOUND = 1,
+    BM_ERR_IO = 2,
+    BM_ERR_INVALID_INPUT = 3,
+} BmStatus;
 
-int remove_bookmark(struct Store *store, const char *url);
+BmStatus remove_bookmark(struct Store *store, const char *url);
 ```
 
-The integer does not identify which constants belong to this function, and C
-will accept an unrelated integer in the same places. Correct propagation relies
-on control flow and review rather than the type system.
+The return type names the codes, but a C enum is still just an integer. C
+converts it to and from `int` freely and doesn't stop a function from returning
+a code that makes no sense for it, or one that isn't a variant at all. Correct
+propagation relies on control flow and review rather than the type system.
 
 ## Give failures a type
 
-In a safe Rust API, an enum defines the possible failures and `Result` connects
-them to the operation:
+In the safe Rust API, `BM_OK` becomes `Ok(())`, and each failure becomes a
+variant of an error enum:
 
-```rust
-#[derive(Debug, PartialEq, Eq)]
+```rust,ignore
 enum RemoveError {
     NotFound,
     Io,
 }
 
-# struct Store { urls: Vec<String> }
-fn remove_bookmark(store: &mut Store, url: &str) -> Result<(), RemoveError> {
-    let Some(index) = store.urls.iter().position(|stored| stored == url) else {
-        return Err(RemoveError::NotFound);
-    };
-    store.urls.remove(index);
-    Ok(())
-}
+fn remove_bookmark(store: &mut Store, url: &str) -> Result<(), RemoveError>;
 ```
 
-The small in-memory implementation only produces `NotFound`. `Io` remains part
-of the operation's error type because the complete implementation may persist
-the changed store. The example does not need to manufacture an I/O failure to
-show that callers must account for it.
-
-A function that performs several fallible steps can use `?` to return early
-without collapsing their error information:
-
-```rust
-# #[derive(Debug)] enum RemoveError { NotFound, Io }
-# struct Store;
-# fn remove_bookmark(_: &mut Store, _: &str) -> Result<(), RemoveError> { Ok(()) }
-fn remove_pair(store: &mut Store, first: &str, second: &str) -> Result<(), RemoveError> {
-    remove_bookmark(store, first)?;
-    remove_bookmark(store, second)?;
-    Ok(())
-}
-```
-
-When a lower layer has a different error type, use `map_err` or implement `From`
-to add the context needed by the public API. Do not convert every failure to one
-generic status simply because the C version did.
+`BM_ERR_INVALID_INPUT` has no variant. It reports a null pointer or a URL that
+isn't valid UTF-8, and the safe function can't receive either of those, because
+the adapter below rejects them first. Don't merge the remaining failures into
+one generic error because the C version shared a return type.
 
 ## Map once at the C boundary
 
@@ -71,10 +49,13 @@ use std::ffi::{CStr, c_char};
 # #[derive(Debug)] enum RemoveError { NotFound, Io }
 # struct Store;
 # fn remove_bookmark(_: &mut Store, _: &str) -> Result<(), RemoveError> { Ok(()) }
-const BM_OK: i32 = 0;
-const BM_ERR_NOT_FOUND: i32 = 1;
-const BM_ERR_IO: i32 = 2;
-const BM_ERR_INVALID_INPUT: i32 = 3;
+#[repr(C)]
+pub enum BmStatus {
+    Ok = 0,
+    NotFound = 1,
+    Io = 2,
+    InvalidInput = 3,
+}
 
 /// # Safety
 ///
@@ -84,43 +65,46 @@ const BM_ERR_INVALID_INPUT: i32 = 3;
 pub unsafe extern "C" fn remove_bookmark_ffi(
     store: *mut Store,
     url: *const c_char,
-) -> i32 {
+) -> BmStatus {
     let Some(store) = (unsafe { store.as_mut() }) else {
-        return BM_ERR_INVALID_INPUT;
+        return BmStatus::InvalidInput;
     };
     if url.is_null() {
-        return BM_ERR_INVALID_INPUT;
+        return BmStatus::InvalidInput;
     }
 
     // SAFETY: The pointer requirements are part of this function's contract,
     // and the null case was rejected above.
     let url = unsafe { CStr::from_ptr(url) };
     let Ok(url) = url.to_str() else {
-        return BM_ERR_INVALID_INPUT;
+        return BmStatus::InvalidInput;
     };
 
     match remove_bookmark(store, url) {
-        Ok(()) => BM_OK,
-        Err(RemoveError::NotFound) => BM_ERR_NOT_FOUND,
-        Err(RemoveError::Io) => BM_ERR_IO,
+        Ok(()) => BmStatus::Ok,
+        Err(RemoveError::NotFound) => BmStatus::NotFound,
+        Err(RemoveError::Io) => BmStatus::Io,
     }
 }
 ```
 
-This does not require the Rust error enum to have a C representation. Its layout
-is private because it never crosses the boundary. Conversely, if a raw numeric
+`BmStatus` mirrors the C enum. `#[repr(C)]` gives it the representation the C
+compiler picks for the same enum, so the two agree on the values they exchange.
+Returning it to C is sound, because a Rust enum always holds one of its
+variants. The Rust error enum doesn't need a C representation: its layout stays
+private because it never crosses the boundary. Conversely, if a raw numeric
 status arrives from C, match its known values explicitly. Constructing a Rust
 enum from an arbitrary integer can create an invalid value.
 
-`bm`'s `BmResult` is a real example of this distinction. Its storage layer also
-handles `ENOENT`: a missing file may represent an empty database, while a read
-failure or corrupt file remains an error. The domain decides which outcomes are
-ordinary; the fact that C reported them as integers does not.
+`bm`'s `BmResult` follows this pattern. Its storage layer also shows that not
+every C failure code is a Rust error: `ENOENT` means a missing file, which may
+be an empty database, while a read failure or corrupt file remains an error. The
+domain decides which outcomes are ordinary; the fact that C reported them as
+integers doesn't.
 
 ## Head to the exercise
 
-In `exercises/02_intermediate/05_02_error_codes`, replace the three numeric
-outcomes of a bookmark-ID change with `Result<(), ChangeIdError>`. Preserve the
-operation's behavior and leave the index unchanged when the old ID is missing or
-the new ID is already assigned to another bookmark. Then complete the FFI
-adapter that maps the Rust result back to the existing C status codes.
+In `exercises/02_intermediate/05_02_error_codes`, implement `change_bookmark_id`
+so that it reports its failures as a `Result<(), ChangeIdError>` instead of C
+status codes, leaving the index unchanged when it fails. Then complete the FFI
+adapter that maps that result back to the C status codes.

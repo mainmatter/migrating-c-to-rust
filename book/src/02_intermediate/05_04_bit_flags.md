@@ -39,7 +39,7 @@ wrapper the layout of that `u32`. Within Rust, `contains` requires every bit in
 its argument, while `intersects` asks whether any bit overlaps. `insert` and
 `remove` mutate a set, and `bits()` returns the raw representation for C.
 
-Named bits do not automatically make every combination meaningful. If a search
+Named bits don't automatically make every combination meaningful. If a search
 must inspect at least URLs or tags, validate that separately:
 
 ```rust,ignore
@@ -63,10 +63,10 @@ Converting a raw C integer requires an explicit compatibility decision:
 - `from_bits_truncate(raw)` discards unknown bits;
 - `from_bits_retain(raw)` preserves them.
 
-Rejecting is appropriate when executing an unknown option could silently do the
+Rejecting is appropriate when silently ignoring an unknown option would do the
 wrong thing. Retaining can be useful for a value that must round-trip to a newer
-library even though this version does not interpret every bit. Truncating is a
-real behavior choice; it is not a neutral default.
+library even though this version doesn't interpret every bit. Truncating is a
+real behavior choice; it isn't a neutral default.
 
 A strict C adapter can therefore convert and validate before entering the safe
 implementation:
@@ -84,8 +84,8 @@ fn flags_from_c(raw: u32) -> Result<FindFlags, ()> {
 }
 ```
 
-The safe search function accepts only `FindFlags`; only the boundary knows that
-C supplied an untyped integer.
+The safe search function accepts only `FindFlags`, so the boundary is the one
+place that knows C supplied an untyped integer.
 
 ## Head to the exercise
 
