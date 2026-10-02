@@ -10,6 +10,7 @@ license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 bindgen = "0.72"
+bitflags = "2.11"
 cbindgen = "0.27"
 cc = "1.0"
 

@@ -1,0 +1,15 @@
+[[verification]]
+command = "cargo"
+args = ["test", "-p", "bm_loops_and_iterators"]
+
+[[verification]]
+command = "cargo"
+args = [
+  "clippy",
+  "-p",
+  "bm_loops_and_iterators",
+  "--all-targets",
+  "--",
+  "-D",
+  "warnings",
+]

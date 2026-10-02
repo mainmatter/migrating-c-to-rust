@@ -67,6 +67,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "bm_bit_flags"
+version = "0.1.0"
+dependencies = [
+ "bitflags",
+]
+
+[[package]]
 name = "bm_cheadergen"
 version = "0.1.0"
 
@@ -80,6 +87,10 @@ version = "0.1.0"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "bm_error_codes"
+version = "0.1.0"
 
 [[package]]
 name = "bm_ffi_safe_types"
@@ -97,11 +108,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "bm_loops_and_iterators"
+version = "0.1.0"
+
+[[package]]
 name = "bm_miri"
 version = "0.1.0"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "bm_out_parameters"
+version = "0.1.0"
+
+[[package]]
+name = "bm_strings"
+version = "0.1.0"
 
 [[package]]
 name = "bm_validate_and_narrow"
