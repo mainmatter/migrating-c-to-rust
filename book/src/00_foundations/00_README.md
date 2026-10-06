@@ -1,11 +1,10 @@
 # Chapter 0: Unsafe Rust foundations
 
 Safe Rust comes with a guarantee: if the program compiles, it has no undefined
-behavior. The compiler can only promise that because it checks the rules behind
-it, such as where a reference may point, which values a type may hold, and who
-may mutate what and when. None of those checks reach across a language boundary.
-Rust cannot see what a C function does with a pointer, and C knows nothing about
-the rules Rust expects to hold, so it falls to you to know what each language
+behavior. The borrow checker and the type checker enforce the rules for
+references, valid values, and mutation that make that guarantee possible. Those
+checks stop at the language boundary, though: Rust cannot borrow-check C, and C
+does not enforce Rust's invariants. It falls to you to know what each language
 guarantees about memory, what it assumes, and what happens when those
 assumptions don't hold.
 

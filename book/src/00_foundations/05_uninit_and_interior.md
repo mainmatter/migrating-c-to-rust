@@ -108,33 +108,8 @@ Use the pointer that `as_mut_ptr` gives you, and don't take a `&mut Handle` to
 memory that isn't initialized yet. The reference is invalid the moment it
 exists, which is one step too early.
 
-For the buffer case, the same type works per element, and only the part C
-reports as written counts as initialized:
-
-```rust,no_run
-use std::mem::MaybeUninit;
-use std::slice;
-
-# #[unsafe(export_name = "read_block")]
-# unsafe extern "C" fn read_block_impl(buf: *mut u8, len: usize) -> usize {
-#     let n = len.min(5);
-#     unsafe { slice::from_raw_parts_mut(buf, n) }.copy_from_slice(b"hello");
-#     n
-# }
-unsafe extern "C" {
-    fn read_block(buf: *mut u8, len: usize) -> usize;
-}
-
-let mut buf = [const { MaybeUninit::<u8>::uninit() }; 4096];
-
-// SAFETY: the pointer and length describe `buf`, and `read_block` only writes.
-let written = unsafe { read_block(buf.as_mut_ptr().cast::<u8>(), buf.len()) };
-
-// SAFETY: `read_block` reported writing `written` bytes, so that prefix is
-// initialized. The rest of `buf` is not, and isn't read here.
-let data = unsafe { slice::from_raw_parts(buf.as_ptr().cast::<u8>(), written) };
-assert_eq!(data, b"hello");
-```
+For the buffer case, use an array of `MaybeUninit<u8>` in the same way, and
+treat only the part that C reports as written as initialized.
 
 ## Mutation behind a shared reference: `UnsafeCell`
 

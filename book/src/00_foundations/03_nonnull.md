@@ -38,10 +38,11 @@ A few more methods are worth knowing:
 
 ## The null-pointer optimization
 
-A `NonNull<T>` is never all zeros, and the compiler takes advantage of that. In
-an `Option<NonNull<T>>`, all zeros means `None` and anything else is a `Some`
-holding that address. The compiler doesn't need a separate discriminant, so the
-`Option` comes out the same size as the pointer:
+A `NonNull<T>` can never be all zeros (`0` being a forbidden value is literally
+the types only job), and the compiler takes advantage of that. A bit pattern
+that a type can never hold is called a _niche_, and the compiler looks for one
+whenever it lays out an enum. For pointer-like types the trick has a name of its
+own, the _null-pointer optimization_ (NPO).
 
 ```rust,no_run
 use std::mem::size_of;
@@ -49,28 +50,16 @@ use std::ptr::NonNull;
 
 const _: () = {
     assert!(size_of::<Option<NonNull<u8>>>() == size_of::<NonNull<u8>>());
-};
-```
-
-A bit pattern that a type can never hold is called a _niche_, and the compiler
-looks for one whenever it lays out an enum. For pointer-like types the trick has
-a name of its own, the _null-pointer optimization_ (NPO). The same reasoning
-applies to every type that rules null out:[^2]
-
-```rust,no_run
-use std::mem::size_of;
-
-const _: () = {
     assert!(size_of::<Option<&u8>>() == size_of::<&u8>());
     assert!(size_of::<Option<Box<u8>>>() == size_of::<Box<u8>>());
     assert!(size_of::<Option<extern "C" fn()>>() == size_of::<extern "C" fn()>());
 };
 ```
 
-A raw pointer is the counter-example. Null is an ordinary value for a
-`*const T`, and so is every other bit pattern, so there's no niche left to mark
-`None` with. The compiler has to store that separately, and pad the result back
-out to the pointer's alignment. On a 64-bit target that doubles the size:
+A raw pointer has none of these guarantees. Every combination of bits can be a
+valid `*const T` or `*mut T`, so there's no niche left to mark `None` with. The
+compiler has to store that separately, and pad the result back out to the
+pointer's alignment. On a 64-bit target that doubles the size:
 
 ```rust,no_run
 use std::mem::size_of;

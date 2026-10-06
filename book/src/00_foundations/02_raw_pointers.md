@@ -26,12 +26,13 @@ undefined behavior, even if you never read through it.
 
 ## Raw pointers
 
-Those guarantees are exactly what a pointer from C cannot offer, so for that
-Rust has raw pointers: `*const T` and `*mut T`. They are Rust's equivalent of
-C's `const T *` and `T *`, and they come with none of the guarantees Rust has
-for references. A raw pointer may be null, dangling, misaligned, or pointing to
-memory that is being mutated through another pointer at the same time.
-Everything that crosses the FFI boundary arrives as one.
+Those guarantees can be quite limiting, though, especially when you want to
+interface with C. For this reason Rust also has raw pointers: `*const T` and
+`*mut T`. They are Rust's equivalent of C's `const T *` and `T *`, and they come
+with none of the guarantees Rust has for references. A raw pointer may be null,
+dangling, misaligned, or pointing to memory that is being mutated through
+another pointer at the same time. Everything that crosses the FFI boundary
+arrives as one.
 
 Creating one is safe. Dereferencing one is `unsafe`, because that's the moment
 all those possibilities matter:
@@ -109,10 +110,10 @@ that:
 - `ptr.as_ref()` and `ptr.as_mut()` do the same, but return `None` for a null
   pointer.
 
-Both are `unsafe` because this is where you promise everything the list at the
-top of this section guarantees. A reference made from a raw pointer gets
-whatever lifetime the caller asks for, since the compiler has nothing to derive
-it from, so tie it to something meaningful:
+Both are `unsafe`. The compiler can't check that the pointer meets the
+guarantees a reference needs, so you promise it does. It also can't work out how
+long the memory stays valid, so you have to assign a lifetime for the reference
+that matches how long the C side keeps the value alive.
 
 ```rust,no_run
 pub struct Config {
@@ -131,7 +132,7 @@ pub unsafe fn config_from_c<'a>(ptr: *const Config) -> Option<&'a Config> {
 }
 ```
 
-The `# Safety` section spells out what `'a` means in practice. Without it, a
+The `# Safety` section tells you what `'a` means in practice. Without it, a
 caller could keep the reference around long after the C library freed the
 `Config`, and nothing would stop them.
 

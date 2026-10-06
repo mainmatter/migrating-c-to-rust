@@ -1,14 +1,11 @@
 # Memory layout: size, alignment, and `repr`
 
-When C and Rust share data, they share bytes. Both sides have to agree on how
-many bytes a value takes, and on where inside those bytes each field sits. C
-fixes both: for a given target, the standard and the platform ABI determine the
-width of every type and the offset of every struct field. Rust fixes neither for
-its own types. The compiler chooses, and it is free to choose differently in the
-next release.
-
-This section covers the vocabulary for talking about that, and `repr`, the
-attribute that pins a type's layout down.
+When C and Rust share data, both sides have to agree on its layout: how many
+bytes a value takes, and where each field sits inside them. C types derive their
+default layout rules from the platform ABI. Rust types, by default, have an
+unspecified layout optimized by the compiler. This section explains how to
+ensure that size and alignment between C and Rust match predictably across
+language boundaries.
 
 ## Size and alignment
 
@@ -26,33 +23,8 @@ For primitives, alignment usually equals size. Alignment comes from the
 hardware: misaligned loads and stores can be much slower than aligned accesses,
 sometimes requiring the compiler to emit multiple instructions; on some
 architectures they even raise a fault. Rust doesn't distinguish between
-architectures here. Accessing a value through a misaligned pointer is undefined
-behavior on every target, including those whose instructions handle misaligned
-access without complaint.[^1]
-
-## How a struct gets its size and alignment
-
-A struct's size and alignment follow from its fields, by three rules:
-
-1. the alignment of the struct is the largest alignment among its fields;
-2. each field sits at the next offset that is a multiple of its own alignment;
-3. the size of the struct is rounded up to a multiple of its own alignment.
-
-An array is a bit simpler. `[T; N]` has the alignment of `T` and a size of
-exactly `N` times the size of `T`, with nothing in between, which is what turns
-indexing into a multiplication. No padding is needed between the elements,
-because the size of `T` is already a multiple of its alignment: every element
-lands on an address that suits it.
-
-Two cases are worth knowing, because they don't follow from those rules:
-
-- **Some types have size 0.** The unit type `()` and a struct with no fields
-  occupy no bytes and have an alignment of 1. They are called _zero-sized
-  types_, or ZSTs.
-- **Not every reference is one word.** A `&u8` is a single address, 8 bytes on a
-  64-bit target. A `&[u8]` is 16: an address plus a length. The same holds for
-  `&str`. Those extra bytes are the reason a slice cannot be handed to C as a
-  plain pointer.
+architectures here: accessing a value through a misaligned pointer is undefined
+behavior on **every** target.[^1]
 
 ## `Layout`
 
@@ -79,13 +51,16 @@ to be aligned, and nothing else about the value going into them. That's also the
 form in which you'll meet it, as the argument to an allocator's methods rather
 than as something you construct by hand.
 
-## Padding
+## How a struct gets its size and alignment
 
-Put fields of different alignments in one struct and they can't all sit next to
-each other, because each one needs an address that matches its own alignment.
-The bytes left in the gaps are called _padding_.
+A struct's size and alignment are calculated from its fields. The fields are
+placed one after the other, but each one has to start at an offset that is a
+multiple of its own alignment, so a field may start a few bytes after the
+previous one ends. The struct as a whole gets the alignment of its most-aligned
+field, and its size is rounded up to a multiple of that alignment, so that the
+next value in an array starts aligned too.
 
-Here is a C struct and the bytes a C compiler gives it:
+Here is a C struct and its layout:
 
 ```c
 struct sample {
@@ -100,13 +75,13 @@ offset  0      1              4             8      9          12
         ├ flag ┼──── pad ─────┼─── value ───┼ tag ─┼─── pad ───┤
 ```
 
-Three bytes of padding follow `flag`, because the next offset that suits
-`value`'s alignment is 4. The struct takes the largest alignment among its
-fields, which is also 4, and its size is rounded up to a multiple of that,
-adding three more bytes after `tag`.
+`flag` sits at offset 0. `value` needs an offset that is a multiple of 4, so it
+starts at 4. `tag` follows at 8. The struct's alignment is 4, from `value`, so
+its size is rounded up to 12.
 
-That's 6 bytes of data in 12 bytes of memory. Padding is the cost of a fixed
-field order.
+The bytes a struct skips to keep its fields aligned are called _padding_: the
+three after `flag` and the three after `tag`. That's 6 bytes of data in 12 bytes
+of memory.
 
 ## No guarantees by default
 
@@ -120,11 +95,8 @@ struct Sample {
 }
 ```
 
-The compiler may place these three fields in any order, and it uses that freedom
-to avoid the padding a fixed order would cost: with `value` first, the same data
-fits in 8 bytes instead of 12. The choice isn't stable either. A different
-compiler version may lay the same struct out differently, since nothing in the
-language specifies it.
+The compiler may place these three fields in any order. With `value` first, the
+same data requires less padding and fits in 8 bytes instead of 12.
 
 For Rust-only code that is a good trade, because the compiler picks a tighter
 layout than a fixed order would and nothing outside the program depends on the
