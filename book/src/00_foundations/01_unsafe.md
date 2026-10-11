@@ -2,7 +2,7 @@
 
 Safe Rust comes with a guarantee: however you combine safe code, it can't cause
 [undefined behavior](#undefined-behavior). No use-after-free, no read past the
-end of a buffer, no two threads writing the same value at once. The compiler
+end of a buffer, no two threads writing the same memory at once. The compiler
 enforces that by checking every borrow, every index, and every conversion it can
 reason about. Some things are beyond what it can check, though. It can't tell
 whether a pointer handed over by a C library still points to live memory, or
@@ -18,11 +18,11 @@ does.
 `unsafe` doesn't switch off the borrow checker or any other check. It lets you
 perform a small set of extra operations the compiler can't verify:
 
-- dereferencing a raw pointer,
-- calling an `unsafe` function, which includes every function implemented in C,
-- reading or writing a `static mut` or an extern static,
-- reading a field of a `union`,
-- implementing an `unsafe` trait such as `Send` or `Sync`.
+- dereferencing a raw pointer
+- calling an `unsafe` function, which includes every function implemented in C
+- reading or writing a `static mut` or an `extern static`
+- reading a field of a `union`
+- implementing an `unsafe` trait such as `Send` or `Sync`
 
 Everything else inside an `unsafe` block is checked exactly as it would be
 outside of one.
@@ -30,31 +30,29 @@ outside of one.
 ## Undefined behavior
 
 The rules these operations can break all lead to _undefined behavior_ (UB). Most
-of those rules protect two properties. Memory safety means a program only ever
-accesses memory it owns, that is still alive, and that holds a value of the type
-it is read as. Freedom from data races means no two threads touch the same
-memory at the same time with at least one of them writing, unless they
-synchronize.
+of those rules protect two properties:
 
-Break either one and the program has UB, and UB is worse than a crash. It
-doesn't mean "the program crashes" or "you get a wrong value". It means the
-program no longer has any defined meaning. The compiler optimizes on the
-assumption that UB never happens, so a single violation can change code far away
-from where it occurred: a null check gets removed, a loop runs one time too
-many, or a value that "can't change" changes. A crash would be the good case,
-because at least it points at something.
+- **Memory safety.** The program only accesses memory that it may access, that
+  is still alive, and that holds a valid value of the type it reads.
+- **No data races.** Threads that share memory coordinate their access to it, so
+  that no thread reads or writes a value while another thread changes it.
+
+If a program has UB, Rust no longer defines what it does: it might crash, give
+wrong results, or seem to work fine. The compiler assumes UB never happens and
+optimizes based on that, so a program that seems fine today can break with the
+next compiler version.
 
 The Rust Reference keeps the
-[full list](https://doc.rust-lang.org/reference/behavior-considered-undefined.html).
-The entries you'll meet most often in FFI code are:
+[full list](https://doc.rust-lang.org/reference/behavior-considered-undefined.html)
+of what counts as UB. The entries you'll meet most often in FFI code are:
 
-- dereferencing a null, dangling, or misaligned pointer,
+- dereferencing a null, dangling, or misaligned pointer
 - producing an invalid value, such as a `bool` holding `3` or an enum with a
-  discriminant that doesn't match any variant,
+  discriminant that doesn't match any variant
 - breaking the aliasing rules, for example mutating memory while a shared
-  reference to it exists,
-- reading uninitialized memory,
-- data races.
+  reference to it exists
+- reading uninitialized memory
+- data races
 
 ## Safety contracts
 
@@ -62,9 +60,10 @@ An `unsafe` operation always comes with conditions that make it sound. We call
 those conditions the operation's _safety contract_. Rust splits the contract
 into two halves.
 
-An `unsafe fn` says "calling me is only sound if you, the caller, uphold these
-conditions". The conditions go into a numbered `# Safety` section of the doc
-comment so that the code relying on them can point at one:
+An `unsafe fn` declaration says "calling me is only sound if you, the caller,
+uphold these conditions". The conditions should go into a numbered `# Safety`
+section of the doc comment, so that we can refer back to them at the relevant
+call sites:
 
 ```rust,no_run
 /// Reads the `u32` that `ptr` points to.
@@ -72,8 +71,8 @@ comment so that the code relying on them can point at one:
 /// # Safety
 ///
 /// 1. `ptr` must be non-null and aligned for `u32`.
-/// 2. `ptr` must point to an initialized `u32` that stays alive and unmodified
-///    for the duration of the call.
+/// 2. `ptr` must point to an initialized `u32` that stays alive and remains
+///    unmodified for the duration of the call.
 pub unsafe fn read_u32(ptr: *const u32) -> u32 {
     // SAFETY: ...
     unsafe { *ptr }
@@ -94,19 +93,19 @@ let x = 41_u32;
 let y = unsafe { read_u32(&x) };
 ```
 
-Each `// SAFETY:` comment then explains why the code upholds each condition, or
-names the numbered invariant its caller already promised.
+A `// SAFETY:` comment explains why the code upholds each condition, or names
+the numbered condition its caller already promised to uphold.
 [High-quality FFI APIs](../01_intro/07_high_quality_ffi_apis.md) returns to this
-convention once a real `extern "C"` function has several invariants to keep
+convention once a real `extern "C"` function has several conditions to keep
 apart.
 
 ## Safe abstractions and soundness
 
-Most `unsafe` code ends up wrapped in a safe function. The safe function checks
-whatever the contract requires, then performs the `unsafe` operation. That
-wrapper is only correct if no input, however strange, can cause UB. A safe
-function that can cause UB is called _unsound_, and it's a bug even if no caller
-triggers it today.
+It's common for `unsafe` code to end up wrapped in a safe function. The safe
+function checks whatever the contract requires, then performs the `unsafe`
+operation. That wrapper is only correct if no input, however strange, can cause
+UB. A safe function that can cause UB is called _unsound_, and it's a bug even
+if no caller triggers it today.
 
 Here's an unsound one:
 
@@ -132,10 +131,11 @@ pub fn first(bytes: &[u8]) -> Option<u8> {
 }
 ```
 
-In real code you would write `bytes.first().copied()`. The pattern is what
-matters: check, then justify, then perform the operation. Writing the
-`// SAFETY:` comment is often how you find out that a check is missing. If you
-can't finish the sentence, the code isn't sound yet.
+In real code you would write `bytes.first().copied()`, which does the same check
+without any `unsafe`. The example uses `get_unchecked` only to show the pattern:
+check, then justify, then perform the operation. Writing the `// SAFETY:`
+comment is often how you find out that a check is missing. If you can't finish
+the sentence, the code isn't sound yet.
 
 ## `unsafe` in FFI code
 
@@ -165,12 +165,12 @@ pub extern "C" fn root_of_two() -> c_double {
   that the signature is correct, which is why the block is marked `unsafe`.
   Every function in it is `unsafe` to call, unless you mark it `safe fn` because
   it has no conditions for the caller to uphold. These declarations are what
-  [What is FFI?](../01_intro/01_what_is_ffi.md) calls bindings, and it covers
-  what the compiler does and doesn't check about them.
+  [What is FFI?](../01_intro/01_what_is_ffi.md) calls bindings. That chapter
+  also covers what the compiler does and doesn't check about them.
 - **`unsafe` attributes.** `#[unsafe(no_mangle)]` exports a function under its
   plain name. That name can collide with another symbol, such as a C library
   function, and the linker won't always tell you. The attribute is `unsafe`
-  because you are promising that it doesn't.
+  because you are promising that no such collision happens.
 - **`unsafe` functions you export.** An `extern "C" fn` that dereferences
   pointers from C has a safety contract like any other `unsafe fn`, and C
   callers need it documented just as much.
@@ -179,8 +179,10 @@ All three come up as soon as you write bindings of your own.
 
 ## Head to the exercise
 
-The exercise is one function: return the last byte of a slice, or `None` if
-there isn't one, reading the byte with `get_unchecked`.
+The exercise is one function: return the last two bytes of a slice, or `None` if
+it has fewer than two, reading each byte with `get_unchecked`. Work out the
+condition that makes both indexes valid before you rely on it, and say why in a
+`// SAFETY:` comment.
 
 [^1]: `read_u32` needs its own `unsafe` block even though the whole function is
     `unsafe`. Since the 2024 edition, the body of an `unsafe fn` is treated like

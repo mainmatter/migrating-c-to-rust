@@ -84,12 +84,12 @@ lay out an `Option`. For a short list of types, though, the standard library
 that `Option<T>` has the same size, alignment, and function-call ABI as `T`,
 with `None` represented as all zeros:
 
-- `&T` and `&mut T`,
-- `Box<T>`,
-- `NonNull<T>`,
-- `NonZero<u8>`, `NonZero<u32>`, and the other `NonZero` integers,
-- function pointers, including `extern "C" fn`,
-- `#[repr(transparent)]` structs around one of the above.
+- `&T` and `&mut T`
+- `Box<T>`
+- `NonNull<T>`
+- `NonZero<u8>`, `NonZero<u32>`, and the other `NonZero` integers
+- function pointers, including `extern "C" fn`
+- `#[repr(transparent)]` structs around one of the above
 
 For the pointer types, the all-zeros part only holds when `T` is sized. A
 pointer to an unsized type, such as `&[u8]` or `&str`, is a pointer plus a

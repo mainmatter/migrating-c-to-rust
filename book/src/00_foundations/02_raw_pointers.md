@@ -9,12 +9,12 @@ carries those guarantees in its type.
 
 A reference, `&T` or `&mut T`, is always:
 
-- **non-null**,
-- **aligned** for `T`,
-- pointing to a **live, initialized, valid** `T`,
-- valid for its **lifetime**, which the borrow checker enforces,
+- **non-null**
+- **aligned** for `T`
+- pointing to a **live, initialized, valid** `T`
+- valid for its **lifetime**, which the borrow checker enforces
 - subject to the **aliasing rules**: either any number of `&T`, or exactly one
-  `&mut T`.[^1]
+  `&mut T`[^1]
 
 These guarantees aren't only there to protect you. The compiler optimizes based
 on them. Because a `&mut T` is the only way to reach its value, the compiler can
@@ -56,11 +56,11 @@ unsafe {
 
 Raw pointers have a small API of their own. The methods you'll use most are:
 
-- `is_null` to check for null,
-- `cast` to change the pointee type, the equivalent of a C pointer cast,
+- `is_null` to check for null
+- `cast` to change the pointee type, the equivalent of a C pointer cast
 - `add` for pointer arithmetic, which is `unsafe` because the result must stay
-  within the same allocation,
-- `read` and `write` to copy a value out or in without creating a reference,
+  within the same allocation
+- `read` and `write` to copy a value out or in without creating a reference
 - `copy_to` and `copy_from` to move a range of data at once, the equivalent of
   C's `memmove`. The `_nonoverlapping` variants are `memcpy` for when the
   pointers don't overlap.
@@ -106,9 +106,9 @@ Sooner or later you'll want to turn a raw pointer from C into a reference, so
 the rest of your Rust code can work with it safely. There are two ways to do
 that:
 
-- `&*ptr` or `&mut *ptr` dereference the pointer and borrow the result,
+- `&*ptr` or `&mut *ptr` dereference the pointer and borrow the result
 - `ptr.as_ref()` and `ptr.as_mut()` do the same, but return `None` for a null
-  pointer.
+  pointer
 
 Both are `unsafe`. The compiler can't check that the pointer meets the
 guarantees a reference needs, so you promise it does. It also can't work out how
