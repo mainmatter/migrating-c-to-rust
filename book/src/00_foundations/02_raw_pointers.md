@@ -158,9 +158,8 @@ point to.
 [^1]: A `&T` usually means the value behind it can't change while the reference
     is alive, but a type can opt out of that by wrapping the field in an
     `UnsafeCell`, which is how `Cell`, `RefCell`, `Mutex`, and the atomics work.
-    That is called interior mutability, and
-    [`MaybeUninit` and `UnsafeCell`](05_uninit_and_interior.md) covers it.
-    Everything else here assumes a plain `&T`.
+    That is called interior mutability. Everything else here assumes a plain
+    `&T`.
 
 [^2]: Raw pointers carry more than an address. Each pointer also has a
     _provenance_: the allocation and permissions it was derived from. Two

@@ -39,7 +39,6 @@
 /f0c https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/02_raw_pointers
 /f0d https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/03_nonnull
 /f0p https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/04_layout
-/f0q https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/00_foundations/05_uninit_and_interior
 /f2f https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/00_README
 /f22 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/01_what_is_ffi
 /f2z https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_intro/02_drift

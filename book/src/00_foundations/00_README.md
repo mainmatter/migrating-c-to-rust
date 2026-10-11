@@ -13,8 +13,6 @@ This chapter covers the building blocks:
 - how raw pointers differ from references and what each one guarantees
 - how `NonNull` and `Option` let the type system track null pointers
 - how size, alignment, and padding work, and what `repr` is for
-- how to describe memory that isn't a valid value yet or that changes behind
-  your back
 
 ## Exercises
 

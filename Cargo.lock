@@ -242,10 +242,6 @@ name = "foundations_raw_pointers"
 version = "0.1.0"
 
 [[package]]
-name = "foundations_uninit_and_interior"
-version = "0.1.0"
-
-[[package]]
 name = "foundations_unsafe"
 version = "0.1.0"
 
