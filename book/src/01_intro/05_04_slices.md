@@ -52,15 +52,14 @@ pub unsafe fn slice_from_c<'a, T>(ptr: *const T, len: usize) -> &'a [T] {
 }
 ```
 
-Everything else stays the caller's responsibility. Nothing in Rust can check
-whether C's length is honest: if C says 10 and allocated 8, you read past the
-end, and the `# Safety` section is the only place that says whose job it was to
-prevent it.
+Everything else stays the caller's responsibility. If C says 10 and allocated 8,
+you read past the end, and the `# Safety` section is the place that says whose
+job it was to prevent it.
 
 Debug builds check some of these rules at runtime and abort with
 `unsafe precondition(s) violated` when C passes `NULL`. Release builds skip
-those checks, and the same call can appear to work. Don't count on the debug
-check: write the explicit one anyway.
+those checks, and the same call can appear to work. Don't depend on this debug
+check.
 
 ## Slices to C
 
@@ -88,15 +87,14 @@ let mut items = [1_i32, 2, 3];
 unsafe { scale_all(items.as_mut_ptr(), items.len(), 2) };
 ```
 
-Two things to watch for. First, check which unit the C function counts its
-length in. `scale_all` counts elements, like `len()` does, but `memcpy` and the
-rest of `string.h` count bytes. Second, the pointer of an empty slice is
-dangling: non-null, but not pointing to any memory. C code that follows the
-length never touches it, but C code that checks `ptr != NULL` instead of
-`len != 0` might.
+One thing to watch out for: The pointer of an empty slice is dangling: non-null,
+but not pointing to any memory. C code that checks `ptr != NULL` instead of
+`len != 0` will cause problems.
 
-This only lends the memory to C for the duration of the call. Handing ownership
-over is a different matter, which
+This only lends the memory to C for the duration of the call. That's also why
+there's no `into_raw_parts` to mirror `from_raw_parts`: a slice borrows its
+memory, so it has no ownership to give away. Handing ownership over is a
+different matter, which
 [Allocation, allocators, and mixing them](../02_intermediate/02_allocators.md)
 covers.
 

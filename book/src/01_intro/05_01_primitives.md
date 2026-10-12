@@ -30,7 +30,7 @@ unsafe extern "C" {
 Here is how the common primitive types map from C to Rust when targeting
 Windows, macOS, or Linux on x86-64 or aarch64:
 
-| C                        | Rust                            | Alias         |
+| C type                   | Rust type                       | Alias         |
 | ------------------------ | ------------------------------- | ------------- |
 | `char`                   | `i8` (or `u8` on aarch64 Linux) | `c_char`      |
 | `signed char`            | `i8`                            | `c_schar`     |
@@ -52,33 +52,19 @@ Windows, macOS, or Linux on x86-64 or aarch64:
 | `T *`                    | `*mut T`                        | –             |
 | `const T *`              | `*const T`                      | –             |
 
-The names in the last column are type aliases from `core::ffi`. `std::ffi`
-re-exports them so `std::ffi::c_int` and `core::ffi::c_int` are the same type.
-`core::ffi` is the one to reach for in a `no_std` crate. You'll also see
+The names in the last column are Rust type aliases for each C type. Each alias
+stands for whichever Rust type matches that C type on the platform you compile
+for.
+
+They are defined in `core::ffi`, and `std::ffi` re-exports them, so
+`std::ffi::c_int` and `core::ffi::c_int` are the same type. You'll also see
 `std::os::raw::c_int` in `bindgen` output and `libc::c_int` from the `libc`
-crate. All of them resolve to the same alias, so you can mix them freely.
+crate. All of them resolve to the same alias.
 
 The aliases are for code that targets platforms where a fixed-width Rust type
 doesn't match. On MSP430 or AVR, for example, C's `int` is 16 bits, so `c_int`
 is `i16`. If your code has to build there as well as on x86-64, where `c_int` is
-an `i32`, no single fixed-width type fits the signature, and the alias is the
-only option.
-
-That gives a rule of thumb for reading a header:
-
-- **The width is up to the platform** (`int`, `long`, `unsigned short`): write
-  the alias, unless you know every target you build for agrees on the width, in
-  which case Rust's fixed-width type is a fair shortcut.
-- **`char`:** always write `c_char`, even where you take the shortcut for other
-  types. The next section explains why.
-- **The width is already pinned** (`int32_t`, `uint64_t`): write Rust's
-  fixed-width type, since the C type can't move either.
-- **`size_t` and `ptrdiff_t`:** write `usize` and `isize`. They're pointer-sized
-  in Rust, which is what `size_t` and `ptrdiff_t` are on every target Rust
-  supports.
-- **`void *`:** write `*mut c_void`, another alias from `core::ffi`. C uses it
-  for "a pointer to something I'm not telling you about", and
-  [Opaque types](05_05_opaque_types.md) covers what to do with such a pointer.
+an `i32`, the alias is the right option.
 
 ## `c_char` and `u8`
 
@@ -115,23 +101,11 @@ Two details about those casts are worth naming:
 
 - **They change the type, not the value.** `as` between `c_char` and `u8` keeps
   the bit pattern exactly, and casting back gives you the same byte again.
-  Nothing is lost in either direction, so the byte that reaches C is the byte
-  the function produced.
 - **They are allowed because the layouts match.** `c_char` and `u8` have the
   same size and the same alignment on every target, and every bit pattern is
-  valid for both. That makes the cast purely a change of type: at runtime it is
-  a no-op, and the compiler emits no instruction for it.
+  valid for both. That makes the cast purely a compile time check.
 
 ## Head to the exercise
 
 The exercise gives you a C library over bytes with its bindings already written,
-and two small wrappers to finish. They're in `u8` and `bool`, the way the rest
-of Rust wants them, so each one converts at the boundary: a byte in and a byte
-out, and C's `int` as a `bool`.
-
-The interesting part is what counts as done. Before running the tests, `wr`
-type-checks the crate for two targets, one where `c_char` is `i8` and one where
-it is `u8`. If you cast to whichever type your own compiler accepts today, as
-the existing code does, one of the two checks rejects it. Only `c_char` gets
-past both. Neither check compiles or links anything, so no cross-compiler is
-involved.
+and two small wrappers to finish.

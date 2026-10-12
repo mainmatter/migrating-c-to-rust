@@ -15,11 +15,4 @@ struct Shape {
   uint32_t id;
 };
 
-#pragma pack(1)
-struct WireHeader {
-  uint8_t version;
-  uint32_t len;
-};
-#pragma pack()
-
 typedef int Fd;

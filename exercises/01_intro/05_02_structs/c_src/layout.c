@@ -21,13 +21,6 @@ const size_t SHAPE_LAYOUT[] = {
     offsetof(struct Shape, id),
 };
 
-const size_t WIRE_HEADER_LAYOUT[] = {
-    sizeof(struct WireHeader),
-    alignof(struct WireHeader),
-    offsetof(struct WireHeader, version),
-    offsetof(struct WireHeader, len),
-};
-
 const size_t FD_LAYOUT[] = {
     sizeof(Fd),
     alignof(Fd),

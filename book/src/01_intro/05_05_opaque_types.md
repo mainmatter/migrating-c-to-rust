@@ -1,11 +1,11 @@
 # Opaque types
 
-Some types can't be shared with C at all. A `Vec` is one of those, and so is a C
-`FILE` in the other direction. Neither can be mirrored field by field, because
-neither layout is guaranteed: Rust reserves the right to change `Vec`'s, and the
-C standard leaves `FILE`'s up to each C library.
+Some types can't cross the FFI boundary by value. A `Vec` is one of those, and
+so is a C `FILE` in the other direction. Neither can be mirrored field by field,
+because neither layout is guaranteed: Rust reserves the right to change `Vec`'s,
+and the C standard leaves `FILE`'s up to each C library.
 
-The alternative is to let a pointer cross and keep the type behind it private. C
+Instead, pass a pointer across the FFI and keep the type behind it private. C
 calls this an opaque type, and it's the shape most C libraries already use:
 `FILE *`, `sqlite3 *`, `pthread_mutex_t *`. One side owns the object, its
 layout, and its memory, and the other side only ever holds the address. So an
@@ -26,11 +26,13 @@ uint32_t counter_value(const Counter *counter);
 void counter_free(Counter *counter);
 ```
 
-`typedef struct Counter Counter;` declares a struct that is never defined. C can
-pass `Counter *` around, but it can't allocate one, copy one, or read a field.
+`typedef struct Counter Counter;` does two things. `struct Counter` declares a
+struct without defining it, and the `typedef` lets C code write `Counter`
+instead of `struct Counter`. The header never defines the struct, so C can pass
+`Counter *` around, but it can't allocate one, copy one, or read a field.
 
-On the Rust side, `Counter` is an ordinary Rust struct. The constructor moves it
-to the heap and hands ownership to C, and the destructor takes it back:
+On the Rust side, `Counter` is an ordinary Rust struct. The constructor puts it
+on the heap and hands ownership to C, and the destructor takes it back:
 
 ```rust,no_run
 pub struct Counter {
@@ -54,8 +56,9 @@ pub unsafe extern "C" fn counter_free(counter: *mut Counter) {
 }
 ```
 
-`Box::into_raw` stops Rust from freeing the counter, and `Box::from_raw` makes
-Rust responsible for it again, so dropping the box frees it.
+`Box::into_raw` turns the box into a raw pointer without dropping the counter,
+and `Box::from_raw` turns the pointer back into a box, which drops the counter
+when the box goes out of scope.
 
 The operations in between borrow the counter for the duration of one call.
 `&mut *counter` turns the raw pointer into a `&mut Counter`, and `&*counter`
@@ -116,12 +119,12 @@ whose layout is none of my business":
 
 ```rust,no_run
 use std::ffi::c_int;
-use std::marker::PhantomData;
+use std::marker::{PhantomData, PhantomPinned};
 
 #[repr(C)]
 pub struct Widget {
     _data: (),
-    _marker: PhantomData<*mut u8>,
+    _marker: PhantomData<(*mut u8, PhantomPinned)>,
 }
 
 unsafe extern "C" {
@@ -133,8 +136,10 @@ unsafe extern "C" {
 
 Both fields are private, so the only way to get a `Widget` is a pointer from C.
 `_data` keeps the `improper_ctypes` lint quiet, which would otherwise flag a
-struct made only of `PhantomData`. The marker makes the type neither `Send` nor
-`Sync`, so Rust won't assume it can be used from another thread.
+struct made only of `PhantomData`. The `*mut u8` in the marker makes the type
+neither `Send` nor `Sync`, so Rust won't assume it can be used from another
+thread. `PhantomPinned` makes it `!Unpin`, because the C library may rely on the
+object staying at the same address.
 
 To make sure every widget is closed exactly once, wrap the pointer in a type
 that owns it. `NonNull` turns C's null into `None`, and `Drop` closes the widget
@@ -142,10 +147,10 @@ when the wrapper goes out of scope:
 
 ```rust,no_run
 # use std::ffi::c_int;
-# use std::marker::PhantomData;
+# use std::marker::{PhantomData, PhantomPinned};
 # use std::ptr::NonNull;
 # #[repr(C)]
-# pub struct Widget { _data: (), _marker: PhantomData<*mut u8> }
+# pub struct Widget { _data: (), _marker: PhantomData<(*mut u8, PhantomPinned)> }
 # unsafe extern "C" {
 #     fn widget_open(id: c_int) -> *mut Widget;
 #     fn widget_id(widget: *const Widget) -> c_int;

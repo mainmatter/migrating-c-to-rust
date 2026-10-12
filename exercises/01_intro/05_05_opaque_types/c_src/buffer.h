@@ -22,4 +22,4 @@ size_t buffer_len(const Buffer *buffer);
 void buffer_free(Buffer *buffer);
 
 /* Returns how many buffers are currently allocated. */
-size_t buffers_live(void);
+size_t num_buffers_live(void);

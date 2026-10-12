@@ -11,12 +11,9 @@
 //
 // `c_test/test_stats.c` is a C program that uses those four functions, and
 // `wr` builds and runs it against your implementation.
-//
-// The stubs below return placeholder values rather than calling `todo!()`,
-// because a panic that reaches an `extern "C"` function aborts the process
-// instead of unwinding, and an abort takes the whole test run with it.
 
-/// Unlike the chapter's counter, `Stats` owns heap memory of its own.
+/// Unlike the chapter's counter, `Stats` owns heap memory of its own in the form
+/// of a `Vec`.
 pub struct Stats {
     samples: Vec<i32>,
 }
@@ -37,7 +34,7 @@ pub extern "C" fn stats_new() -> *mut Stats {
 /// call may use the same `Stats` for the duration of this one.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn stats_add(stats: *mut Stats, sample: i32) {
-    // TODO: borrow the `Stats` mutably for this call, and record the sample.
+    // TODO: borrow the `Stats` mutably for this call, and add the sample.
     let _ = (stats, sample);
 }
 
@@ -46,7 +43,7 @@ pub unsafe extern "C" fn stats_add(stats: *mut Stats, sample: i32) {
 /// # Safety
 ///
 /// `stats` must come from `stats_new` and must not have been freed. No other
-/// call may modify the same `Stats` for the duration of this one.
+/// call may modify the same `Stats` for the duration of this call.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn stats_sum(stats: *const Stats) -> i64 {
     // TODO: borrow the `Stats` for this call, and add up its samples.
@@ -69,12 +66,13 @@ pub unsafe extern "C" fn stats_free(stats: *mut Stats) {
 //
 // `c_src/buffer.h` declares `typedef struct Buffer Buffer;` and the functions
 // below. The struct itself is defined in `buffer.c`, so this crate has no way
-// of knowing what is in it, and no business guessing.
+// of knowing what is in it (and no business guessing).
 
 use std::ptr::NonNull;
 
 // TODO: replace this with a type that stands for "a C struct whose layout is
-// none of my business": no public fields, and neither `Send` nor `Sync`.
+// none of my business": no public fields, neither `Send` nor `Sync`, and not
+// `Unpin`.
 pub struct Buffer;
 
 unsafe extern "C" {
@@ -83,7 +81,7 @@ unsafe extern "C" {
     fn buffer_len(buffer: *const Buffer) -> usize;
     fn buffer_free(buffer: *mut Buffer);
     /// How many buffers the C library currently has allocated.
-    pub safe fn buffers_live() -> usize;
+    pub safe fn num_buffers_live() -> usize;
 }
 
 /// A buffer that frees itself.
@@ -133,11 +131,11 @@ mod tests {
 
     #[test]
     fn buffer_grows_and_is_freed() {
-        let before = buffers_live();
+        let before = num_buffers_live();
 
         {
             let mut buffer = OwnedBuffer::new().expect("buffer_new returned null");
-            assert_eq!(buffers_live(), before + 1);
+            assert_eq!(num_buffers_live(), before + 1);
             assert_eq!(buffer.len(), 0);
 
             for byte in b"opaque types" {
@@ -146,6 +144,6 @@ mod tests {
             assert_eq!(buffer.len(), 12);
         }
 
-        assert_eq!(buffers_live(), before);
+        assert_eq!(num_buffers_live(), before);
     }
 }

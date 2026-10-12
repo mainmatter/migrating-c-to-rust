@@ -2,14 +2,10 @@
 //
 //     char to_lower(char byte);
 //     int  is_letter(char byte);
-//
-// The bindings are already correct. The two wrappers below are the job: they
-// speak `u8` and `bool`, so every value converts on its way across.
-//
-// `wr` type-checks this crate for two targets: `c_char` is `i8` on x86_64-unknown-linux-gnu, and `u8` on
-// aarch64-unknown-linux-gnu so this will trigger when not properly casting to `c_char`.
+
 use std::ffi::{c_char, c_int};
 
+// The bindings are already correct, no need to change them.
 unsafe extern "C" {
     pub fn to_lower(byte: c_char) -> c_char;
     pub fn is_letter(byte: c_char) -> c_int;
@@ -17,8 +13,8 @@ unsafe extern "C" {
 
 /// Lowercases an ASCII letter, and returns any other byte unchanged.
 pub fn lower(byte: u8) -> u8 {
-    // A colleague wrote this: the compiler asked for an `i8`, they gave it one,
-    // the tests went green. See what happens when you remove the `as i8` cast.
+    // This code was written to compile on another platform. See what happens
+    // when you remove the `as i8` cast.
     //
     // TODO: make it build for both targets.
     unsafe { to_lower(byte as i8) as u8 }

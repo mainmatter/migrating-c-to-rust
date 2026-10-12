@@ -14,13 +14,6 @@
 //         uint32_t id;
 //     };
 //
-//     #pragma pack(1)
-//     struct WireHeader {
-//         uint8_t version;
-//         uint32_t len;
-//     };
-//     #pragma pack()
-//
 //     typedef int Fd;
 //
 // Keep the field names from the header: the tests look them up by name. They
@@ -34,10 +27,6 @@ pub struct Point;
 // TODO: mirror `struct Shape`. C may leave `parent` null, so pick a Rust type
 // that says so: an `Option` around a non-null pointer.
 pub struct Shape;
-
-// TODO: mirror `struct WireHeader`. It is declared under `#pragma pack(1)`, so C
-// gives it no padding at all.
-pub struct WireHeader;
 
 // TODO: `Fd` is a wrapper that C never sees: it passes a plain `int`. Make it a
 // tuple struct around a `c_int`, with the attribute that guarantees the same
@@ -57,7 +46,7 @@ pub extern "C" fn close_fd(fd: Fd) -> c_int {
 
 #[cfg(test)]
 mod tests {
-    use super::{Fd, Point, Shape, WireHeader};
+    use super::{Fd, Point, Shape};
     use std::mem::offset_of;
 
     // What the C compiler says about each type, from `c_src/layout.c`: size and
@@ -65,7 +54,6 @@ mod tests {
     unsafe extern "C" {
         safe static POINT_LAYOUT: [usize; 4];
         safe static SHAPE_LAYOUT: [usize; 7];
-        safe static WIRE_HEADER_LAYOUT: [usize; 4];
         safe static FD_LAYOUT: [usize; 2];
     }
 
@@ -92,17 +80,6 @@ mod tests {
             offset_of!(Shape, id),
         ];
         assert_eq!(rust, SHAPE_LAYOUT);
-    }
-
-    #[test]
-    fn wire_header_matches_c() {
-        let rust = [
-            size_of::<WireHeader>(),
-            align_of::<WireHeader>(),
-            offset_of!(WireHeader, version),
-            offset_of!(WireHeader, len),
-        ];
-        assert_eq!(rust, WIRE_HEADER_LAYOUT);
     }
 
     #[test]

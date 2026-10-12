@@ -43,4 +43,4 @@ void buffer_free(Buffer *buffer) {
   live_buffers--;
 }
 
-size_t buffers_live(void) { return live_buffers; }
+size_t num_buffers_live(void) { return live_buffers; }
