@@ -123,8 +123,8 @@ the entire implementation.
 
 ## Verifying behavior parity
 
-A rewrite is only done when the observable behavior is unchanged. The exercise
-uses the same C caller twice:
+A rewrite must not change observable behavior. The exercise checks this by
+running the same C caller twice:
 
 1. first it links the caller with `bm_version.c` and runs the all-C baseline;
 2. then it omits `bm_version.c`, links the unchanged caller with the Rust
