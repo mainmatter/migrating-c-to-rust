@@ -24,7 +24,7 @@ hardware: misaligned loads and stores can be much slower than aligned accesses,
 sometimes requiring the compiler to emit multiple instructions; on some
 architectures they even raise a fault. Rust doesn't distinguish between
 architectures here: accessing a value through a misaligned pointer is undefined
-behavior on **every** target.[^1]
+behavior on every target.[^1]
 
 ## `Layout`
 
@@ -45,16 +45,15 @@ assert_eq!((three.size(), three.align()), (24, 8));
 `Layout::array` returns a `Result`, because the total size of a large array can
 overflow.
 
-Allocation APIs are written in terms of `Layout` rather than a type parameter:
-an allocator has to know how many bytes to hand out and how strictly they need
-to be aligned, and nothing else about the value going into them. That's also the
-form in which you'll meet it, as the argument to an allocator's methods rather
-than as something you construct by hand.
+Allocation APIs are written in terms of `Layout`: an allocator has to know how
+many bytes to allocate and how they need to be aligned.
+[Allocation, allocators, and mixing them](../02_intermediate/02_allocators.md)
+covers the allocator API in more detail.
 
 ## How a struct gets its size and alignment
 
-A struct's size and alignment are calculated from its fields. The fields are
-placed one after the other, but each one has to start at an offset that is a
+In C, a struct's size and alignment are calculated from its fields. The fields
+are placed one after the other, but each one has to start at an offset that is a
 multiple of its own alignment, so a field may start a few bytes after the
 previous one ends. The struct as a whole gets the alignment of its most-aligned
 field, and its size is rounded up to a multiple of that alignment, so that the
@@ -79,9 +78,9 @@ offset  0      1              4             8      9          12
 starts at 4. `tag` follows at 8. The struct's alignment is 4, from `value`, so
 its size is rounded up to 12.
 
-The bytes a struct skips to keep its fields aligned are called _padding_: the
-three after `flag` and the three after `tag`. That's 6 bytes of data in 12 bytes
-of memory.
+The unused bytes the compiler inserts to keep fields aligned are called
+_padding_: the three after `flag` and the three after `tag`. That's 6 bytes of
+data in 12 bytes of memory.
 
 ## No guarantees by default
 
@@ -101,8 +100,8 @@ same data requires less padding and fits in 8 bytes instead of 12.
 For Rust-only code that is a good trade, because the compiler picks a tighter
 layout than a fixed order would and nothing outside the program depends on the
 result. It stops working as soon as C is involved: the C side computes field
-offsets from the header, and those offsets follow C's rules rather than whatever
-the Rust compiler decided.
+offsets from the struct definition, and those offsets follow C's rules rather
+than whatever the Rust compiler decided.
 
 ## What `repr` is for
 
@@ -124,12 +123,6 @@ The variant you'll use most is `repr(C)`, which lays a type out by C's rules.
 The others cover enum discriminants, single-field wrappers, and changes to
 padding and alignment, and each one comes up together with the problem it
 solves.
-
-A type without a `repr` attribute has the default representation, sometimes
-written `repr(Rust)`, which is the unspecified one described above.
-
-Whatever variant you use, `repr` affects where the fields live in memory. It
-doesn't change which fields the type has, or the values stored in them.
 
 ## Head to the exercise
 

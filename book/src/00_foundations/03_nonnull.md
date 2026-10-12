@@ -1,9 +1,8 @@
 # `NonNull<T>` and null-pointer optimization
 
-References and raw pointers sit at two ends of a scale: references guarantee
-everything, raw pointers guarantee nothing. In FFI code you often want something
-in between, a pointer you know isn't null even though you can't vouch for the
-memory behind it. That's what `NonNull<T>` is for.
+In FFI code you often know that a pointer isn't null. `NonNull<T>` puts that
+knowledge in the type. Wrapped in an `Option`, it also gives you a pointer that
+may be null, but that you can't use without checking first.
 
 ## `NonNull<T>`
 
@@ -36,13 +35,13 @@ A few more methods are worth knowing:
   anything. The standard library uses it for empty collections, which have
   nothing to point at but still have to hold a pointer.[^1]
 
-## The null-pointer optimization
+## Null-pointer optimization
 
 A `NonNull<T>` can never be all zeros (`0` being a forbidden value is literally
-the types only job), and the compiler takes advantage of that. A bit pattern
+the type's only job), and the compiler takes advantage of that. A bit pattern
 that a type can never hold is called a _niche_, and the compiler looks for one
 whenever it lays out an enum. For pointer-like types the trick has a name of its
-own, the _null-pointer optimization_ (NPO).
+own: _null-pointer optimization_ (NPO).
 
 ```rust,no_run
 use std::mem::size_of;
@@ -93,11 +92,11 @@ with `None` represented as all zeros:
 
 For the pointer types, the all-zeros part only holds when `T` is sized. A
 pointer to an unsized type, such as `&[u8]` or `&str`, is a pointer plus a
-length, and can't cross the FFI boundary as a single C pointer anyway.
+length, and can't cross the FFI boundary as a single C pointer.
 
-That guarantee is what makes these types usable in FFI signatures. For anything
-else, such as `Option<bool>` or `Option<u32>`, the layout is a compiler
-decision, not a contract C can rely on.
+This guarantee is what makes these types usable in FFI signatures. For anything
+else, such as `Option<bool>` or `Option<u32>`, the layout is a compiler decision
+and can't be used in FFI signatures.
 
 ## Head to the exercise
 
@@ -109,11 +108,3 @@ to read. Let the type carry the null check rather than writing one by hand.
     [`Unique<T>`](https://doc.rust-lang.org/src/core/ptr/unique.rs.html), which
     wraps `NonNull<T>` and adds the claim that the pointer is the only one to
     its value, the way a `&mut T` is.
-
-[^2]: The niches the compiler knows about today come from the language's own
-    rules: a reference is never null, a `bool` is 0 or 1, an enum holds one of
-    its discriminants. Nightly has
-    [pattern types](https://doc.rust-lang.org/nightly/unstable-book/language-features/pattern-types.html),
-    which let a type state which values it can hold, such as a `u32` that is
-    always at least 1. That would give the compiler a niche to work with in many
-    more cases than it can find on its own.

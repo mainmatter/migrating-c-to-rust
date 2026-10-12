@@ -1,17 +1,10 @@
 # `unsafe` and safety contracts
 
-Safe Rust comes with a guarantee: however you combine safe code, it can't cause
-[undefined behavior](#undefined-behavior). No use-after-free, no read past the
-end of a buffer, no two threads writing the same memory at once. The compiler
-enforces that by checking every borrow, every index, and every conversion it can
-reason about. Some things are beyond what it can check, though. It can't tell
-whether a pointer handed over by a C library still points to live memory, or
-whether that library expects a buffer of 16 bytes or 16 kilobytes.
-
-For those operations Rust has the `unsafe` keyword. It marks the places where
-you, instead of the compiler, are responsible for keeping the program sound.
-Mixed C-Rust codebases use it a lot, so it's worth being precise about what it
-does.
+Safe Rust can't cause [undefined behavior](#undefined-behavior), but some things
+are beyond what the compiler can check, such as whether a pointer handed over by
+a C library still points to live memory. For those, Rust has the `unsafe`
+keyword. It marks the places where you, instead of the compiler, are responsible
+for keeping the program sound.
 
 ## What `unsafe` unlocks
 
@@ -19,7 +12,7 @@ does.
 perform a small set of extra operations the compiler can't verify:
 
 - dereferencing a raw pointer
-- calling an `unsafe` function, which includes every function implemented in C
+- calling an `unsafe` function, which includes most functions implemented in C
 - reading or writing a `static mut` or an `extern static`
 - reading a field of a `union`
 - implementing an `unsafe` trait such as `Send` or `Sync`
@@ -29,16 +22,9 @@ outside of one.
 
 ## Undefined behavior
 
-The rules these operations can break all lead to _undefined behavior_ (UB). Most
-of those rules protect two properties:
-
-- **Memory safety.** The program only accesses memory that it may access, that
-  is still alive, and that holds a valid value of the type it reads.
-- **No data races.** Threads that share memory coordinate their access to it, so
-  that no thread reads or writes a value while another thread changes it.
-
-If a program has UB, Rust no longer defines what it does: it might crash, give
-wrong results, or seem to work fine. The compiler assumes UB never happens and
+The rules these operations can break all lead to _undefined behavior_ (UB). If a
+program has UB, Rust no longer defines what it does: it might crash, give wrong
+results, or seem to work fine. The compiler assumes UB never happens and
 optimizes based on that, so a program that seems fine today can break with the
 next compiler version.
 
@@ -80,7 +66,7 @@ pub unsafe fn read_u32(ptr: *const u32) -> u32 {
 ```
 
 An `unsafe` block says "I checked the conditions here". The justification goes
-into a `// SAFETY:` comment right above it:[^1]
+into a `// SAFETY:` comment right above it:
 
 ```rust,no_run
 # /// # Safety
@@ -95,9 +81,6 @@ let y = unsafe { read_u32(&x) };
 
 A `// SAFETY:` comment explains why the code upholds each condition, or names
 the numbered condition its caller already promised to uphold.
-[High-quality FFI APIs](../01_intro/07_high_quality_ffi_apis.md) returns to this
-convention once a real `extern "C"` function has several conditions to keep
-apart.
 
 ## Safe abstractions and soundness
 
@@ -137,55 +120,9 @@ check, then justify, then perform the operation. Writing the `// SAFETY:`
 comment is often how you find out that a check is missing. If you can't finish
 the sentence, the code isn't sound yet.
 
-## `unsafe` in FFI code
-
-`unsafe` shows up in three places when you work across a language boundary.
-
-```rust,no_run
-use std::ffi::{c_char, c_double, c_int};
-
-unsafe extern "C" {
-    // Rust can't check what `strlen` does with the pointer, so calling it is
-    // `unsafe`.
-    fn strlen(s: *const c_char) -> usize;
-
-    // `sqrt` accepts every `double`: a negative one gives NaN rather than
-    // undefined behavior. With no condition to uphold, it can be declared
-    // `safe` and called from safe code.
-    safe fn sqrt(x: c_double) -> c_double;
-}
-
-#[unsafe(no_mangle)]
-pub extern "C" fn root_of_two() -> c_double {
-    sqrt(2.0)
-}
-```
-
-- **`unsafe extern` blocks.** Declaring a foreign function is itself a promise
-  that the signature is correct, which is why the block is marked `unsafe`.
-  Every function in it is `unsafe` to call, unless you mark it `safe fn` because
-  it has no conditions for the caller to uphold. These declarations are what
-  [What is FFI?](../01_intro/01_what_is_ffi.md) calls bindings. That chapter
-  also covers what the compiler does and doesn't check about them.
-- **`unsafe` attributes.** `#[unsafe(no_mangle)]` exports a function under its
-  plain name. That name can collide with another symbol, such as a C library
-  function, and the linker won't always tell you. The attribute is `unsafe`
-  because you are promising that no such collision happens.
-- **`unsafe` functions you export.** An `extern "C" fn` that dereferences
-  pointers from C has a safety contract like any other `unsafe fn`, and C
-  callers need it documented just as much.
-
-All three come up as soon as you write bindings of your own.
-
 ## Head to the exercise
 
 The exercise is one function: return the last two bytes of a slice, or `None` if
 it has fewer than two, reading each byte with `get_unchecked`. Work out the
 condition that makes both indexes valid before you rely on it, and say why in a
 `// SAFETY:` comment.
-
-[^1]: `read_u32` needs its own `unsafe` block even though the whole function is
-    `unsafe`. Since the 2024 edition, the body of an `unsafe fn` is treated like
-    any other function body, and the `unsafe_op_in_unsafe_fn` lint warns when
-    you perform an `unsafe` operation without a block. That keeps every `unsafe`
-    operation visible, with its own justification next to it.

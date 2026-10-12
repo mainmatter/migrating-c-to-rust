@@ -1,4 +1,4 @@
-// Part one: work the numbers out on paper, then write them down below. The
+// Part one: work out the numbers on paper, then write them down below. The
 // tests compare each one against what the compiler reports, so a wrong answer
 // tells you which type to look at again.
 
