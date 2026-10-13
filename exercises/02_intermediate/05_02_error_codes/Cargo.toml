@@ -1,0 +1,5 @@
+[package]
+name = "bm_error_codes"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
