@@ -1,0 +1,104 @@
+# What is FFI?
+
+A _Foreign Function Interface_ (FFI) bridges different type systems (or lack of
+type systems), execution models, and code-organization concepts, so that code in
+one language can call functions and use types from another. The exact syntax and
+options vary by language, but they almost always have one thing in common: they
+represent functions as if they were C functions.
+
+This is called the "C ABI" (C Application Binary Interface) or "C calling
+convention" and, as the name suggests, is a convention on how to call functions
+(which CPU registers hold what arguments, which register(s) hold return values,
+when to spill to the stack, etc.)[^1]. Notice that this is just a convention
+that the industry agreed on over time. The C ABI is predictable, simple, and
+stable, and it has been so for decades, which is how it became the de facto
+standard for language interoperability.
+
+## Calling an FFI function
+
+Let's say for example we have a Rust program that needs to call the `time`
+function from `libc` (a C static library)[^2]. We would use the following
+construct:
+
+```rust,no_run
+# type time_t = i64;
+unsafe extern "C" {
+    fn time(time: *mut time_t) -> time_t;
+}
+```
+
+Before we dissect the syntax though: you may have already noticed that nowhere
+in this snippet do we ask for `libc`. Why is that?
+
+This is because object file formats (ELF on Linux, Mach-O on macOS, PE on
+Windows) are all old and therefore simplistic. They have _one global namespace_,
+called a _symbol table_, that all functions (and statics) share. So you cannot
+say "call `time` from `libc`", you can only say "call a function named `time`".
+
+When a compiler builds a program, all function calls reference the function _by
+symbol_ ("call function named `X`"). To make this actually executable, we need
+to replace every symbol reference with the actual address of the function. This
+happens _after_ compilation during the _linking_ step, where a separate program,
+the _linker_, aggregates all object files that make up your final program, lays
+them out on disk, and then resolves these symbol names.
+
+To call `time` from `libc` we therefore need Rust to emit a reference to the
+`time` symbol and make sure the `libc` file is also passed to the linker.
+
+This solves the problem of _what_ to call, but we still need to figure out _how_
+to call that function: How many parameters does the function accept? What are
+the types of those parameters? How many values does it return? Remember the
+symbol references above are plain string names. They carry no information about
+the function's argument or return types, so `rustc` has no way to work them out
+on its own.
+
+This is why we need to tell it about `time`'s signature through a so-called
+"extern block" (or sometimes an "extern C block") above. This block _declares_
+items that are not _defined_ in the current crate. Each item we declare is a
+promise to the compiler: "this is the correct signature of this symbol, trust
+me". We commonly refer to it as a **binding**.
+
+Get the signature wrong and your Rust program will pass garbage to the FFI
+function without any way to check this at compile-time. The exact implementation
+won't be known until link-time, much later than the compiler's type-checking
+pass. This is why bindings are marked `unsafe`: you as the programmer have to
+ensure signatures are correct.
+
+This is the foundation of all Foreign Function Interfaces in Rust. In later
+exercises we will see how to make this much safer and more ergonomic.
+
+## Calling Rust from C
+
+A migration also needs the other direction: C code calling functions that are
+now implemented in Rust. That takes two annotations on an ordinary Rust
+function:
+
+```rust,no_run
+#[unsafe(no_mangle)]
+pub extern "C" fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+```
+
+`extern "C" fn` tells `rustc` to use the C calling convention for this function.
+`#[unsafe(no_mangle)]` keeps the symbol name exactly as written.
+
+## Head to the exercise
+
+You'll write this block for a `bm_add` function implemented in C.
+
+[^1]: Technically, there is no "single" calling convention. Every architecture
+    defines its own "C Calling Convention". For example, the RISC-V C Calling
+    Convention is defined
+    [here](https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf) and
+    lays out the sizes of C primitives and how arguments and return values are
+    passed from and to functions. x86 architectures have _many_ different
+    calling conventions: the Microsoft x64 calling convention and the System V
+    ABI are the most common, but many calling conventions exist to improve
+    calling performance (`fastcall`, `regcall`, and more). When we say "the C
+    calling convention" we usually mean "the C calling convention commonly used
+    on this OS+architecture combination".
+
+[^2]: Yes, generally speaking `libc` is distributed not as a static but as a
+    _dynamic_ library, which is a completely different way of linking and
+    calling functions.
