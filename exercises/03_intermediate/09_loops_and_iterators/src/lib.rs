@@ -12,8 +12,9 @@ pub struct Bookmark {
 
 pub fn any_tag_contains(bookmark: &Bookmark, query: &str) -> bool {
     // TODO: Express the early boolean return with `any`.
-    for index in 0..bookmark.tags.len() {
-        if bookmark.tags[index].contains(query) {
+    let tags = &bookmark.tags;
+    for index in 0..tags.len() {
+        if tags[index].contains(query) {
             return true;
         }
     }
@@ -32,9 +33,10 @@ pub fn position_of_url(bookmarks: &[Bookmark], url: &str) -> Option<usize> {
 
 pub fn count_matching_tags(bookmark: &Bookmark, query: &str) -> usize {
     // TODO: Express the condition with `filter` and consume it with `count`.
+    let tags = &bookmark.tags;
     let mut matches = 0;
-    for index in 0..bookmark.tags.len() {
-        if bookmark.tags[index].contains(query) {
+    for index in 0..tags.len() {
+        if tags[index].contains(query) {
             matches += 1;
         }
     }

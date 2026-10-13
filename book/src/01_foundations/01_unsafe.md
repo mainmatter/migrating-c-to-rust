@@ -119,7 +119,7 @@ the sentence, the code isn't sound yet.
 
 ## Head to the exercise
 
-The exercise is one function: return the last two bytes of a slice, or `None` if
-it has fewer than two, reading each byte with `get_unchecked`. Work out the
-condition that makes both indexes valid before you rely on it, and say why in a
-`// SAFETY:` comment.
+The exercise is one function: return the last byte of a slice, or `None` if the
+slice is empty, reading the byte with `get_unchecked`. Work out the condition
+that makes the index valid before you rely on it, and say why in a `// SAFETY:`
+comment.
