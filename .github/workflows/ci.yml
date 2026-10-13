@@ -68,7 +68,7 @@ jobs:
           sed -i 's/"ItalicFont=CoreSansA45It.ttf",//g' book/book.toml
           sed -i 's/"BoldItalicFont=CoreSansA65It.ttf",//g' book/book.toml
           sed -i 's/CoreSansA45.ttf/Open Sans:style=Regular/g' book/book.toml
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions-rust-lang/setup-rust-toolchain@v2
       - name: Install exercise plugin
         run: cargo install --git https://github.com/mainmatter/mdbook-exercise-linker
       - name: Install link shortener plugin
