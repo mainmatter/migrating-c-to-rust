@@ -13,6 +13,22 @@ You'll build up your knowledge in small, manageable steps. By the end of the
 course, you will have solved many exercises and should be prepared to migrate
 even larger C codebases to Rust.
 
+## Why FFI matters
+
+Rewriting a large C codebase in one go rarely works. Instead, you migrate it
+piece by piece, and for a while C and Rust live in the same program and call
+each other. What makes that possible is a _Foreign Function Interface_ (FFI): a
+way for code in one language to call functions and use types defined in another.
+Nearly every language supports the same one: calling functions as if they were
+written in C.
+
+The boundary between the two languages is where most of the difficulty lives.
+Rust's compiler can't check the C side, and C doesn't know about Rust's rules,
+so everything that crosses has to be described, validated, and owned correctly
+by hand. This course starts with the `unsafe` Rust you need to reason about that
+boundary, then covers how values cross it, and finally how to move code from one
+side to the other.
+
 ## Methodology
 
 This course is based on the "learn by doing" principle.\
@@ -68,10 +84,11 @@ solution.
 
 To work through this course, you'll need:
 
-- [**Rust**](https://www.rust-lang.org/tools/install). If `rustup` is already
-  installed on your system, run `rustup update` (or another appropriate command
-  depending on how you installed Rust on your system) to ensure you're running
-  on the latest stable version.
+- [**Rust**](https://www.rust-lang.org/tools/install), installed through
+  `rustup`. The repository pins a nightly toolchain in `rust-toolchain.toml`,
+  because some of the tools the course uses, such as Miri, only run on nightly.
+  `rustup` picks it up whenever you run `cargo` inside the repository. If it
+  isn't installed yet, run `rustup toolchain install` from the repository root.
 - _(Optional but recommended)_ An IDE with Rust autocompletion support. We
   recommend one of the following:
   - [RustRover](https://www.jetbrains.com/rust/);
@@ -80,7 +97,9 @@ To work through this course, you'll need:
     extension.
 - A C compiler. The one provided by your operating system will be good enough.
 - Two extra compilation targets. One exercise type-checks your bindings against
-  platforms that disagree with yours, which needs their standard libraries:
+  platforms that disagree with yours, which needs their standard libraries. Run
+  this from the repository root, so the targets are added to the pinned
+  toolchain:
 
   ```bash
   rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
