@@ -1,0 +1,9 @@
+[package]
+name = "bm_version"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+# TODO 1 OF 2: Configure this crate to produce a static library that C can link.
+# crate-type = ["staticlib"]
