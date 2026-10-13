@@ -4,6 +4,9 @@ language = "en"
 src = "src"
 title = "The C to Rust Migration Book"
 
+[rust]
+edition = "2024"
+
 [preprocessor.exercise-linker]
 exercise_root_url = "https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises"
 
