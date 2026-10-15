@@ -288,6 +288,6 @@ pins it down rather than asking you to reproduce it.
 [criterion]: https://github.com/criterion-rs/criterion.rs
 [divan]: https://docs.rs/divan/latest/divan/
 [hotpath]: https://docs.rs/hotpath/latest/hotpath/
-[hotpath-ci]: https://hotpath.rs/github_ci
+[hotpath-ci]: https://hotpath.rs/ci_integration
 [samply]: https://docs.rs/cargo-samply/latest/cargo_samply/
 [unstable-test]: https://doc.rust-lang.org/unstable-book/library-features/test.html
