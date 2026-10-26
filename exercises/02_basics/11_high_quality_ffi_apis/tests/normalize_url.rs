@@ -12,7 +12,7 @@ const BM_ERR_INVALID_URL: i32 = 3;
 const BM_ERR_INVALID_BUFFER: i32 = 6;
 const BM_ERR_BUFFER_TOO_SMALL: i32 = 7;
 
-extern "C" {
+unsafe extern "C" {
     fn bm_normalize_url(url: *const c_char, out: *mut c_char, out_len: usize) -> i32;
 }
 
