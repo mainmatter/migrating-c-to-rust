@@ -4,7 +4,7 @@
 //! breakpoint on `bm_shout`, then inspect its arguments and the mixed stack.
 //! The C header is the source of truth for the function signature.
 
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 
 unsafe extern "C" {
     fn bm_shout(label: *const c_char, out: *mut c_char, out_len: usize) -> i32;

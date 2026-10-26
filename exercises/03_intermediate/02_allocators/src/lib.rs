@@ -2,7 +2,7 @@
 
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
-use std::ffi::{CString, c_char};
+use std::ffi::{c_char, CString};
 
 /// Forwards every request to the system allocator.
 pub struct CountingAllocator;

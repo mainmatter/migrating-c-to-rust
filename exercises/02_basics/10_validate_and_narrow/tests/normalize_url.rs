@@ -1,7 +1,7 @@
 extern crate bm_validate_and_narrow;
 
 use core::ptr;
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 
 const BM_OK: i32 = 0;
 const BM_ERR_INVALID_URL: i32 = 3;

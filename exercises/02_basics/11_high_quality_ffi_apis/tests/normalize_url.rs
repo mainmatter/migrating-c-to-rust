@@ -1,7 +1,7 @@
 extern crate bm_high_quality_ffi_apis;
 
 use core::ptr;
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 
 /// Non-zero fill for buffers we expect to come back untouched, so that any
 /// write is detectable (a zero fill would hide a stray NUL terminator).

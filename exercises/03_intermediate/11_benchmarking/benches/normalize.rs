@@ -1,7 +1,7 @@
 use std::ffi::c_char;
 use std::ptr::NonNull;
 
-use bm_benchmarking::{BmResult, bm_normalize_url_rust};
+use bm_benchmarking::{bm_normalize_url_rust, BmResult};
 
 const RAW: &[u8] = b"HTTPS://EXAMPLE.COM/Rust\0";
 const OUT_LEN: usize = 2048; // BM_MAX_URL_LEN in c_src/normalize.h
