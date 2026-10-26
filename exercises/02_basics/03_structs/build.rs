@@ -7,5 +7,7 @@ fn main() {
     cc::Build::new()
         .file("c_src/layout.c")
         .include("c_src")
+        // `alignof` comes from C11's <stdalign.h>; MSVC only enables it with /std:c11.
+        .std("c11")
         .compile("layout");
 }
