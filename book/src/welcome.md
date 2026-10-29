@@ -145,3 +145,8 @@ standardization.\
 Artur Jakubiec is a long-time C/C++ engineer and was one of the main developers
 of Cubasis. He is now a tech lead at a company building enterprise SaaS
 productivity software, currently migrating it from C++ to Rust.
+
+## License
+
+Copyright © 2024- Mainmatter GmbH (https://mainmatter.com), released under the
+[PolyForm-Noncommercial-1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0).
