@@ -22,7 +22,7 @@ mod tests {
     use std::ffi::c_char;
     use std::ptr::NonNull;
 
-    use super::{BM_ERR_INVALID_URL, BM_OK, BmResult, bm_normalize_url_rust};
+    use super::{bm_normalize_url_rust, BmResult, BM_ERR_INVALID_URL, BM_OK};
 
     unsafe extern "C" {
         #[link_name = "bm_normalize_url"]
