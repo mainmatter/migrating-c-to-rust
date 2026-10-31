@@ -1,6 +1,6 @@
 use std::ffi::c_char;
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bm_normalize_url(
     _url: *const c_char,
     _out: *mut c_char,

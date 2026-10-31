@@ -9,9 +9,9 @@ path = "src/lib.rs"
 
 [lints.rust]
 # `undocumented_unsafe_blocks` below only fires on *explicit* `unsafe {}`
-# blocks, and in edition 2021 the body of an `unsafe fn` is already implicitly
-# unsafe. Without this, a solution that writes no explicit blocks needs no
-# `// SAFETY:` comments at all and the lint below never fires.
+# blocks. Edition 2024 only warns on unsafe ops in an `unsafe fn` body, so a
+# solution could ignore the warning, write no explicit blocks, need no
+# `// SAFETY:` comments at all, and the lint below would never fire. Deny it.
 unsafe_op_in_unsafe_fn = "deny"
 
 [lints.clippy]

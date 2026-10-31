@@ -8,7 +8,7 @@ pub const BM_ERR_INVALID_URL: BmResult = 3;
 pub const BM_ERR_INVALID_BUFFER: BmResult = 6;
 pub const BM_ERR_BUFFER_TOO_SMALL: BmResult = 7;
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bm_normalize_url_rust(
     url: Option<NonNull<c_char>>,
     out: Option<NonNull<c_char>>,
