@@ -146,6 +146,11 @@ Artur Jakubiec is a long-time C/C++ engineer and was one of the main developers
 of Cubasis. He is now a tech lead at a company building enterprise SaaS
 productivity software, currently migrating it from C++ to Rust.
 
+[Mainmatter](https://mainmatter.com/rust-consulting/) is an engineering
+consultancy specializing in Rust. We offer engineering services, training, and
+mentorship to companies that aim to migrate from C to Rust or introduce Rust
+into an existing codebase.
+
 ## License
 
 Copyright © 2024- Mainmatter GmbH (https://mainmatter.com), released under the
