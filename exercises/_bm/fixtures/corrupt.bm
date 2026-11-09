@@ -1,6 +1,7 @@
 https://example.com/first	valid,control
 https://example.com/second	valid,control
 https://example.com/third	valid,control
+https://EXAMPLE.com/first	duplicate,url
 ftp://oldserver.example.com/file	bad,scheme
 	orphan-tag-no-url
 https://	empty,host
