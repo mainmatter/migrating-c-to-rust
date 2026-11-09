@@ -4,7 +4,7 @@ use std::ffi::c_char;
 ///
 /// Hint: Check the test suite to determine what to return in the different
 /// error cases.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn bm_normalize_url(
     url: *const c_char,
     out: *mut c_char,
