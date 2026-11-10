@@ -60,6 +60,17 @@ jobs:
           purge-prefixes: nix-${{ runner.os }}-
           purge-last-accessed: P7D
       - uses: Swatinem/rust-cache@v2
+      # `cheadergen` drives its own pinned nightly through `rustup`, which the
+      # nix shell doesn't provide. Install both outside nix, as the welcome
+      # page tells attendees to; the runner's `~/.cargo/bin` stays on `PATH`
+      # inside `nix develop`, behind the nix toolchain.
+      - name: Install cheadergen and its nightly
+        # Outside the repository, so `rust-toolchain.toml` doesn't make
+        # `rustup` install the course toolchain just to build `cheadergen`.
+        working-directory: ${{ runner.temp }}
+        run: |
+          rustup toolchain install nightly-2026-06-04 --profile minimal -c rust-docs-json
+          cargo install --locked cheadergen_cli --version 0.3.3
       - name: cargo clippy
         run: nix develop --command cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: cargo test

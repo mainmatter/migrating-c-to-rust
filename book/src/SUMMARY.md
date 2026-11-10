@@ -2,12 +2,12 @@
 
 [Welcome](welcome.md)
 
-- [Chapter 1: Unsafe Rust foundations](./01_foundations/00_README.md)
+- [Chapter 1: Unsafe Rust foundations](./01_foundations/00_intro.md)
   - [`unsafe` and safety contracts](./01_foundations/01_unsafe.md)
   - [References vs raw pointers](./01_foundations/02_raw_pointers.md)
   - [`NonNull<T>` and null-pointer optimization](./01_foundations/03_nonnull.md)
   - [Memory layout: size, alignment, and `repr`](./01_foundations/04_layout.md)
-- [Chapter 2: Basics](./02_basics/00_README.md)
+- [Chapter 2: Basics](./02_basics/00_intro.md)
   - [What is FFI?](./02_basics/01_what_is_ffi.md)
   - [Primitive types in FFI](./02_basics/02_primitives.md)
   - [Structs in FFI](./02_basics/03_structs.md)
@@ -19,7 +19,7 @@
   - [Exposing Rust to C with cheadergen](./02_basics/09_cheadergen.md)
   - [The FFI boundary as a firewall](./02_basics/10_validate_and_narrow.md)
   - [High-quality FFI APIs](./02_basics/11_high_quality_ffi_apis.md)
-- [Chapter 3: Intermediate](./03_intermediate/00_README.md)
+- [Chapter 3: Intermediate](./03_intermediate/00_intro.md)
   - [How to rewrite a module](./03_intermediate/01_rewrite_a_module.md)
   - [Allocation, allocators, and mixing them](./03_intermediate/02_allocators.md)
   - [Using lldb/gdb](./03_intermediate/03_lldb_gdb.md)

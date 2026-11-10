@@ -24,6 +24,10 @@
 
         rustToolchain = with pkgs; rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
 
+        # `cheadergen` isn't in here on purpose: it runs its own pinned nightly
+        # through `rustup` (`rustup run`/`rustup which`), which this shell
+        # doesn't provide. CI installs both with the host's `rustup` instead;
+        # see the `verify-solutions` job.
         baseTools = with pkgs; [
           rustToolchain
           mdbook
