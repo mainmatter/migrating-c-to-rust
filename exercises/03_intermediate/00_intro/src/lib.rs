@@ -8,13 +8,13 @@
 
 /// How many bookmarks does `BM_DB=fixtures/sample.bm ./bm find blog` print?
 pub fn blog_matches() -> usize {
-    todo!()
+    9
 }
 
 /// According to `BM_DB=fixtures/sample.bm ./bm list`, how many bookmarks are
 /// tagged `rust`?
 pub fn rust_tagged() -> usize {
-    todo!()
+    13
 }
 
 #[cfg(test)]
