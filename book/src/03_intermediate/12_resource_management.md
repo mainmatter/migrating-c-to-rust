@@ -59,7 +59,8 @@ Any of these intermediate steps might fail, and we're left in an awkward,
 halfway-done state. In this case, we want to return an error to let the caller
 know the initialization wasn't successful, but we first need to clean up any
 acquired resources. The typical pattern for structuring this cleanly without a
-bunch of `if` statements is one you're likely familiar with: using `goto` labels.
+bunch of `if` statements is one you're likely familiar with: using `goto`
+labels.
 
 We can picture the labels as a waterfall: each `goto` leads to the label of the
 most recently acquired resource. Notice in the example how a failure in
@@ -138,12 +139,12 @@ fields, and the file descriptor is closed.
 What about the order? With the `goto` waterfall, the rule was to tear down in
 the reverse order of acquisition, or, in other words, last-in-first-out. This is
 especially important when one resource might depend on earlier ones. Otherwise,
-you risk pulling a dependency out from under something that's still using it.
-No need to worry. This is also taken care of by Rust, since local variables are
+you risk pulling a dependency out from under something that's still using it. No
+need to worry. This is also taken care of by Rust, since local variables are
 dropped in reverse order of declaration. What this means for us is that the
 cleanup happens automatically in the same order we'd write the `goto` labels.
 
-This new paradigm, called *Resource Acquisition Is Initialization* (RAII), ties
+This new paradigm, called _Resource Acquisition Is Initialization_ (RAII), ties
 resource management to an object's lifetime: allocate on initialization,
 deallocate on destruction. Let it sink in for a second before jumping (no pun
 intended) to the exercise.
