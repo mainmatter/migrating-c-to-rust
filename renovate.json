@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "description": "The pinned nightly is bumped by hand, so don't open PRs for it",
+      "matchFileNames": ["rust-toolchain.toml"],
+      "enabled": false
+    }
   ]
 }
