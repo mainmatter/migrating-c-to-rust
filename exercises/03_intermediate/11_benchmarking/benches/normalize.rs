@@ -38,9 +38,19 @@ fn c(bencher: divan::Bencher) {
     });
 }
 
-/// YOUR TASK: benchmark the Rust port against the C baseline above.
+/// The Rust port, measured the same way as `c` above: same input, same
+/// `out_len`, and the output buffer allocated once outside the timed closure so
+/// only the normalization itself is measured.
 #[divan::bench(sample_size = 4096)]
 fn rust(bencher: divan::Bencher) {
-    let _ = bencher;
-    todo!("Benchmark bm_normalize_url_rust the same way `c` benchmarks bm_normalize_url")
+    let mut out = [0 as c_char; OUT_LEN];
+
+    bencher.bench_local(|| unsafe {
+        let result = bm_normalize_url_rust(
+            NonNull::new(divan::black_box(RAW.as_ptr().cast_mut().cast())),
+            NonNull::new(divan::black_box(out.as_mut_ptr())),
+            out.len(),
+        );
+        divan::black_box(result)
+    });
 }
