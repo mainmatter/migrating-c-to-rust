@@ -28,3 +28,28 @@
 //! ```
 //!
 //! to generate the C header from your Rust code!
+
+use core::ffi::c_char;
+
+/// Lowercases the ASCII letters of `c` in place.
+///
+/// # Safety
+///
+/// A non-null `c` must point to a live, writable, NUL-terminated byte string.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn bm_strlower(c: *mut c_char) {
+    if c.is_null() {
+        return;
+    }
+    let len = {
+        // SAFETY: `c` is non-null, and the caller guarantees it points to a
+        // live, NUL-terminated byte string.
+        let c = unsafe { std::ffi::CStr::from_ptr(c) };
+        c.count_bytes()
+    };
+
+    // SAFETY: the `len` bytes before the NUL are live and, per the caller's
+    // guarantee, writable.
+    let slice: &mut [u8] = unsafe { std::slice::from_raw_parts_mut(c.cast(), len) };
+    slice.make_ascii_lowercase();
+}
