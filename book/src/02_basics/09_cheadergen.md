@@ -24,8 +24,9 @@ headers from Rust code.
 `cheadergen`, created and maintained by our colleague Luca Palmieri, reads your
 Rust code and generates a C header for the relevant FFI-visible symbols.
 
-Install the CLI from the
-[`cheadergen` releases page](https://github.com/LukeMathWalker/cheadergen/releases).
+If you haven't installed it yet, follow the
+[`cheadergen` install guide](https://cheadergen.com/getting-started/install.html),
+or the steps in the course requirements.
 
 Then you can run the following command in your crate root (for example, the
 current exercise crate):
@@ -78,7 +79,7 @@ You'll port the `bm_strlower` function to Rust and call
 the header automatically.
 
 [bindgen]: https://rust-lang.github.io/rust-bindgen/
-[cheadergen]: https://github.com/LukeMathWalker/cheadergen
+[cheadergen]: https://github.com/LukeMathWalker/officina/tree/main/cheadergen
 [cheadergen-toml-config]: https://docs.rs/cheadergen/latest/cheadergen/config_reference/index.html
 [cheadergen-macro]: https://docs.rs/cheadergen/latest/cheadergen/index.html
 [cbindgen]: https://github.com/mozilla/cbindgen

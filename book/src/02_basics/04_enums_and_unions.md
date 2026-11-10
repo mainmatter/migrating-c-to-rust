@@ -79,11 +79,11 @@ two in sync:
 
 ```c
 struct Value {
-    int kind; /* VALUE_INT or VALUE_FLOAT */
-    union {
-        int64_t i;
-        double f;
-    } data;
+  int kind; /* VALUE_INT or VALUE_FLOAT */
+  union {
+    int64_t i;
+    double f;
+  } data;
 };
 ```
 

@@ -5,10 +5,10 @@ variant for success and one for each kind of failure:
 
 ```c
 typedef enum {
-    BM_OK = 0,
-    BM_ERR_NOT_FOUND = 1,
-    BM_ERR_IO = 2,
-    BM_ERR_INVALID_INPUT = 3,
+  BM_OK = 0,
+  BM_ERR_NOT_FOUND = 1,
+  BM_ERR_IO = 2,
+  BM_ERR_INVALID_INPUT = 3,
 } BmStatus;
 
 BmStatus remove_bookmark(struct Store *store, const char *url);

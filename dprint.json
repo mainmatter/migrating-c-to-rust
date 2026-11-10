@@ -2,7 +2,8 @@
   "json": {},
   "markdown": {
     "lineWidth": 80,
-    "textWrap": "always"
+    "textWrap": "always",
+    "wrapCodeSpans": false
   },
   "toml": {},
   "exec": {
@@ -21,9 +22,9 @@
   },
   "excludes": ["**/*-lock.json"],
   "plugins": [
-    "https://plugins.dprint.dev/json-0.21.3.wasm",
-    "https://plugins.dprint.dev/markdown-0.22.1.wasm",
-    "https://plugins.dprint.dev/toml-0.7.0.wasm",
-    "https://plugins.dprint.dev/exec-0.6.2.json@df98f54ffd3092b8a841aedd6d098a2651f16d0a796a40535774f1a8b4b9d463"
+    "npm:@dprint/json@0.26.0",
+    "npm:@dprint/markdown@0.29.0",
+    "npm:@dprint/toml@0.10.0",
+    "npm:@dprint/exec@0.9.0/plugin.json@d4f708dc00798b51013ca4e7c26a86656bfb31e7255cdcde28a487f86813e34d"
   ]
 }

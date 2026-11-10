@@ -1,5 +1,6 @@
 {
   "https://bencher.dev/": "f2h",
+  "https://cheadergen.com/getting-started/install.html": "fzu",
   "https://code.visualstudio.com": "ff6",
   "https://doc.rust-lang.org/cargo/commands/cargo-bench.html": "f29",
   "https://doc.rust-lang.org/nightly/unstable-book/language-features/pattern-types.html": "fzx",
@@ -23,6 +24,7 @@
   "https://gdbgui.com/": "f2j",
   "https://github.com/LukeMathWalker/cheadergen": "fft",
   "https://github.com/LukeMathWalker/cheadergen/releases": "ffu",
+  "https://github.com/LukeMathWalker/officina/tree/main/cheadergen": "fzy",
   "https://github.com/criterion-rs/criterion.rs": "f2r",
   "https://github.com/dtolnay/cargo-expand": "ff9",
   "https://github.com/mainmatter/c-to-rust-migration-book/tree/main/exercises/02_intro/00_README": "ffn",
@@ -93,10 +95,11 @@
   "https://mainmatter.com/contact/": "ff2",
   "https://mainmatter.com/rust-consulting/": "fff",
   "https://mainmatter.github.io/rust-workshop-runner/": "ff8",
-  "https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer": "ffv",
+  "https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer": "ffv",
   "https://polyformproject.org/licenses/noncommercial/1.0.0": "fz9",
   "https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf": "ffm",
   "https://rust-lang.github.io/rust-bindgen/": "ffy",
+  "https://rust-lang.github.io/rust-bindgen/requirements.html": "fzt",
   "https://rust-lang.github.io/rust-clippy/master/index.html": "fz2",
   "https://www.jetbrains.com/rust/": "ffx",
   "https://www.rust-lang.org/tools/install": "ff4"

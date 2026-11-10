@@ -8,8 +8,8 @@ Consider this loop from `bm`:
 
 ```c
 for (size_t i = 0; i < b->n_tags; i++) {
-    if (strstr(b->tags[i], query))
-        return 1;
+  if (strstr(b->tags[i], query))
+    return 1;
 }
 return 0;
 ```
@@ -74,8 +74,8 @@ reaches the NUL terminator:
 ```c
 size_t n = 0;
 for (const char *p = s; *p; p++) {
-    if (*p == ',')
-        n++;
+  if (*p == ',')
+    n++;
 }
 ```
 

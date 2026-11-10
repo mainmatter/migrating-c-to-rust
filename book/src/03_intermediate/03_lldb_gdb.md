@@ -72,14 +72,14 @@ stops (output abbreviated):
 
 ```text
 (lldb) b bm_shout
-Breakpoint 1: where = bm`bm_shout at shout.c:6
+Breakpoint 1: where = bm_lldb_gdb`bm_shout at shout.c:7
 (lldb) run
 Process 51234 stopped
 * thread #1, stop reason = breakpoint 1.1
-  * frame #0: bm`bm_shout at shout.c:6
-    frame #1: bm`bm_lldb_gdb::shout at lib.rs:17
-    frame #2: bm`bm_lldb_gdb::demo at lib.rs:30
-    frame #3: bm`main at main.rs:2
+  * frame #0: bm_lldb_gdb`bm_shout at shout.c:7
+    frame #1: bm_lldb_gdb`bm_lldb_gdb::shout at lib.rs:17
+    frame #2: bm_lldb_gdb`bm_lldb_gdb::demo at lib.rs:30
+    frame #3: bm_lldb_gdb`bm_lldb_gdb::main at main.rs:2
 ```
 
 C frames and Rust frames are interleaved, and the numbering tells you which way

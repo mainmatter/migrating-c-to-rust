@@ -8,7 +8,7 @@ on:
 jobs:
   dprint:
     name: dprint check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: DeterminateSystems/determinate-nix-action@v3
@@ -25,7 +25,7 @@ jobs:
 
   typos:
     name: typos
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: DeterminateSystems/determinate-nix-action@v3
@@ -41,7 +41,7 @@ jobs:
         run: nix develop .#author --command typos
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
         with:
@@ -73,15 +73,38 @@ jobs:
         run: cargo install --git https://github.com/mainmatter/mdbook-exercise-linker
       - name: Install link shortener plugin
         run: cargo install --git https://github.com/mainmatter/mdbook-link-shortener
-      - name: Install mdbook-pandoc, calibre, pdftk and related dependencies
+      # Cache the downloaded .deb files so a hit skips fetching ~617 MB from
+      # the Ubuntu mirror, which has crawled to ~300 kB/s and stretched this
+      # job past 30 minutes. apt-get still installs them normally, so
+      # postinst scripts run as usual.
+      - name: Compute apt cache key
+        id: apt-key
+        run: echo "image=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+      - name: Cache apt archives
+        uses: actions/cache@v6
+        with:
+          path: ~/apt-archives
+          key: apt-${{ steps.apt-key.outputs.image }}-${{ hashFiles('.github/workflows/ci.yml') }}
+          restore-keys: |
+            apt-${{ steps.apt-key.outputs.image }}-
+            apt-
+      - name: Install calibre, pdftk and fonts
+        run: |
+          mkdir -p ~/apt-archives/partial
+          sudo apt-get update
+          sudo apt-get install -y \
+            -o Dir::Cache::Archives="$HOME/apt-archives" \
+            -o APT::Sandbox::User=root \
+            fonts-noto fonts-open-sans calibre pdftk
+          # apt writes the archives as root; actions/cache saves as the runner user.
+          sudo chown -R "$USER" ~/apt-archives
+      - name: Install mdbook-pandoc, pandoc and refresh font cache
         run: |
           cargo install mdbook-pandoc --locked --version 0.11.0
-          sudo apt-get update
-          sudo apt-get install -y fonts-noto fonts-open-sans calibre pdftk
           sudo fc-cache -f -v
           export PANDOC_VERSION=3.3
           curl -LsSf https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | tar zxf -
-          echo "$PWD/pandoc-${PANDOC_VERSION}/bin" >> $GITHUB_PATH
+          echo "$PWD/pandoc-${PANDOC_VERSION}/bin" >> "$GITHUB_PATH"
         shell: bash
       - name: Setup TeX Live
         uses: TeX-Live/setup-texlive-action@v4
@@ -165,7 +188,7 @@ jobs:
           path: book/book/pandoc/html/c-to-rust-migration-book.epub
 
   is_fresh:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - run: sudo apt-get update && sudo apt-get install -y jq

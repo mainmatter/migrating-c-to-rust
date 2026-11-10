@@ -93,9 +93,25 @@ To work through this course, you'll need:
   recommend one of the following:
   - [RustRover](https://www.jetbrains.com/rust/);
   - [Visual Studio Code](https://code.visualstudio.com) with the
-    [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer)
+    [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
     extension.
 - A C compiler. The one provided by your operating system will be good enough.
+- **libclang**, which [`bindgen`](https://rust-lang.github.io/rust-bindgen/)
+  uses to parse C headers. Many systems already have it; if yours doesn't,
+  follow
+  [`bindgen`'s requirements page](https://rust-lang.github.io/rust-bindgen/requirements.html).
+- [**`cheadergen`**](https://cheadergen.com/getting-started/install.html), which
+  generates C headers from Rust code. Install the CLI crate, `cheadergen_cli`
+  (`cargo install cheadergen` fails: that crate is the library), along with the
+  nightly toolchain `cheadergen` runs `rustdoc` with:
+
+  ```bash
+  cargo install --locked cheadergen_cli --version 0.3.3
+  rustup toolchain install nightly-2026-06-04 -c rust-docs-json
+  ```
+
+  That nightly is separate from the one in `rust-toolchain.toml`: `cheadergen`
+  pins its own.
 - Two extra compilation targets. One exercise type-checks your bindings against
   platforms that disagree with yours, which needs their standard libraries. Run
   this from the repository root, so the targets are added to the pinned
