@@ -23,12 +23,12 @@
 /f2r https://github.com/criterion-rs/criterion.rs
 /ff9 https://github.com/dtolnay/cargo-expand
 /ffz https://github.com/mainmatter/migrating-c-to-rust
-/f0a https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_foundations/00_README
+/f0a https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_foundations/00_intro
 /f0b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_foundations/01_unsafe
 /f0c https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_foundations/02_raw_pointers
 /f0d https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_foundations/03_nonnull
 /f0p https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/01_foundations/04_layout
-/f26 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/00_README
+/f26 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/00_intro
 /f25 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/01_what_is_ffi
 /fz8 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/02_primitives
 /fzb https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/03_structs
@@ -40,7 +40,7 @@
 /fzw https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/09_cheadergen
 /fz7 https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/10_validate_and_narrow
 /fze https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/02_basics/11_high_quality_ffi_apis
-/f2b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/03_intermediate/00_README
+/f2b https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/03_intermediate/00_intro
 /f2g https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/03_intermediate/01_rewrite_a_module
 /f2q https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/03_intermediate/02_allocators
 /fzf https://github.com/mainmatter/migrating-c-to-rust/tree/main/exercises/03_intermediate/03_lldb_gdb
