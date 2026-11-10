@@ -5,6 +5,8 @@ exercises/**/include/
 *.a
 bm
 bm-demo
+exercises/_bm/bookmarks.bm
+exercises/_bm/bookmarks.bm.tmp
 .DS_Store
 progress.db
 CLAUDE.md
