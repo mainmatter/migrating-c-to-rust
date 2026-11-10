@@ -27,6 +27,8 @@
         baseTools = with pkgs; [
           rustToolchain
           mdbook
+          # Sets LIBCLANG_PATH so the bindgen exercise can find libclang.
+          rustPlatform.bindgenHook
         ];
         authorTools = with pkgs; [
           dprint
