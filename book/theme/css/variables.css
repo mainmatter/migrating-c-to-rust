@@ -170,6 +170,8 @@ html:not(.js) {
 
     --links: #4a00b4;
 
+    --inline-code-color: #c9d1d9;
+
     --theme-popup-bg: #ffffff;
     --theme-popup-border: #e0e0e0;
     --theme-hover: #f0e6ff;
