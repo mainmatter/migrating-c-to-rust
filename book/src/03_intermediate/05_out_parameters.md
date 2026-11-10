@@ -16,8 +16,7 @@ arguments are called out-parameters. For example, this function splits a
 duration into minutes and seconds:
 
 ```c
-void split_duration(uint32_t total_seconds,
-                    uint32_t *out_minutes,
+void split_duration(uint32_t total_seconds, uint32_t *out_minutes,
                     uint32_t *out_seconds);
 ```
 
