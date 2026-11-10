@@ -132,6 +132,7 @@ BmResult bm_open(const char *path, BmDb **out) {
     return BM_ERR_IO;
   *out = NULL;
 
+  BmResult r = BM_ERR_IO;
   BmDb *db = calloc(1, sizeof(*db));
   if (!db)
     return BM_ERR_IO;
@@ -145,7 +146,7 @@ BmResult bm_open(const char *path, BmDb **out) {
   if (!db->entries)
     goto err_entries;
 
-  BmResult r = storage_load(path, db);
+  r = storage_load(path, db);
   if (r != BM_OK)
     goto err_load;
   db->dirty = 0; /* successful load == clean state */
@@ -154,12 +155,18 @@ BmResult bm_open(const char *path, BmDb **out) {
   return BM_OK;
 
 err_load:
+  /* Free the entries loaded before the failing line. */
+  for (size_t i = 0; i < db->cap; i++) {
+    Bookmark *b = db->entries[i];
+    if (b && b != BM_TOMBSTONE)
+      bookmark_free(b);
+  }
   free(db->entries);
 err_entries:
   free(db->path);
 err_path:
   free(db);
-  return BM_ERR_IO;
+  return r;
 }
 
 void bm_close(BmDb *db) {
