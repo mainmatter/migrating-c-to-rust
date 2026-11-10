@@ -93,7 +93,7 @@ To work through this course, you'll need:
   recommend one of the following:
   - [RustRover](https://www.jetbrains.com/rust/);
   - [Visual Studio Code](https://code.visualstudio.com) with the
-    [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer)
+    [`rust-analyzer`](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
     extension.
 - A C compiler. The one provided by your operating system will be good enough.
 - **libclang**, which [`bindgen`](https://rust-lang.github.io/rust-bindgen/)
