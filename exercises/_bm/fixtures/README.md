@@ -16,4 +16,6 @@ File format (one bookmark per line):
   case, same normalized URL). Loading stops there with `bm: ...:4: duplicate`
   and `bm` reports a corrupt database: this drives the storage error path. The
   malformed lines after it (bad scheme, no URL, no host, blank URL) would _not_
-  fail on their own, because the C `bm_normalize_url` only rejects tabs.
+  fail on their own: during a load, `bm_add` only rejects duplicates.
+  `storage_load` splits each line at the tab before the URL is normalized, so
+  the tab check in `bm_normalize_url` never fires.
