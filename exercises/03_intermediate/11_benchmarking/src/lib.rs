@@ -14,7 +14,14 @@ pub unsafe extern "C" fn bm_normalize_url_rust(
     out: Option<NonNull<c_char>>,
     out_len: usize,
 ) -> BmResult {
-    todo!("Replace this stub with your solution for bm_normalize_url in Chapter 2, exercise 11");
+    // Bring over the body of your `bm_normalize_url` from Chapter 2, exercise 11.
+    // Two things need adapting, because this crate links the C version too:
+    //
+    // - Keep this function's name, `bm_normalize_url_rust`. Exporting
+    //   `bm_normalize_url` would clash with the C symbol of the same name.
+    // - Return the `BM_*` constants above. If your solution returned its own
+    //   enum, map each variant to the constant with the same value.
+    todo!("Adapt your bm_normalize_url from Chapter 2, exercise 11 (see the comment above)");
 }
 
 #[cfg(test)]
