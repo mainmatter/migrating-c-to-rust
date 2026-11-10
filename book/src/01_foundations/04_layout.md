@@ -63,9 +63,9 @@ Here is a C struct and its layout:
 
 ```c
 struct sample {
-    bool flag;
-    uint32_t value;
-    uint8_t tag;
+  bool flag;
+  uint32_t value;
+  uint8_t tag;
 };
 ```
 

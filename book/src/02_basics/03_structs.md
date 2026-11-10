@@ -32,8 +32,8 @@ one:
 
 ```c
 struct Point {
-    double x;
-    double y;
+  double x;
+  double y;
 };
 
 struct Point midpoint(struct Point a, struct Point b);

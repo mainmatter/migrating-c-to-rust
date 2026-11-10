@@ -3,8 +3,8 @@
 C represents a set of independent options by assigning each option a bit:
 
 ```c
-#define FIND_URLS             (1u << 0)
-#define FIND_TAGS             (1u << 1)
+#define FIND_URLS (1u << 0)
+#define FIND_TAGS (1u << 1)
 #define FIND_CASE_INSENSITIVE (1u << 2)
 
 size_t find_bookmarks(const struct Bookmark *bookmarks, size_t len,
