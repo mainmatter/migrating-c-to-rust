@@ -144,7 +144,7 @@ fn url_safe_punctuation_is_accepted() {
 fn characters_outside_the_allowlist_are_rejected() {
     // None of these may appear in a URL unescaped, so an allowlist as loose as
     // `u8::is_ascii_graphic` is not enough either.
-    for bad in [b' ', b'"', b'<', b'>', b'\\', b'\n'] {
+    for bad in *b" \"<>\\\n" {
         let mut raw = b"https://example.com/".to_vec();
         raw.push(bad);
         raw.push(b'b');
