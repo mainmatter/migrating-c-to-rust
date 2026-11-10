@@ -1,4 +1,5 @@
 /f2h https://bencher.dev/
+/fzu https://cheadergen.com/getting-started/install.html
 /ff6 https://code.visualstudio.com
 /f29 https://doc.rust-lang.org/cargo/commands/cargo-bench.html
 /fzx https://doc.rust-lang.org/nightly/unstable-book/language-features/pattern-types.html
@@ -22,6 +23,7 @@
 /f2j https://gdbgui.com/
 /fft https://github.com/LukeMathWalker/cheadergen
 /ffu https://github.com/LukeMathWalker/cheadergen/releases
+/fzy https://github.com/LukeMathWalker/officina/tree/main/cheadergen
 /f2r https://github.com/criterion-rs/criterion.rs
 /ff9 https://github.com/dtolnay/cargo-expand
 /ffn https://github.com/mainmatter/c-to-rust-migration-book/tree/main/exercises/02_intro/00_README
@@ -96,6 +98,7 @@
 /fz9 https://polyformproject.org/licenses/noncommercial/1.0.0
 /ffm https://riscv.org/wp-content/uploads/2024/12/riscv-calling.pdf
 /ffy https://rust-lang.github.io/rust-bindgen/
+/fzt https://rust-lang.github.io/rust-bindgen/requirements.html
 /fz2 https://rust-lang.github.io/rust-clippy/master/index.html
 /ffx https://www.jetbrains.com/rust/
 /ff4 https://www.rust-lang.org/tools/install
