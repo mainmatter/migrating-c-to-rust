@@ -12,47 +12,31 @@ pub struct Bookmark {
 
 pub fn any_tag_contains(bookmark: &Bookmark, query: &str) -> bool {
     // TODO: Express the early boolean return with `any`.
-    let tags = &bookmark.tags;
-    for index in 0..tags.len() {
-        if tags[index].contains(query) {
-            return true;
-        }
-    }
-    false
+    bookmark.tags.iter().any(|tag| tag.contains(query))
 }
 
 pub fn position_of_url(bookmarks: &[Bookmark], url: &str) -> Option<usize> {
     // TODO: Express the search for an index with `position`.
-    for index in 0..bookmarks.len() {
-        if bookmarks[index].url == url {
-            return Some(index);
-        }
-    }
-    None
+    bookmarks.iter().position(|bookmark| bookmark.url == url)
 }
 
 pub fn count_matching_tags(bookmark: &Bookmark, query: &str) -> usize {
     // TODO: Express the condition with `filter` and consume it with `count`.
-    let tags = &bookmark.tags;
-    let mut matches = 0;
-    for index in 0..tags.len() {
-        if tags[index].contains(query) {
-            matches += 1;
-        }
-    }
-    matches
+    bookmark
+        .tags
+        .iter()
+        .filter(|tag| tag.contains(query))
+        .count()
 }
 
 pub fn urls_with_tag<'a>(bookmarks: &'a [Bookmark], tag: &str) -> Vec<&'a str> {
     // TODO: Use `filter`, `map`, and `collect`, with `any` for the nested tag
     // check. Preserve input order and return each bookmark at most once.
-    let mut urls = Vec::new();
-    for index in 0..bookmarks.len() {
-        if bookmarks[index].tags.iter().any(|item| item == tag) {
-            urls.push(bookmarks[index].url.as_str());
-        }
-    }
-    urls
+    bookmarks
+        .iter()
+        .filter(|bookmark| bookmark.tags.iter().any(|item| item == tag))
+        .map(|bookmark| bookmark.url.as_str())
+        .collect()
 }
 
 #[cfg(test)]
