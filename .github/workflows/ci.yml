@@ -73,11 +73,19 @@ jobs:
         run: cargo install --git https://github.com/mainmatter/mdbook-exercise-linker
       - name: Install link shortener plugin
         run: cargo install --git https://github.com/mainmatter/mdbook-link-shortener
-      - name: Install mdbook-pandoc, calibre, pdftk and related dependencies
+      # Cached so a hit skips the Ubuntu mirror (~617 MB per run, which has
+      # crawled to ~300 kB/s and stretched this job past 30 minutes).
+      # Install scripts are needed for the update-alternatives links that
+      # postinst creates, e.g. /usr/bin/pdftk and libblas/liblapack.
+      - name: Install calibre, pdftk and fonts
+        uses: awalsh128/cache-apt-pkgs-action@v1.6.3
+        with:
+          packages: fonts-noto fonts-open-sans calibre pdftk
+          execute_install_scripts: true
+          version: "1"
+      - name: Install mdbook-pandoc, pandoc and refresh font cache
         run: |
           cargo install mdbook-pandoc --locked --version 0.11.0
-          sudo apt-get update
-          sudo apt-get install -y fonts-noto fonts-open-sans calibre pdftk
           sudo fc-cache -f -v
           export PANDOC_VERSION=3.3
           curl -LsSf https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | tar zxf -
