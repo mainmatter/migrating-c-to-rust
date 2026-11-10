@@ -18,6 +18,8 @@ verify = false
 after = ["exercise-linker"]
 
 [output.html]
+default-theme = "mainmatter"
+preferred-dark-theme = "coal"
 git-repository-url = "https://github.com/mainmatter/migrating-c-to-rust"
 
 [output.html.playground]
