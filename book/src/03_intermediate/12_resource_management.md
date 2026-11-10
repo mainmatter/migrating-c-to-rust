@@ -19,39 +19,39 @@ file, allocate memory for the `Store` out parameter and then load an index.
 
 ```c
 struct Store {
-    FILE *file;
-    struct Index *index;
+  FILE *file;
+  struct Index *index;
 };
 
 BmStatus store_open(const char *path, struct Store **out) {
-    BmStatus status;
+  BmStatus status;
 
-    FILE *file = fopen(path, "r");
-    if (file == NULL) {
-        return BM_ERR_IO;
-    }
+  FILE *file = fopen(path, "r");
+  if (file == NULL) {
+    return BM_ERR_IO;
+  }
 
-    struct Store *store = calloc(1, sizeof(*store));
-    if (store == NULL) {
-        status = BM_ERR_IO;
-        goto close_file;
-    }
-    store->file = file;
+  struct Store *store = calloc(1, sizeof(*store));
+  if (store == NULL) {
+    status = BM_ERR_IO;
+    goto close_file;
+  }
+  store->file = file;
 
-    store->index = index_load(file);
-    if (store->index == NULL) {
-        status = BM_ERR_IO;
-        goto free_store;
-    }
+  store->index = index_load(file);
+  if (store->index == NULL) {
+    status = BM_ERR_IO;
+    goto free_store;
+  }
 
-    *out = store;
-    return BM_OK;
+  *out = store;
+  return BM_OK;
 
 free_store:
-    free(store);
+  free(store);
 close_file:
-    fclose(file);
-    return status;
+  fclose(file);
+  return status;
 }
 ```
 
