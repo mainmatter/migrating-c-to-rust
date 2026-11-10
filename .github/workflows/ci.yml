@@ -8,7 +8,7 @@ on:
 jobs:
   dprint:
     name: dprint check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: DeterminateSystems/determinate-nix-action@v3
@@ -25,7 +25,7 @@ jobs:
 
   typos:
     name: typos
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: DeterminateSystems/determinate-nix-action@v3
@@ -41,7 +41,7 @@ jobs:
         run: nix develop .#author --command typos
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
         with:
@@ -188,7 +188,7 @@ jobs:
           path: book/book/pandoc/html/c-to-rust-migration-book.epub
 
   is_fresh:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - run: sudo apt-get update && sudo apt-get install -y jq
