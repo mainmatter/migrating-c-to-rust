@@ -36,6 +36,14 @@ BM_DB=fixtures/sample.bm ./bm find blog
 BM_DB=fixtures/sample.bm ./bm list
 ```
 
+`fixtures/corrupt.bm` shows the error path instead. Its fourth line is the first
+URL again with a different case, so loading stops at a duplicate and `bm`
+refuses to open the database:
+
+```sh
+BM_DB=fixtures/corrupt.bm ./bm list
+```
+
 Stick to `find` and `list` on the fixtures: `add`, `del`, and `tag` rewrite the
 database they're pointed at. `make clean` removes the binary and your own
 `bookmarks.bm`.
