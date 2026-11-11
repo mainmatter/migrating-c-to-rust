@@ -40,12 +40,18 @@
           clang-tools
           rustfmt
         ];
+        # Nix's cc wrapper defines `_FORTIFY_SOURCE`, which glibc rejects with
+        # a `#warning` at `-O0`; `bm`'s Makefile builds with `-O0 -Werror`, so
+        # `make` fails on Linux unless fortify is off.
+        hardeningDisable = [ "fortify" ];
       in
       {
         devShells.default = pkgs.mkShell {
+          inherit hardeningDisable;
           buildInputs = baseTools;
         };
         devShells.author = pkgs.mkShell {
+          inherit hardeningDisable;
           buildInputs = baseTools ++ authorTools;
         };
       }
