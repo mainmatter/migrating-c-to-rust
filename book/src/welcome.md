@@ -85,10 +85,10 @@ solution.
 To work through this course, you'll need:
 
 - [**Rust**](https://www.rust-lang.org/tools/install), installed through
-  `rustup`. The repository pins a single nightly in `rust-toolchain.toml`:
-  some tools the course uses, such as Miri, only run on nightly, and the date
-  matches the one `cheadergen` requires. `rustup` picks it up whenever you run
-  `cargo` inside the repository. If it isn't installed yet, run
+  `rustup`. The repository pins a single nightly in `rust-toolchain.toml`: some
+  tools the course uses, such as Miri, only run on nightly, and the date matches
+  the one `cheadergen` requires. `rustup` picks it up whenever you run `cargo`
+  inside the repository. If it isn't installed yet, run
   `rustup toolchain install` from the repository root.
 - _(Optional but recommended)_ An IDE with Rust autocompletion support. We
   recommend one of the following:
