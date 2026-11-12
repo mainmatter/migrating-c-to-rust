@@ -81,7 +81,8 @@ but some ABIs pass a struct differently from the bare value inside it.
 ## Head to the exercise
 
 The exercise gives you a C header, and you write the matching Rust types from
-scratch. `Point` is a plain struct of two `double`s. `Shape` holds an array, a
-nested `Point`, and a pointer that may be null. `Fd` wraps an `int`. The tests
-compare the size, alignment, and field offsets of each type against what the C
-compiler reports for the same header.
+scratch. `Point` is a plain struct of two `double`s. `Shape` holds a one-byte
+`kind`, a fixed-size `name` array, a nested `Point`, a `parent` pointer that may
+be null, and a `uint32_t` `id`. `Fd` wraps an `int`. The tests compare the size,
+alignment, and field offsets of each type against what the C compiler reports
+for the same header.
