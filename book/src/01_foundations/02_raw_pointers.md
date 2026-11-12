@@ -77,6 +77,12 @@ let p = &x as *const i32 as *mut i32;
 unsafe { *p = 20 };
 ```
 
+That error doesn't come from the type system or the borrow checker. It comes
+from a lint, `invalid_reference_casting`, which is set to deny by default. The
+lint looks for one pattern within a function: a `&T` cast to a `*mut T` and then
+written through. It's a heuristic for a common mistake, and it doesn't prove
+anything about your code.
+
 It doesn't catch the less obvious ones. This example compiles, runs, and prints
 `20`, but it is undefined behavior all the same:
 
@@ -91,7 +97,9 @@ println!("{r}");
 ```
 
 The borrow checker only tracks references, so it has no idea `p` and `r` point
-to the same value. Miri does catch it and reports undefined behavior;
+to the same value. This time `p` comes from `&mut x`, so the cast itself is
+fine. The problem is writing through `p` while `r` is alive, and that's a
+pattern the lint can't see. Miri does catch it and reports undefined behavior;
 [Dynamic analysis with Miri](../03_intermediate/10_miri.md) puts it to work on a
 real port.
 
