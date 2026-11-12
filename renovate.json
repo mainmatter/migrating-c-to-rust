@@ -5,7 +5,7 @@
   ],
   "packageRules": [
     {
-      "description": "The pinned nightly is bumped by hand, so don't open PRs for it",
+      "description": "The pinned nightly must match cheadergen's, so it's bumped by hand",
       "matchFileNames": ["rust-toolchain.toml"],
       "enabled": false
     }

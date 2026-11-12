@@ -55,11 +55,11 @@ section until you've solved the exercise for the current one.
 
 ## Requirements
 
-- **Rust** (follow instructions
-  [here](https://www.rust-lang.org/tools/install)).\
-  If `rustup` is already installed on your system, run `rustup update` (or
-  another appropriate command depending on how you installed Rust on your
-  system) to make sure you're running on the latest stable version.
+- **Rust**, installed through
+  [`rustup`](https://www.rust-lang.org/tools/install). The repository pins a
+  single nightly in `rust-toolchain.toml`: Miri needs nightly, and the date
+  matches the one `cheadergen` requires. Run `rustup toolchain install` from the
+  repository root to install it.
 - A **C compiler**. The one provided by your operating system will be good
   enough.
 - **libclang**, which [`bindgen`](https://rust-lang.github.io/rust-bindgen/)
@@ -68,19 +68,16 @@ section until you've solved the exercise for the current one.
   [`bindgen`'s requirements page](https://rust-lang.github.io/rust-bindgen/requirements.html).
 - [**`cheadergen`**](https://cheadergen.com/getting-started/install.html), which
   generates C headers from Rust code. Install the CLI crate, `cheadergen_cli`
-  (`cargo install cheadergen` fails: that crate is the library), along with the
-  nightly toolchain `cheadergen` runs `rustdoc` with:
+  (`cargo install cheadergen` fails: that crate is the library):
 
   ```bash
   cargo install --locked cheadergen_cli --version 0.3.3
-  rustup toolchain install nightly-2026-06-04 -c rust-docs-json
   ```
 
-  That nightly is separate from the one in `rust-toolchain.toml`: `cheadergen`
-  pins its own.
 - Two extra **compilation targets**. One exercise type-checks your bindings
   against platforms that disagree with yours, which needs their standard
-  libraries:
+  libraries. Run this from the repository root, so the targets are added to the
+  pinned toolchain:
 
   ```bash
   rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
