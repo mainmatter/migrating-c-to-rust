@@ -12,6 +12,11 @@ headers from Rust. The chapter ends with the rules we follow to make an FFI
 boundary trustworthy: validating everything that comes in, and designing an API
 that is small and documented well enough to keep correct.
 
-## Exercises
+## Check your setup
 
-The exercises for this chapter are located in `exercises/02_basics`.
+This chapter uses two code generators: `bindgen`, which needs libclang, and the
+`cheadergen` CLI, which needs its own pinned nightly toolchain. This page's
+exercise runs both once, so a missing tool shows up now instead of halfway
+through the chapter. There's nothing to write: if the tests pass, you're ready.
+If one fails, its message says which tool is missing, and the
+[welcome page](../welcome.md) explains how to install it.

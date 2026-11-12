@@ -2,51 +2,8 @@
 
 In the previous chapter you learned the FFI building blocks: `extern` blocks,
 generated bindings, FFI-safe types, and how to design a boundary that acts as a
-firewall. Now we'll put them to work on a real codebase. Meet `bm`, a small
-bookmark manager CLI written in C.
-
-## Take `bm` for a spin
-
-Before porting any of it, build `bm` and use it for a minute. It's easier to
-reason about a module once you've seen what the program does with it:
-
-```sh
-cd exercises/_bm
-make
-./bm
-```
-
-Without arguments, `bm` prints its usage. Add a couple of bookmarks, then look
-them up again:
-
-```sh
-./bm add https://www.rust-lang.org/ --tag rust --tag lang
-./bm add https://en.cppreference.com/w/c --tag c --tag reference
-./bm find rust
-./bm list
-```
-
-`find` prints matching bookmarks, one per line, and `list` prints how many
-bookmarks carry each tag. Your bookmarks live in `bookmarks.bm` in the current
-directory. The `BM_DB` environment variable points `bm` at a different database.
-`fixtures/sample.bm` has about 50 entries to explore:
-
-```sh
-BM_DB=fixtures/sample.bm ./bm find blog
-BM_DB=fixtures/sample.bm ./bm list
-```
-
-`fixtures/corrupt.bm` shows the error path instead. Its fourth line is the first
-URL again with a different case, so loading stops at a duplicate and `bm`
-refuses to open the database:
-
-```sh
-BM_DB=fixtures/corrupt.bm ./bm list
-```
-
-Stick to `find` and `list` on the fixtures: `add`, `del`, and `tag` rewrite the
-database they're pointed at. `make clean` removes the binary and your own
-`bookmarks.bm`.
+firewall. Now we'll put them to work on `bm`, the bookmark manager you took for
+a spin in this chapter's introduction.
 
 ## The source code
 
