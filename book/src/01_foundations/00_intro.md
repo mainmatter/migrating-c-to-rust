@@ -12,6 +12,10 @@ and doesn't change, how raw pointers differ from references, how `NonNull` and
 `Option` let the type system track null pointers, and how size, alignment, and
 padding work.
 
-## Exercises
+## Check your setup
 
-The exercises for this chapter are located in `exercises/01_foundations`.
+Later chapters compile C code alongside Rust, so this page's exercise makes sure
+that works on your machine before you need it. It compiles a tiny C file, links
+it into a Rust crate, and calls it from a test. There's nothing to write: if the
+test passes, you're ready. If it fails, revisit the requirements in the
+[welcome page](../welcome.md).
