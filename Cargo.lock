@@ -107,6 +107,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "bm_normalize"
+version = "0.1.0"
+dependencies = [
+ "bm_high_quality_ffi_apis",
+]
+
+[[package]]
 name = "bm_out_parameters"
 version = "0.1.0"
 
@@ -116,10 +123,6 @@ version = "0.1.0"
 
 [[package]]
 name = "bm_validate_and_narrow"
-version = "0.1.0"
-
-[[package]]
-name = "bm_version"
 version = "0.1.0"
 
 [[package]]

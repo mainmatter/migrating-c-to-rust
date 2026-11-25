@@ -104,37 +104,43 @@ suggest. Tangles like that are normal in code that has been maintained for a
 while, and they are exactly what you want to know before choosing where to
 start.
 
-The exercise uses an even smaller boundary than these production modules: a
-one-function `bm_version` module. Its behavior is intentionally trivial so that
-the work is limited to replacing a C object file with a Rust static library.
+We'll start with `normalize`. It has no project dependencies, and both of its
+functions write into a buffer the caller supplies, so no memory changes owner at
+the boundary. You have also ported half of it already: `bm_normalize_url` is the
+function you made safe in exercise 2.11.
 
 ## Preserve the existing contract
 
 When possible, an incremental migration replaces the module's _object file_
 without changing the interface used by the remaining C code. The existing C
-header describes the ABI our Rust implementation must initially satisfy. The
-exercise's header contains this declaration:
+header describes the ABI our Rust implementation must initially satisfy.
+`normalize.h` declares two functions:
 
 ```c
-#include <stdint.h>
-
-uint32_t bm_version(void);
+BmResult bm_normalize_url(const char *raw, char *out, size_t out_len);
+BmResult tag_normalize(const char *raw, char *out, size_t out_len);
 ```
 
-The Rust replacement must export the same function under the same symbol name
-and use the C ABI:
+We drop all of `normalize.o` from the link, so the Rust replacement must export
+every function it provided, under the same symbol names and with the C ABI:
 
 ```rust,no_run
+use std::ffi::c_char;
+
 #[unsafe(no_mangle)]
-pub extern "C" fn bm_version() -> u32 {
-    1
+pub unsafe extern "C" fn tag_normalize(
+    raw: *const c_char,
+    out: *mut c_char,
+    out_len: usize,
+) -> i32 {
+    todo!()
 }
 ```
 
-The rest of the C code doesn't know, and doesn't need to know, that the
-implementation behind the symbol changed. The linker resolves the same symbol
-names as before; it just finds them in our Rust static library instead of the
-old object file.
+Leave one out and `bm` no longer links. The rest of the C code doesn't know, and
+doesn't need to know, that the implementation behind the symbols changed. The
+linker resolves the same symbol names as before; it just finds them in our Rust
+static library instead of the old object file.
 
 That is a migration constraint, not necessarily the interface we want in the
 long term. Some C headers expose globals, macros, shared data structures, or
@@ -142,39 +148,81 @@ ownership assumptions that cannot be reproduced cleanly in Rust. In those cases,
 we can introduce a small compatibility layer and improve the interface
 separately.
 
-After that, all you have to do is link against the replacement library written
-in Rust instead of the original one written in C. Cargo must first produce the
-right kind of artifact:
+## Reuse what you already ported
+
+`bm_normalize_url` already exists in Rust: it's your solution to exercise 2.11.
+Copying it would leave two versions to keep in sync, so the exercise crate
+depends on the 2.11 crate instead:
+
+```toml
+[dependencies]
+bm_high_quality_ffi_apis = { path = "../../02_basics/11_high_quality_ffi_apis" }
+```
+
+Its `#[unsafe(no_mangle)]` function only ends up in your static library if your
+code uses the crate. Cargo hands every dependency to `rustc`, and `rustc` only
+links the ones the code refers to. A `use` is enough:
+
+```rust,ignore
+pub use bm_high_quality_ffi_apis::bm_normalize_url;
+```
+
+Your version is stricter than the C one: it rejects characters such as spaces
+and double quotes, which C accepted. That is a change in behavior: a database
+that the C build saved with such a URL no longer opens. The only such URL in the
+fixtures comes after the line where `corrupt.bm` stops loading, so the
+comparison below still passes. In a real migration you'd make that call on
+purpose, and tell your users.
+
+`tag_normalize` is new. Port it as it is, quirks included: the goal of this step
+is a drop-in replacement. Improvements come after the swap, one reviewed change
+at a time.
+
+## Link it into `bm`
+
+Cargo must first produce the right kind of artifact:
 
 ```toml
 [lib]
 crate-type = ["staticlib"]
 ```
 
-```text
-before:  test_bm_version.o + bm_version.o (C)
-after:   test_bm_version.o + libbm_version.a (Rust)
+Then, from the repository root, build `bm` from every C file except
+`normalize.c`, with the flags of its `Makefile`, and add the archive in its
+place:
+
+```sh
+cargo build -p bm_normalize
+cd exercises/_bm
+cc -Wall -Wextra -Werror -O0 -g -std=c11 -Isrc \
+  src/bookmark.c src/cli.c src/index.c src/storage.c src/tag.c src/util.c \
+  ../../target/debug/libbm_normalize.a -o ../../target/bm-rust
 ```
 
-## Structuring the Rust side
-
-For a substantial module, keep the two layers from the firewall pattern in
-section 2.10: a thin `extern "C"` surface that converts C representations and a
-safe Rust core that implements the behavior. `bm_version` takes no arguments and
-returns a fixed-width integer, so in this case the exported function can remain
-the entire implementation.
+```text
+before:  cli.o, index.o, ..., normalize.o (C)
+after:   cli.o, index.o, ..., libbm_normalize.a (Rust)
+```
 
 ## Verifying behavior parity
 
-A rewrite must not change observable behavior. The exercise checks this by
-running the same C caller twice:
+A rewrite must not change observable behavior. With both builds of `bm` at hand,
+run them on the same input and compare what they print:
 
-1. first it links the caller with `bm_version.c` and runs the all-C baseline;
-2. then it omits `bm_version.c`, links the unchanged caller with the Rust
-   archive, and runs it again.
+```sh
+make
+diff <(BM_DB=fixtures/sample.bm ./bm list) \
+     <(BM_DB=fixtures/sample.bm ../../target/bm-rust list)
+```
 
-A Rust unit test independently checks the function's return value. The C link is
-what proves that the archive exposes the ABI and symbol promised by the header.
+No output means no difference. Comparing two implementations on the same inputs
+is called differential testing. Pick the commands with care: `list` only reaches
+`bm_normalize_url`, because loading a database normalizes every URL. Tags come
+through `tag_normalize` only in `add --tag` and `tag`.
+
+The exercise's tests do this for you. They build both versions of `bm`, run
+`find`, `list`, `add --tag`, and `tag` on copies of the fixtures, and compare
+stdout, stderr, exit codes, and the database each one leaves behind.
 
 ## Tips
 
@@ -185,17 +233,17 @@ static library exports. The command depends on your toolchain and platform:
 - LLVM toolchains: `llvm-nm target/debug/lib<crate>.a`
 - Windows with MSVC: `dumpbin /symbols target\debug\<crate>.lib`
 
-A missing `#[unsafe(no_mangle)]` is a common cause.
-
-While both implementations still exist, you can also run the same inputs through
-the C and Rust versions and compare their results. This is called differential
-testing. The exercise uses the simpler form of running the same assertions
-against both implementations.
+A missing `#[unsafe(no_mangle)]` is a common cause. So is a dependency that your
+code never uses. On macOS, symbol names start with an underscore, so look for
+`_tag_normalize`.
 
 ## Head to the exercise
 
 The exercise in `exercises/03_intermediate/01_rewrite_a_module` replaces
-`bm_version.c`. Configure the crate to produce a static library, then make the
-provided Rust function satisfy `bm_version.h` without changing the header or the
-C caller. There is no algorithm to port: the exercise focuses on the build
-artifact, ABI, symbol name, and link step.
+`normalize.c`. Configure the crate to produce a static library, bring in
+`bm_normalize_url` from exercise 2.11, and port `tag_normalize`. The tests then
+link the real `bm` against your library and compare it with the all-C build.
+
+The exercise links your solution to exercise 2.11 as it is in your copy of the
+repository, so solve that one first. If you change it later, this exercise
+checks the new version.
