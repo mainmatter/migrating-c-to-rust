@@ -1,9 +1,13 @@
 [package]
-name = "bm_version"
+name = "bm_normalize"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [lib]
-# TODO 1 OF 2: Configure this crate to produce a static library that C can link.
-crate-type = ["staticlib"]
+# TODO 1 OF 3: Configure this crate to produce a static library that C can link.
+# crate-type = ["staticlib"]
+
+[dependencies]
+# Your solution to exercise 2.11. It already exports `bm_normalize_url`.
+bm_high_quality_ffi_apis = { path = "../../02_basics/11_high_quality_ffi_apis" }
