@@ -27,8 +27,8 @@ pub struct Point {
     pub y: f64,
 }
 
-// TODO: mirror `struct Shape`. C may leave `parent` null, so pick a Rust type
-// that says so: an `Option` around a non-null pointer.
+// C may leave `parent` null, so its Rust type says so: an `Option` around a
+// non-null pointer.
 #[repr(C)]
 pub struct Shape {
     pub kind: u8,
@@ -38,14 +38,13 @@ pub struct Shape {
     pub id: u32,
 }
 
-// TODO: `Fd` is a wrapper that C never sees: it passes a plain `int`. Make it a
-// tuple struct around a `c_int`, with the attribute that guarantees the same
+// `Fd` is a wrapper that C never sees: it passes a plain `int`. It is a tuple
+// struct around a `c_int`, with `repr(transparent)`, which guarantees the same
 // layout *and* the same function-call ABI as that field.
 //
-// `close_fd` below takes an `Fd`, so the crate won't build until `Fd` is a type
-// C can accept. Note that the compiler can't tell the two candidate attributes
-// apart here: it accepts either, and the ABI guarantee is the reason to prefer
-// one of them.
+// `close_fd` below takes an `Fd`, so `Fd` must be a type C can accept. The
+// compiler would accept `repr(C)` here too: the ABI guarantee is the reason to
+// prefer `repr(transparent)`.
 #[repr(transparent)]
 pub struct Fd(c_int);
 

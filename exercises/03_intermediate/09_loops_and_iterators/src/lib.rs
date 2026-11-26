@@ -2,7 +2,7 @@
 //!
 //! The starter functions are correct, so their tests pass. `wr` also runs
 //! Clippy with warnings denied; replace every index-based loop with the
-//! iterator operation named in the function's TODO.
+//! iterator operation named in the comment of each function.
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Bookmark {
@@ -11,17 +11,17 @@ pub struct Bookmark {
 }
 
 pub fn any_tag_contains(bookmark: &Bookmark, query: &str) -> bool {
-    // TODO: Express the early boolean return with `any`.
+    // The early boolean return, expressed with `any`.
     bookmark.tags.iter().any(|tag| tag.contains(query))
 }
 
 pub fn position_of_url(bookmarks: &[Bookmark], url: &str) -> Option<usize> {
-    // TODO: Express the search for an index with `position`.
+    // The search for an index, expressed with `position`.
     bookmarks.iter().position(|bookmark| bookmark.url == url)
 }
 
 pub fn count_matching_tags(bookmark: &Bookmark, query: &str) -> usize {
-    // TODO: Express the condition with `filter` and consume it with `count`.
+    // The condition, expressed with `filter` and consumed with `count`.
     bookmark
         .tags
         .iter()
@@ -30,8 +30,8 @@ pub fn count_matching_tags(bookmark: &Bookmark, query: &str) -> usize {
 }
 
 pub fn urls_with_tag<'a>(bookmarks: &'a [Bookmark], tag: &str) -> Vec<&'a str> {
-    // TODO: Use `filter`, `map`, and `collect`, with `any` for the nested tag
-    // check. Preserve input order and return each bookmark at most once.
+    // `filter`, `map`, and `collect`, with `any` for the nested tag check. This
+    // preserves input order and returns each bookmark at most once.
     bookmarks
         .iter()
         .filter(|bookmark| bookmark.tags.iter().any(|item| item == tag))

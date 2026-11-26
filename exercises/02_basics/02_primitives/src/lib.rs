@@ -13,10 +13,8 @@ unsafe extern "C" {
 
 /// Lowercases an ASCII letter, and returns any other byte unchanged.
 pub fn lower(byte: u8) -> u8 {
-    // This code was written to compile on another platform. See what happens
-    // when you remove the `as i8` cast.
-    //
-    // TODO: make it build for both targets.
+    // `c_char` is `i8` on some targets and `u8` on others, so casting to
+    // `c_char` instead of either one builds on both.
     // SAFETY: `to_lower` accepts any `char` value and has no other requirements.
     unsafe { to_lower(byte as c_char) as u8 }
 }
