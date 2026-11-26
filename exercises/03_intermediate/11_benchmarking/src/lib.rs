@@ -49,8 +49,8 @@ mod tests {
         // SAFETY: as above.
         let rust_result = unsafe {
             bm_normalize_url_rust(
-                NonNull::new(raw.as_ptr() as *mut c_char).into(),
-                NonNull::new(rust_out.as_mut_ptr()).into(),
+                NonNull::new(raw.as_ptr() as *mut c_char),
+                NonNull::new(rust_out.as_mut_ptr()),
                 out_len,
             )
         };

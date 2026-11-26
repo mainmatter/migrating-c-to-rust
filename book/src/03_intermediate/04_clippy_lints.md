@@ -177,7 +177,7 @@ That comment carries no information. The next reader still has to establish
 whether `raw` is non-null, initialized, and terminated. Write the reasoning
 down.
 
-It's the same discipline as the `# Safety` documentation from Chapter 2. The
+It's the same discipline as the `# Safety` documentation from Chapter 1. The
 function's `# Safety` section describes what its caller must guarantee. The
 local `// SAFETY:` comment describes why one operation can rely on those
 guarantees at this exact point in the implementation.
