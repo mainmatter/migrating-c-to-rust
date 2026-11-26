@@ -15,19 +15,64 @@
 
 use std::ffi::c_char;
 
-// TODO 2 OF 3: Bring in `bm_normalize_url` from your exercise 2.11 crate.
+// Pull in exercise 2.11. Only crates you use get linked, so without this line
+// `bm_normalize_url` would be missing from the static library.
+pub use bm_high_quality_ffi_apis::bm_normalize_url;
 
 /// Mirrors `BM_OK` in `exercises/_bm/src/result.h`.
 pub const BM_OK: i32 = 0;
 /// Mirrors `BM_ERR_INVALID_URL` in `exercises/_bm/src/result.h`.
 pub const BM_ERR_INVALID_URL: i32 = 3;
 
+/// The bytes C's `isspace` accepts in the "C" locale. `u8::is_ascii_whitespace`
+/// leaves out `\v`, so it isn't a drop-in replacement.
+const fn is_c_space(b: u8) -> bool {
+    matches!(b, b' ' | b'\t' | b'\n' | 0x0b | 0x0c | b'\r')
+}
+
 /// Trim, lowercase, and reject empty tags, as `tag_normalize` in
 /// `normalize.c` does.
-// TODO 3 OF 3: Export this function with the ABI and symbol name that
-// `normalize.h` declares, then port its body from `normalize.c`.
-pub unsafe fn tag_normalize(_raw: *const c_char, _out: *mut c_char, _out_len: usize) -> i32 {
-    todo!()
+///
+/// # Safety
+///
+/// If `raw` is non-null, it must point to a NUL-terminated C string. If `out`
+/// is non-null, it must be valid for writes of `out_len` bytes and must not
+/// overlap `raw`. `out` may be uninitialized: `bm` passes stack buffers.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn tag_normalize(
+    raw: *const c_char,
+    out: *mut c_char,
+    out_len: usize,
+) -> i32 {
+    if raw.is_null() || out.is_null() || out_len == 0 {
+        return BM_ERR_INVALID_URL;
+    }
+
+    // SAFETY: `raw` is non-null, and the caller guarantees it is NUL-terminated.
+    let raw = unsafe { std::ffi::CStr::from_ptr(raw) }.to_bytes();
+
+    let tag = raw
+        .iter()
+        .copied()
+        .skip_while(|&b| is_c_space(b))
+        .take_while(|&b| !is_c_space(b) && b != b',');
+
+    let mut n = 0;
+    for b in tag {
+        // Keep room for the NUL terminator.
+        if n + 1 >= out_len {
+            return BM_ERR_INVALID_URL;
+        }
+        // SAFETY: `n < out_len`, and the caller guarantees `out` is valid for
+        // writes of `out_len` bytes. Writing through the pointer, instead of
+        // making a `&mut [u8]`, is fine for uninitialized memory.
+        unsafe { out.add(n).write(b.to_ascii_lowercase() as c_char) };
+        n += 1;
+    }
+    // SAFETY: `n < out_len`, by the check in the loop or because `out_len > 0`.
+    unsafe { out.add(n).write(0) };
+
+    if n == 0 { BM_ERR_INVALID_URL } else { BM_OK }
 }
 
 #[cfg(test)]

@@ -5,8 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [lib]
-# TODO 1 OF 3: Configure this crate to produce a static library that C can link.
-# crate-type = ["staticlib"]
+crate-type = ["staticlib"]
 
 [dependencies]
 # Your solution to exercise 2.11. It already exports `bm_normalize_url`.
