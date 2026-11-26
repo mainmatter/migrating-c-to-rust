@@ -105,7 +105,7 @@ while, and they are exactly what you want to know before choosing where to
 start.
 
 We'll start with `normalize`. It has no project dependencies, and both of its
-functions write into a buffer the caller supplies, so no memory changes owner at
+functions write into a buffer the caller supplies, so no memory changes hands at
 the boundary. You have also ported half of it already: `bm_normalize_url` is the
 function you made safe in exercise 2.11.
 
@@ -122,7 +122,8 @@ BmResult tag_normalize(const char *raw, char *out, size_t out_len);
 ```
 
 We drop all of `normalize.o` from the link, so the Rust replacement must export
-every function it provided, under the same symbol names and with the C ABI:
+every function `normalize.o` provided, under the same symbol names and with the
+C ABI:
 
 ```rust,no_run
 use std::ffi::c_char;
@@ -159,20 +160,20 @@ depends on the 2.11 crate instead:
 bm_high_quality_ffi_apis = { path = "../../02_basics/11_high_quality_ffi_apis" }
 ```
 
-Its `#[unsafe(no_mangle)]` function only ends up in your static library if your
-code uses the crate. Cargo hands every dependency to `rustc`, and `rustc` only
-links the ones the code refers to. A `use` is enough:
+The 2.11 crate's `#[unsafe(no_mangle)]` function ends up in your static library
+only if your code uses the crate. Cargo hands every dependency to `rustc`, and
+`rustc` only links the ones the code refers to. A `use` is enough:
 
 ```rust,ignore
 pub use bm_high_quality_ffi_apis::bm_normalize_url;
 ```
 
 Your version is stricter than the C one: it rejects characters such as spaces
-and double quotes, which C accepted. That is a change in behavior: a database
-that the C build saved with such a URL no longer opens. The only such URL in the
-fixtures comes after the line where `corrupt.bm` stops loading, so the
-comparison below still passes. In a real migration you'd make that call on
-purpose, and tell your users.
+and double quotes, which the C version accepted. That is a change in behavior: a
+database that the C build saved with such a URL no longer opens. The only such
+URL in the fixtures comes after the line where `corrupt.bm` stops loading, so
+the comparison below still passes. In a real migration you'd make that call on
+purpose and tell your users.
 
 `tag_normalize` is new. Port it as it is, quirks included: the goal of this step
 is a drop-in replacement. Improvements come after the swap, one reviewed change
@@ -187,9 +188,8 @@ Cargo must first produce the right kind of artifact:
 crate-type = ["staticlib"]
 ```
 
-Then, from the repository root, build `bm` from every C file except
-`normalize.c`, with the flags of its `Makefile`, and add the archive in its
-place:
+Then build `bm` with the flags from its `Makefile`, leaving out `normalize.c`
+and linking the archive in its place. Run this from the repository root:
 
 ```sh
 cargo build -p bm_normalize
@@ -217,8 +217,8 @@ diff <(BM_DB=fixtures/sample.bm ./bm list) \
 
 No output means no difference. Comparing two implementations on the same inputs
 is called differential testing. Pick the commands with care: `list` only reaches
-`bm_normalize_url`, because loading a database normalizes every URL. Tags come
-through `tag_normalize` only in `add --tag` and `tag`.
+`bm_normalize_url`, because loading a database normalizes every URL. Only
+`add --tag` and `tag` pass tags through `tag_normalize`.
 
 The exercise's tests do this for you. They build both versions of `bm`, run
 `find`, `list`, `add --tag`, and `tag` on copies of the fixtures, and compare
