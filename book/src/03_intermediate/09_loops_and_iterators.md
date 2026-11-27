@@ -4,7 +4,8 @@ A C loop often does several jobs at once: it traverses memory, controls when
 iteration stops, and computes a result. A literal Rust port can preserve all of
 that machinery even after the data has become a safe Rust collection.
 
-Consider this loop from `bm`:
+Consider this loop, which checks whether any of a bookmark's tags contains a
+query:
 
 ```c
 for (size_t i = 0; i < b->n_tags; i++) {

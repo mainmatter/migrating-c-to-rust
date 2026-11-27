@@ -1,11 +1,11 @@
 # Allocation, allocators, and mixing them
 
 In the previous section you saw how to replace a whole C module with Rust while
-keeping the interface identical. But `bm` passes more than integers and borrowed
-strings across the boundary: it passes _ownership_. `bookmark_new` allocates a
-`Bookmark` that someone else will free later. Who frees it, and with what? This
-is where mixed-language codebases hide some of their nastiest bugs and most
-difficult design challenges.
+keeping the interface identical. But most C code passes more than integers and
+borrowed strings across the boundary: it passes _ownership_. A function like
+`bookmark_new` allocates a `Bookmark` that someone else will free later. Who
+frees it, and with what? This is where mixed-language codebases hide some of
+their nastiest bugs and most difficult design challenges.
 
 ## The golden rule
 

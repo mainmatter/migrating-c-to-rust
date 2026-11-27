@@ -2,74 +2,8 @@
 
 In the previous chapter you learned the FFI building blocks: `extern` blocks,
 generated bindings, FFI-safe types, and how to design a boundary that acts as a
-firewall. Now we'll put them to work on a real codebase. Meet `bm`, a small
-bookmark manager CLI written in C.
-
-## Take `bm` for a spin
-
-Before porting any of it, build `bm` and use it for a minute. It's easier to
-reason about a module once you've seen what the program does with it:
-
-```sh
-cd exercises/_bm
-make
-./bm
-```
-
-Without arguments, `bm` prints its usage. Add a couple of bookmarks, then look
-them up again:
-
-```sh
-./bm add https://www.rust-lang.org/ --tag rust --tag lang
-./bm add https://en.cppreference.com/w/c --tag c --tag reference
-./bm find rust
-./bm list
-```
-
-`find` prints matching bookmarks, one per line, and `list` prints how many
-bookmarks carry each tag. Your bookmarks live in `bookmarks.bm` in the current
-directory. The `BM_DB` environment variable points `bm` at a different database.
-`fixtures/sample.bm` has about 50 entries to explore:
-
-```sh
-BM_DB=fixtures/sample.bm ./bm find blog
-BM_DB=fixtures/sample.bm ./bm list
-```
-
-`fixtures/corrupt.bm` shows the error path instead. Its fourth line is the first
-URL again with a different case, so loading stops at a duplicate and `bm`
-refuses to open the database:
-
-```sh
-BM_DB=fixtures/corrupt.bm ./bm list
-```
-
-Stick to `find` and `list` on the fixtures: `add`, `del`, and `tag` rewrite the
-database they're pointed at. `make clean` removes the binary and your own
-`bookmarks.bm`.
-
-## The source code
-
-Here is an overview of the C source code:
-
-```text
-exercises/_bm/src/
-├── bookmark.c    the Bookmark type
-├── bookmark.h
-├── cli.c         entry point, argument parsing
-├── index.c       in-memory bookmark index
-├── index.h
-├── internal.h    definitions shared by index.c and storage.c
-├── normalize.c   URL and tag normalization
-├── normalize.h
-├── result.h      shared result codes and error-string helper
-├── storage.c     on-disk persistence of .bm files
-├── storage.h
-├── tag.c         tag parsing and matching
-├── tag.h
-├── util.c        string helpers
-└── util.h
-```
+firewall. Now we'll put them to work on the first step of a migration: replacing
+one C module with Rust while the rest of the program stays in C.
 
 ## Picking the first module
 
@@ -87,6 +21,30 @@ The right choice depends on the codebase, but a few guidelines help:
 - Choose code with useful tests, so you can compare behavior before and after.
 - Keep the change small enough to review and, if necessary, revert.
 
+To see these guidelines at work, take a small command-line bookmark manager
+written in C. Its source code looks like this:
+
+```text
+src/
+├── bookmark.c    the Bookmark type
+├── bookmark.h
+├── cli.c         entry point, argument parsing
+├── index.c       in-memory bookmark index
+├── index.h
+├── internal.h    definitions shared by index.c and storage.c
+├── normalize.c   URL and tag normalization
+├── normalize.h
+├── result.h      shared result codes and error-string helper
+├── storage.c     on-disk persistence of the bookmark database
+├── storage.h
+├── tag.c         tag parsing and matching
+├── tag.h
+├── util.c        string helpers
+└── util.h
+```
+
+Following the `#include` lines gives the dependencies between its modules:
+
 ```text
 cli       → bookmark, index, normalize, result, tag, util
 index     → bookmark, internal, normalize, storage, tag, util
@@ -97,16 +55,15 @@ normalize → (no project dependencies)
 util      → (no project dependencies)
 ```
 
-Two things are worth noting. `normalize` and `util` are the only real leaves:
-every other module pulls in at least one of its siblings. And `index` and
-`storage` include each other, so this is not the clean tree the file names
-suggest. Tangles like that are normal in code that has been maintained for a
-while, and they are exactly what you want to know before choosing where to
-start.
+Two things stand out. `normalize` and `util` are the only real leaves: every
+other module pulls in at least one of its siblings. And `index` and `storage`
+include each other, so this is not the clean tree the file names suggest.
+Tangles like that are normal in code that has been maintained for a while, and
+they are exactly what you want to know before choosing where to start.
 
-The exercise uses an even smaller boundary than these production modules: a
-one-function `bm_version` module. Its behavior is intentionally trivial so that
-the work is limited to replacing a C object file with a Rust static library.
+The exercise uses an even smaller boundary than these modules: a one-function
+`bm_version` module. Its behavior is intentionally trivial so that the work is
+limited to replacing a C object file with a Rust static library.
 
 ## Preserve the existing contract
 
