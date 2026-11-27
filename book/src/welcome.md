@@ -35,22 +35,23 @@ This course is based on the "learn by doing" principle.\
 It has been designed to be interactive and hands-on.
 
 [Mainmatter](https://mainmatter.com/rust-consulting/) developed this course to
-be delivered in a classroom setting, over four days: each attendee advances
+be delivered in a classroom setting, over three days: each attendee advances
 through the lessons at their own pace, with an experienced instructor providing
 guidance, answering questions, and diving deeper into the topics as needed.\
 If you'd like to organize a private session for your company, please
 [get in touch](https://mainmatter.com/contact/).
 
 You can also take the course on your own, but we recommend you find a friend or
-a mentor to help you along the way should you get stuck.
-
-<!--You can find solutions for all exercises in the
-[`solutions` branch of the GitHub repository](https://github.com/mainmatter/migrating-c-to-rust/tree/solutions).-->
+a mentor to help you along the way should you get stuck. You can find solutions
+for all exercises in the
+[`solutions` branch of the GitHub repository](https://github.com/mainmatter/migrating-c-to-rust/tree/solutions).
 
 ## Formats
 
-You can go through the course material [in the browser]([TODO: insert URL]) or
-[download it as a PDF file]([TODO: insert URL]), for offline reading.
+You can go through the course material
+[in the browser](https://mainmatter.com/c-to-rust-migration-book/course/) or
+[download it as a PDF file](https://mainmatter.com/assets/c-to-rust-migration-book.pdf),
+for offline reading.
 
 ## Structure
 
@@ -149,15 +150,18 @@ Enjoy the course!
 
 This course was written by [Jonas Kruckenberg](https://jonaskruckenberg.de),
 Engineering Consultant at [Mainmatter](https://mainmatter.com/rust-consulting/),
-and Artur Jakubiec.\
+[Dax Huiberts](https://daxhuiberts.com/), Artur Jakubiec, and Magnus Markling.\
 Jonas Kruckenberg is a systems engineer working on operating systems and
 low-level infrastructure. He is the lead author of k23, an experimental
 high-reliability operating system. As a TC39 Invited Expert, he helps shape the
 future of the web by bringing non-browser perspectives to JavaScript language
 standardization.\
+Dax Huiberts is a software engineer who enjoys building fast, reliable systems
+with Rust, PostgreSQL, and WebAssembly.\
 Artur Jakubiec is a long-time C/C++ engineer and was one of the main developers
 of Cubasis. He is now a tech lead at a company building enterprise SaaS
-productivity software, currently migrating it from C++ to Rust.
+productivity software, currently migrating it from C++ to Rust.\
+Magnus Markling is a senior Rust engineer at Mainmatter.
 
 [Mainmatter](https://mainmatter.com/rust-consulting/) is an engineering
 consultancy specializing in Rust. We offer engineering services, training, and
