@@ -1,4 +1,4 @@
-# Chapter 3: Intermediate
+# Chapter 3: Rewriting a C module
 
 From now on we will be porting a "real" C application: the `bm` bookmark manager
 CLI. We will learn how to approach real-world codebases, structure our approach,
