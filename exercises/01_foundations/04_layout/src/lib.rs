@@ -9,7 +9,6 @@ pub struct Pixel {
     pub layer: u16,
 }
 
-// TODO: replace each 0 with the right number.
 pub const BOOL_SIZE: usize = 1;
 pub const BOOL_ALIGN: usize = 1;
 pub const U64_ARRAY_SIZE: usize = 24; // for `[u64; 3]`
@@ -19,9 +18,6 @@ pub const PIXEL_ALIGN: usize = 4;
 // Part two: `Header` follows C's rules, so its fields stay in the order you
 // write them. It holds 14 bytes of fields and takes up 24, and a better order
 // gets that down to 16.
-//
-// TODO: reorder the fields so the struct is as small as those rules allow.
-// Keep every field, keep `repr(C)`, and don't change any types.
 #[repr(C)]
 pub struct Header {
     pub id: u64,
