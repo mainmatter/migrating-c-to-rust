@@ -96,11 +96,10 @@ private because it never crosses the boundary. Conversely, if a raw numeric
 status arrives from C, match its known values explicitly. Constructing a Rust
 enum from an arbitrary integer can create an invalid value.
 
-`bm`'s `BmResult` follows this pattern. Its storage layer also shows that not
-every C failure code is a Rust error: `ENOENT` means a missing file, which may
-be an empty database, while a read failure or corrupt file remains an error. The
-domain decides which outcomes are ordinary; the fact that C reported them as
-integers doesn't.
+Not every C failure code is a Rust error. When a program loads its database from
+a file, `ENOENT` means a missing file, which may be an empty database, while a
+read failure or corrupt file remains an error. The domain decides which outcomes
+are ordinary; the fact that C reported them as integers doesn't.
 
 ## Head to the exercise
 

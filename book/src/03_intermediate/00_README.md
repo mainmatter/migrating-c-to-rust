@@ -1,8 +1,12 @@
 # Chapter 3: Rewriting a C module
 
-From now on we will be porting a "real" C application: the `bm` bookmark manager
-CLI. We will learn how to approach real-world codebases, structure our approach,
-and debug our code when it breaks.
+This chapter moves from the FFI building blocks to rewriting C code in Rust. We
+will learn how to approach real-world codebases, structure our approach, and
+debug our code when it breaks.
+
+Each section has its own small exercise. Most of them borrow names from the same
+imaginary program, a bookmark manager written in C, but each exercise stands on
+its own.
 
 In this chapter we'll pick our first module to rewrite, learn how C and Rust
 allocators (don't) mix, debug across the language boundary with `lldb`/`gdb`,
