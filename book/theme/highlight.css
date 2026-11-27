@@ -1,0 +1,154 @@
+/*
+ * An increased contrast highlighting scheme loosely based on the
+ * "Base16 Atelier Dune Light" theme by Bram de Haan
+ * (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/dune)
+ * Original Base16 color scheme by Chris Kempson
+ * (https://github.com/chriskempson/base16)
+ */
+
+/* Comment */
+.hljs-comment,
+.hljs-quote {
+  color: #575757;
+}
+
+/* Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-attr,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #d70025;
+}
+
+/* Orange */
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #b21e00;
+}
+
+/* Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #008200;
+}
+
+/* Blue */
+.hljs-title,
+.hljs-section {
+  color: #0030f2;
+}
+
+/* Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #9d00ec;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  background: #f6f7f6;
+  color: #000;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-addition {
+  color: #22863a;
+  background-color: #f0fff4;
+}
+
+.hljs-deletion {
+  color: #b31d28;
+  background-color: #ffeef0;
+}
+
+/* Mainmatter palette from book/custom.theme, mapped to Highlight.js tokens. */
+.mainmatter .hljs {
+  background: #343942;
+  color: #c9d1d9;
+}
+
+.mainmatter .hljs-comment,
+.mainmatter .hljs-quote {
+  color: #8b949e;
+  font-style: italic;
+}
+
+.mainmatter .hljs-type {
+  color: #8b949e;
+}
+
+.mainmatter .hljs-keyword,
+.mainmatter .hljs-selector-tag {
+  color: #03dac5;
+  font-weight: bold;
+}
+
+.mainmatter .hljs-built_in,
+.mainmatter .hljs-builtin-name,
+.mainmatter .hljs-attribute,
+.mainmatter .hljs-attr,
+.mainmatter .hljs-tag,
+.mainmatter .hljs-name,
+.mainmatter .hljs-meta {
+  color: #03dac5;
+}
+
+.mainmatter .hljs-number,
+.mainmatter .hljs-literal {
+  color: #79c0ff;
+}
+
+.mainmatter .hljs-string,
+.mainmatter .hljs-symbol,
+.mainmatter .hljs-bullet {
+  color: #a5d6ff;
+}
+
+.mainmatter .hljs-title,
+.mainmatter .hljs-section {
+  color: #d2a8ff;
+}
+
+.mainmatter .hljs-variable,
+.mainmatter .hljs-template-variable,
+.mainmatter .hljs-regexp,
+.mainmatter .hljs-link,
+.mainmatter .hljs-selector-id,
+.mainmatter .hljs-selector-class {
+  color: #a8daff;
+}
+
+.mainmatter .hljs-params {
+  color: #c9d1d9;
+}
+
+.mainmatter .hljs-addition {
+  color: #a5d6ff;
+  background-color: transparent;
+}
+
+.mainmatter .hljs-deletion {
+  color: #79c0ff;
+  background-color: transparent;
+}
