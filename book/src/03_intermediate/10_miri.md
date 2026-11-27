@@ -86,23 +86,30 @@ confront the details of a function that we gloss over when we simply call it.
 That usually leads to a much better understanding of the code, which makes it a
 worthwhile exercise in itself.
 
-You would usually have something like this:
+In this section's exercise, the Rust code calls `tag_normalize` from `tag.c`.
+The stub for it looks like this:
 
-```rust,no_run
+```rust,ignore
 #[cfg(miri)]
 mod stubs {
+    use super::*;
+
     #[unsafe(no_mangle)]
-    unsafe extern "C" fn SomeCFunction() {
-        // ... some stub here ...
+    unsafe extern "C" fn tag_normalize(
+        raw: *const c_char,
+        out: *mut c_char,
+        out_len: usize,
+    ) -> BmResult {
+        // ... a Rust stand-in that honors the contract in `tag.h` ...
     }
 }
 ```
 
-In a regular build we would link against the `.so` library and get the
-`SomeCFunction` symbol that way. Under Miri we stub out the symbol, pointing it
-at a simple pure-Rust function. The stubs live in their own module because Rust
-won't let a definition and the `extern` declaration of `SomeCFunction` share a
-name.
+In a regular build, the build script compiles `tag.c` into a static library and
+links it in, which gives us the `tag_normalize` symbol. Under Miri we stub out
+the symbol, pointing it at a simple pure-Rust function. The stubs live in their
+own module because Rust won't let a definition and the `extern` declaration of
+`tag_normalize` share a name.
 
 One word of caution, though: Miri passing with Rust stubs does not mean your
 codebase with the full C functions is correct. These stubs, written correctly,
@@ -113,7 +120,7 @@ your stubs' behavior more than the actual C code's.
 ## Future features
 
 Miri has gained support for running code directly from native libraries:
-`MIRIFLAGS="-Zmiri-native-lib=path/to/libbm.so"` loads the .so and directly
+`MIRIFLAGS="-Zmiri-native-lib=path/to/libtag.so"` loads the .so and directly
 calls the symbols in it. This is a promising direction, but for now it is
 limited. It does not support Windows, supports only integer and pointer
 arguments and returns (no structs by value), and by design cannot check most
