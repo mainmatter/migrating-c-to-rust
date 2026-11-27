@@ -1,4 +1,4 @@
-# Chapter 2: Basics
+# Chapter 2: C/Rust interop
 
 In this chapter we'll cover the FFI foundations: what FFI is, how we use it to
 interoperate between C and Rust, and the common pitfalls.
