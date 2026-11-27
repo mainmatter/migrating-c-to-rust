@@ -11,7 +11,7 @@
 //! crate. The implementation is intentionally trivial: the exercise is about
 //! replacing an object file, not porting an algorithm.
 
-/// Return the version of the `bm` interface.
+/// Return the version of the interface.
 // TODO 2 OF 2: Use the C ABI and export the exact `bm_version` symbol.
 pub fn bm_version() -> u32 {
     1

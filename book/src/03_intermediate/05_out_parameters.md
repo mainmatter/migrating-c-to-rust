@@ -86,7 +86,7 @@ through it.
 ## Recognize values split across channels
 
 An out-parameter can combine with the ordinary return value to describe one
-logical result. `bm` contains this example:
+logical result. Here is an example:
 
 ```c
 size_t bm_cursor_tags(BmCursor *cursor, const char ***out_tags);
