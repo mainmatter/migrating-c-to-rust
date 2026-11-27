@@ -1,5 +1,5 @@
 [book]
-authors = ["Jonas Kruckenberg", "Artur Jakubiec"]
+authors = ["Jonas Kruckenberg", "Dax Huiberts", "Artur Jakubiec", "Magnus Markling"]
 language = "en"
 src = "src"
 title = "The C to Rust Migration Book"
