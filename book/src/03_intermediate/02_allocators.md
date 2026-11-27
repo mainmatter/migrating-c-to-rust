@@ -128,16 +128,6 @@ There are several workable strategies:
    different allocation system while still using standard owning types such as
    `Box` and `Vec`.
 
-## Spotting allocator mismatches
-
-Tools like Valgrind give every allocation a birth certificate: run the test
-binary under `valgrind --leak-check=full` and it will tell you not just that a
-block leaked, but which call stack allocated it.
-
-Valgrind has no Apple Silicon support, so on an M-series Mac reach for `leaks`,
-for AddressSanitizer via `-Zsanitizer=address`, or, for the Rust side of the
-boundary, for Miri, which we cover in a later section.
-
 ## Head to the exercise
 
 In `exercises/03_intermediate/02_allocators`, you'll write a global allocator
